@@ -74,7 +74,7 @@
   .stat span{font-size:12px; color:var(--ink-soft); font-weight:600}
   .stat.soon b{color:var(--soon)} .stat.exp b{color:var(--expired)}
 
-  main{flex:1; padding:8px 20px 122px}
+  main{flex:1; padding:6px 20px 130px}
 
   .recipe-cta{display:flex; align-items:center; gap:14px; background:var(--peach); border-radius:var(--radius); padding:16px 18px; box-shadow:var(--shadow); margin:18px 0 6px}
   .recipe-cta .rc-emoji{font-size:33px; line-height:1}
@@ -108,9 +108,9 @@
   .sortrow .lbl{font-size:13px; color:var(--ink-soft); font-weight:600}
   .sortrow select{border:none; background:none; font-weight:700; font-size:14px; color:var(--sage-deep); padding:3px 2px}
 
-  .grid{display:grid; grid-template-columns:1fr; gap:12px}
+  .grid{display:grid; grid-template-columns:1fr; gap:13px}
   @media(min-width:600px){ .grid{grid-template-columns:1fr 1fr} }
-  .card{background:var(--card); border-radius:var(--radius); padding:16px; box-shadow:var(--shadow)}
+  .card{background:var(--card); border-radius:var(--radius); padding:17px 18px; box-shadow:var(--shadow)}
   .card .top{display:flex; align-items:flex-start; gap:13px}
   .emoji-tile{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;font-size:30px;line-height:1;flex:none}
   .thumb{width:52px;height:52px;border-radius:16px;object-fit:cover;flex:none}
@@ -201,15 +201,25 @@
   .spinner{width:18px;height:18px;border:2.4px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite}
   @keyframes sp{to{transform:rotate(360deg)}}
 
-  .fab{position:fixed; right:max(20px, calc(50% - 440px + 20px)); bottom:calc(82px + env(safe-area-inset-bottom)); background:var(--sage); color:#fff; border-radius:999px; padding:15px 24px; font-weight:700; font-size:16px; display:flex; align-items:center; gap:8px; box-shadow:0 10px 26px -8px rgba(140,176,127,.55); z-index:30}
-  .fab:active{transform:scale(.96)}
+  /* 카테고리별 현황 그리드 */
+  .sec-title{font-size:15px; font-weight:800; letter-spacing:-.02em; margin:22px 2px 12px; color:var(--ink)}
+  .cat-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:9px}
+  .cat-cell{background:var(--card); border-radius:var(--radius-sm); padding:14px 8px; box-shadow:var(--shadow); text-align:center; transition:transform .12s}
+  .cat-cell:active{transform:scale(.96)}
+  .cat-cell.on{box-shadow:0 0 0 2px var(--sage)}
+  .cat-cell .ce{font-size:24px; line-height:1}
+  .cat-cell .cn{font-size:12px; font-weight:600; color:var(--ink-soft); margin-top:6px}
+  .cat-cell .cc{font-size:17px; font-weight:800; letter-spacing:-.02em; margin-top:2px; color:var(--ink)}
 
-  nav{position:fixed; left:0; right:0; bottom:0; z-index:25; background:rgba(255,253,249,.86); backdrop-filter:saturate(1.6) blur(18px); border-top:1px solid var(--line); padding-bottom:env(safe-area-inset-bottom)}
-  .navin{max-width:880px; margin:0 auto; display:flex}
-  .navbtn{flex:1; padding:11px 0 9px; display:flex; flex-direction:column; align-items:center; gap:4px; color:var(--ink-faint); font-size:11px; font-weight:600}
+  /* iOS 탭바 + 중앙 담기 버튼 */
+  nav{position:fixed; left:0; right:0; bottom:0; z-index:25; background:rgba(255,255,255,.82); backdrop-filter:saturate(1.6) blur(20px); -webkit-backdrop-filter:saturate(1.6) blur(20px); border-top:1px solid var(--line); padding-bottom:env(safe-area-inset-bottom)}
+  .navin{max-width:880px; margin:0 auto; display:flex; align-items:center}
+  .navbtn{flex:1; padding:10px 0 8px; display:flex; flex-direction:column; align-items:center; gap:4px; color:var(--ink-faint); font-size:11px; font-weight:600}
   .navbtn.on{color:var(--sage-deep)}
   .navbtn .nbdg{position:relative}
   .navbtn .nbdg em{position:absolute; top:-3px; right:-9px; background:var(--expired); color:#fff; font-style:normal; font-size:9px; font-weight:700; min-width:15px; height:15px; padding:0 3px; border-radius:8px; display:grid; place-items:center}
+  .nav-fab{flex:none; width:54px; height:54px; margin:0 8px; border-radius:50%; background:var(--sage-deep); color:#fff; display:grid; place-items:center; box-shadow:0 8px 20px -6px rgba(140,176,127,.75); transform:translateY(-14px); transition:transform .12s}
+  .nav-fab:active{transform:translateY(-14px) scale(.94)}
 
   .scrim{position:fixed; inset:0; background:rgba(60,45,30,.34); z-index:40; opacity:0; pointer-events:none; transition:opacity .2s}
   .scrim.show{opacity:1; pointer-events:auto}
@@ -264,6 +274,8 @@
   <main>
     <section id="tab-fridge">
       <div id="alertBanner"></div>
+      <p class="sec-title" id="catSecTitle" style="display:none">카테고리별 현황</p>
+      <div class="cat-grid" id="catGrid" style="display:none"></div>
       <div class="recipe-cta" id="recipeCta">
         <span class="rc-emoji">🍳</span>
         <div class="rc-txt"><b>오늘 뭐 해먹지?</b><p>임박한 재료로 요리를 추천해 드려요</p></div>
@@ -291,12 +303,12 @@
     </section>
   </main>
 
-  <button class="fab" id="fab"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>담기</button>
-
   <nav><div class="navin">
     <button class="navbtn on" data-tab="fridge"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="3.5"/><path d="M5 10h14M9 5v2M9 13v3"/></svg>냉장고</button>
-    <button class="navbtn" data-tab="recipe"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 3v7a3 3 0 0 0 6 0V3M7 3v18M17 3c-1.5 0-3 1.5-3 5s1.5 4 3 4v9"/></svg>레시피</button>
     <button class="navbtn" data-tab="shop"><span class="nbdg"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M6 6 5 3H3"/></svg><em id="shopBadge" style="display:none">0</em></span>장보기</button>
+    <button class="nav-fab" id="navAdd" aria-label="재료 담기"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+    <button class="navbtn" data-tab="recipe"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 3v7a3 3 0 0 0 6 0V3M7 3v18M17 3c-1.5 0-3 1.5-3 5s1.5 4 3 4v9"/></svg>레시피</button>
+    <button class="navbtn" id="navMy"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>마이</button>
   </div></nav>
 </div>
 
@@ -453,7 +465,7 @@ const CAT_KW=[
 function autoCat(name){ const s=(name||'').toLowerCase(); for(const [cat,keys] of CAT_KW){ for(const k of keys){ if(s.includes(k)) return cat; } } return ''; }
 
 let items=[], shop=[], me='', tab='fridge', viewMode='list';
-let filterZone='all', sortBy='exp', query='', editingId=null, pickedZone='cold', pendingPhoto='', expTouched=false, catTouched=false;
+let filterZone='all', filterCat='', sortBy='exp', query='', editingId=null, pickedZone='cold', pendingPhoto='', expTouched=false, catTouched=false;
 
 const $=s=>document.querySelector(s);
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
@@ -473,7 +485,7 @@ function renderBanner(){ const {soon,exp}=counts(); const el=$('#alertBanner'); 
 function renderFilters(){ const c={all:items.length}; ZONES.forEach(z=>c[z.id]=items.filter(x=>x.zone===z.id).length); const mk=(id,l)=>`<button class="chip ${filterZone===id?'on':''}" data-z="${id}">${l}<span class="cnt">${c[id]||0}</span></button>`; $('#filters').innerHTML=mk('all','전체')+ZONES.map(z=>mk(z.id,z.label)).join(''); $('#filters').querySelectorAll('.chip').forEach(b=>b.onclick=()=>{filterZone=b.dataset.z;renderList();renderFilters();}); }
 
 function renderList(){
-  let list=items.filter(x=>filterZone==='all'||x.zone===filterZone);
+  let list=items.filter(x=>(filterZone==='all'||x.zone===filterZone)&&(!filterCat||(x.cat||'기타')===filterCat));
   if(query) list=list.filter(x=>x.name.toLowerCase().includes(query));
   list.sort((a,b)=>{ if(sortBy==='name') return a.name.localeCompare(b.name,'ko'); if(sortBy==='new') return (b.added||0)-(a.added||0); const da=daysLeft(a.exp),db=daysLeft(b.exp); if(da===null&&db===null) return 0; if(da===null) return 1; if(db===null) return -1; return da-db; });
   $('#listCount').textContent=list.length?`${list.length}개`:'';
@@ -646,15 +658,25 @@ function addShop(){ const v=$('#shopInput').value.trim(); if(!v)return; const o=
 $('#shopAdd').onclick=addShop;
 $('#shopInput').addEventListener('keydown',e=>{if(e.key==='Enter')addShop();});
 
-function switchTab(name){ tab=name; document.querySelectorAll('.navbtn').forEach(x=>x.classList.toggle('on',x.dataset.tab===name)); ['fridge','recipe','shop'].forEach(t=>$('#tab-'+t).style.display=(t===name)?'block':'none'); $('#fab').style.display=name==='fridge'?'flex':'none'; if(name==='fridge'&&viewMode==='fridge')renderFridge(); window.scrollTo({top:0}); }
-document.querySelectorAll('.navbtn').forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
+function switchTab(name){ tab=name; document.querySelectorAll('.navbtn[data-tab]').forEach(x=>x.classList.toggle('on',x.dataset.tab===name)); ['fridge','recipe','shop'].forEach(t=>$('#tab-'+t).style.display=(t===name)?'block':'none'); if(name==='fridge'&&viewMode==='fridge')renderFridge(); window.scrollTo({top:0}); }
+document.querySelectorAll('.navbtn[data-tab]').forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
+$('#navAdd').onclick=()=>openItem(null);
+$('#navMy').onclick=()=>$('#spaceBtn').click();
 $('#q').addEventListener('input',e=>{query=e.target.value.trim().toLowerCase();$('#qClr').style.display=query?'block':'none';renderList();});
 $('#qClr').onclick=()=>{$('#q').value='';query='';$('#qClr').style.display='none';renderList();};
 $('#sort').onchange=e=>{sortBy=e.target.value;renderList();};
-$('#fab').onclick=()=>openItem(null);
 
 /* ---------- boot ---------- */
-function renderAll(){ renderStats(); renderBanner(); renderFilters(); renderList(); if(viewMode==='fridge')renderFridge(); renderShop(); }
+function renderCatGrid(){
+  const el=$('#catGrid'), title=$('#catSecTitle'); if(!el) return;
+  const counts={}; items.forEach(x=>{ const c=x.cat||'기타'; counts[c]=(counts[c]||0)+1; });
+  const cats=CATS.filter(c=>counts[c]);
+  if(!cats.length){ el.style.display='none'; if(title)title.style.display='none'; return; }
+  el.style.display='grid'; if(title)title.style.display='block';
+  el.innerHTML=cats.map(c=>`<button class="cat-cell ${filterCat===c?'on':''}" data-cat="${esc(c)}"><div class="ce">${CAT_EMOJI[c]||'🍽️'}</div><div class="cn">${esc(c)}</div><div class="cc">${counts[c]}</div></button>`).join('');
+  el.querySelectorAll('[data-cat]').forEach(b=>b.onclick=()=>{ filterCat=(filterCat===b.dataset.cat)?'':b.dataset.cat; if(viewMode!=='list') setView('list'); renderCatGrid(); renderList(); if(filterCat){ $('#listWrap').scrollIntoView({behavior:'smooth',block:'nearest'}); } });
+}
+function renderAll(){ renderStats(); renderBanner(); renderCatGrid(); renderFilters(); renderList(); if(viewMode==='fridge')renderFridge(); renderShop(); }
 async function syncFromShared(){ if(document.querySelector('.sheet.show')) return; const ni=await dbLoadItems(), ns=await dbLoadShop(); if(JSON.stringify(ni)!==JSON.stringify(items)||JSON.stringify(ns)!==JSON.stringify(shop)){ items=ni; shop=ns; renderAll(); } }
 (async()=>{ $('#f_cat').innerHTML=CATS.map(c=>`<option>${c}</option>`).join(''); await loadAll(); refreshWho(); renderAll(); if(!me) setTimeout(()=>{$('#nameInput').value='';showSheet('#nameSheet');},400); setInterval(syncFromShared,8000); document.addEventListener('visibilitychange',()=>{ if(!document.hidden) syncFromShared(); }); })();
 </script>
