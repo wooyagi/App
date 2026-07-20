@@ -12,27 +12,27 @@
 <style>
   @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
   :root{
-    --bg:#f6efe3; --card:#fffdf9; --card-2:#f8f1e6; --tint:#f1e9db;
-    --ink:#4b4137; --ink-soft:#a1937f; --ink-faint:#c6bba8; --line:rgba(75,65,55,.09);
-    --sage:#7f9b6c; --sage-deep:#6c8a58; --peach:#ef9f78; --peach-ink:#c96f45; --rose:#e39a92;
-    --fresh:#82a566; --soon:#dfa459; --expired:#d67f6e;
-    --fresh-bg:#eaf1dc; --soon-bg:#f9ecd5; --expired-bg:#f8e2d9;
+    --bg:#f5f6f1; --card:#ffffff; --card-2:#f3f5ef; --tint:#edf1e8;
+    --ink:#3c4038; --ink-soft:#8b8f85; --ink-faint:#b6bab0; --line:rgba(60,64,56,.07);
+    --sage:#a8c5a1; --sage-deep:#8cb07f; --peach:#ffe8d6; --peach-ink:#e07d3c; --rose:#e39a92;
+    --fresh:#8cb07f; --soon:#ff9f4d; --expired:#ef7a4d;
+    --fresh-bg:#eaf1e3; --soon-bg:#ffe8d6; --expired-bg:#fbe0d4;
     --z-cold:#7ba7ad; --z-freeze:#8ba4c2; --z-veg:#8fa86a; --z-door:#c7a684;
     --font:"Pretendard Variable",Pretendard,-apple-system,"Apple SD Gothic Neo","Noto Sans KR",system-ui,Roboto,"Malgun Gothic",sans-serif;
     --serif:"Pretendard Variable",Pretendard,-apple-system,"Apple SD Gothic Neo","Noto Sans KR",system-ui,Roboto,"Malgun Gothic",sans-serif;
-    --radius:22px; --radius-sm:15px;
-    --shadow:0 4px 18px -10px rgba(120,95,70,.35);
-    --shadow-lg:0 12px 34px -16px rgba(120,95,70,.4);
+    --radius:20px; --radius-sm:15px;
+    --shadow:0 4px 16px -8px rgba(90,105,80,.16);
+    --shadow-lg:0 14px 32px -14px rgba(90,105,80,.22);
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;padding:0}
-  body{font-family:var(--font); color:var(--ink); background-color:var(--bg); background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27132%27%20height%3D%27132%27%20viewBox%3D%270%200%20132%20132%27%3E%3Cg%20fill%3D%27none%27%20stroke%3D%27%23c3ac86%27%20stroke-width%3D%271.5%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%20opacity%3D%270.42%27%3E%3Ccircle%20cx%3D%2730%27%20cy%3D%2740%27%20r%3D%279%27%2F%3E%3Cpath%20d%3D%27M30%2031%20v-5%20M30%2026%20q5%20-4%208%200%27%2F%3E%3Cpath%20d%3D%27M92%2030%20h9%20v3%20l2%203%20v13%20a3%203%200%200%201%20-3%203%20h-7%20a3%203%200%200%201%20-3%20-3%20v-13%20l2%20-3%20z%27%2F%3E%3Cpath%20d%3D%27M36%2092%20v18%20M28%2097%20l16%208%20M44%2097%20l-16%208%27%2F%3E%3Cellipse%20cx%3D%2798%27%20cy%3D%27104%27%20rx%3D%2711%27%20ry%3D%276%27%2F%3E%3Cpath%20d%3D%27M109%20104%20l7%20-5%20v10%20z%27%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E"); background-size:132px 132px; font-size:15px; line-height:1.5; letter-spacing:-.01em; -webkit-font-smoothing:antialiased; padding-bottom:env(safe-area-inset-bottom)}
+  body{font-family:var(--font); color:var(--ink); background-color:var(--bg); font-size:15px; line-height:1.5; letter-spacing:-.01em; -webkit-font-smoothing:antialiased; padding-bottom:env(safe-area-inset-bottom)}
   button{font-family:inherit; cursor:pointer; border:none; background:none; color:inherit}
   input,select,textarea{font-family:inherit; font-size:16px; color:var(--ink)}
   ::placeholder{color:var(--ink-faint)}
   .app{max-width:880px; margin:0 auto; min-height:100vh; display:flex; flex-direction:column}
 
-  header{padding:24px 20px 8px; position:sticky; top:0; z-index:20; background-color:var(--bg); background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27132%27%20height%3D%27132%27%20viewBox%3D%270%200%20132%20132%27%3E%3Cg%20fill%3D%27none%27%20stroke%3D%27%23c3ac86%27%20stroke-width%3D%271.5%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%20opacity%3D%270.42%27%3E%3Ccircle%20cx%3D%2730%27%20cy%3D%2740%27%20r%3D%279%27%2F%3E%3Cpath%20d%3D%27M30%2031%20v-5%20M30%2026%20q5%20-4%208%200%27%2F%3E%3Cpath%20d%3D%27M92%2030%20h9%20v3%20l2%203%20v13%20a3%203%200%200%201%20-3%203%20h-7%20a3%203%200%200%201%20-3%20-3%20v-13%20l2%20-3%20z%27%2F%3E%3Cpath%20d%3D%27M36%2092%20v18%20M28%2097%20l16%208%20M44%2097%20l-16%208%27%2F%3E%3Cellipse%20cx%3D%2798%27%20cy%3D%27104%27%20rx%3D%2711%27%20ry%3D%276%27%2F%3E%3Cpath%20d%3D%27M109%20104%20l7%20-5%20v10%20z%27%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E"); background-size:132px 132px}
+  header{padding:24px 20px 8px; position:sticky; top:0; z-index:20; background-color:var(--bg)}
   .brandrow{display:flex; align-items:center; justify-content:space-between; gap:12px}
   .brand h1{font-family:var(--serif); font-size:25px; font-weight:700; margin:0; letter-spacing:-.03em}
   .brand p{margin:4px 0 0; font-size:13px; color:var(--ink-soft); font-weight:500}
