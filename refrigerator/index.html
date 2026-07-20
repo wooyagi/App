@@ -406,7 +406,7 @@ if(!userId){ userId = 'u_'+Date.now().toString(36)+Math.random().toString(36).sl
 let spaces=[], curSpace=null;   /* curSpace = {id,name,kind,code} */
 const curSid = ()=> curSpace ? curSpace.id : '';
 
-async function dbLoadItems(){ if(!curSpace) return []; const {data,error}=await sb.from('items').select('payload').eq('space',curSid()); if(error){ console.warn(error); return items; } return (data||[]).map(r=>r.payload); }
+async function dbLoadItems(){ if(!curSpace) return []; const {data,error}=await sb.from('items').select('payload').eq('space',curSid()); if(error){ console.warn(error); return items; } return (data||[]).map(r=>{ const p=r.payload; if(p&&p.zone!=='cold'&&p.zone!=='freeze') p.zone='cold'; return p; }); }
 async function dbLoadShop(){ if(!curSpace) return []; const {data,error}=await sb.from('shopping').select('payload').eq('space',curSid()); if(error){ console.warn(error); return shop; } return (data||[]).map(r=>r.payload); }
 async function dbSaveItem(it){ const {error}=await sb.from('items').upsert({id:it.id,space:curSid(),payload:it}); if(error) console.warn(error); }
 async function dbDelItem(id){ const {error}=await sb.from('items').delete().eq('id',id); if(error) console.warn(error); }
@@ -429,7 +429,7 @@ async function initSpaces(){
   renderSpaceBar();
 }
 
-const ZONES=[{id:'cold',label:'냉장실',c:'var(--z-cold)'},{id:'freeze',label:'냉동실',c:'var(--z-freeze)'},{id:'veg',label:'야채칸',c:'var(--z-veg)'},{id:'door',label:'문칸',c:'var(--z-door)'}];
+const ZONES=[{id:'cold',label:'냉장실',c:'var(--z-cold)'},{id:'freeze',label:'냉동실',c:'var(--z-freeze)'}];
 const CATS=['채소','과일','육류','수산','유제품','계란','음료','반찬','양념','냉동식품','기타'];
 const CAT_EMOJI={채소:'🥬',과일:'🍎',육류:'🍖',수산:'🐟',유제품:'🧀',계란:'🥚',음료:'🥤',반찬:'🥘',양념:'🧂',냉동식품:'🧊',기타:'🍽️'};
 const CAT_COLOR={채소:'#34c759',과일:'#ff9500',육류:'#ff5a5f',수산:'#00c7be',유제품:'#34aadc',계란:'#ffcc00',음료:'#5856d6',반찬:'#ff9f0a',양념:'#af52de',냉동식품:'#64d2ff',기타:'#8e8e93'};
