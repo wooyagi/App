@@ -1,0 +1,664 @@
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>냉장고 프로젝트</title>
+<meta name="theme-color" content="#7f9b6c" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="냉장고" />
+<link rel="manifest" href="manifest.json" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<link rel="icon" href="favicon.png" />
+<style>
+  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
+  :root{
+    --bg:#f6efe3; --card:#fffdf9; --card-2:#f8f1e6; --tint:#f1e9db;
+    --ink:#4b4137; --ink-soft:#a1937f; --ink-faint:#c6bba8; --line:rgba(75,65,55,.09);
+    --sage:#7f9b6c; --sage-deep:#6c8a58; --peach:#ef9f78; --peach-ink:#c96f45; --rose:#e39a92;
+    --fresh:#82a566; --soon:#dfa459; --expired:#d67f6e;
+    --fresh-bg:#eaf1dc; --soon-bg:#f9ecd5; --expired-bg:#f8e2d9;
+    --z-cold:#7ba7ad; --z-freeze:#8ba4c2; --z-veg:#8fa86a; --z-door:#c7a684;
+    --font:"Pretendard Variable",Pretendard,-apple-system,"Apple SD Gothic Neo","Noto Sans KR",system-ui,Roboto,"Malgun Gothic",sans-serif;
+    --serif:"Pretendard Variable",Pretendard,-apple-system,"Apple SD Gothic Neo","Noto Sans KR",system-ui,Roboto,"Malgun Gothic",sans-serif;
+    --radius:22px; --radius-sm:15px;
+    --shadow:0 4px 18px -10px rgba(120,95,70,.35);
+    --shadow-lg:0 12px 34px -16px rgba(120,95,70,.4);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{font-family:var(--font); color:var(--ink); background-color:var(--bg); background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27132%27%20height%3D%27132%27%20viewBox%3D%270%200%20132%20132%27%3E%3Cg%20fill%3D%27none%27%20stroke%3D%27%23c3ac86%27%20stroke-width%3D%271.5%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%20opacity%3D%270.42%27%3E%3Ccircle%20cx%3D%2730%27%20cy%3D%2740%27%20r%3D%279%27%2F%3E%3Cpath%20d%3D%27M30%2031%20v-5%20M30%2026%20q5%20-4%208%200%27%2F%3E%3Cpath%20d%3D%27M92%2030%20h9%20v3%20l2%203%20v13%20a3%203%200%200%201%20-3%203%20h-7%20a3%203%200%200%201%20-3%20-3%20v-13%20l2%20-3%20z%27%2F%3E%3Cpath%20d%3D%27M36%2092%20v18%20M28%2097%20l16%208%20M44%2097%20l-16%208%27%2F%3E%3Cellipse%20cx%3D%2798%27%20cy%3D%27104%27%20rx%3D%2711%27%20ry%3D%276%27%2F%3E%3Cpath%20d%3D%27M109%20104%20l7%20-5%20v10%20z%27%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E"); background-size:132px 132px; font-size:15px; line-height:1.5; letter-spacing:-.01em; -webkit-font-smoothing:antialiased; padding-bottom:env(safe-area-inset-bottom)}
+  button{font-family:inherit; cursor:pointer; border:none; background:none; color:inherit}
+  input,select,textarea{font-family:inherit; font-size:16px; color:var(--ink)}
+  ::placeholder{color:var(--ink-faint)}
+  .app{max-width:880px; margin:0 auto; min-height:100vh; display:flex; flex-direction:column}
+
+  header{padding:24px 20px 8px; position:sticky; top:0; z-index:20; background-color:var(--bg); background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27132%27%20height%3D%27132%27%20viewBox%3D%270%200%20132%20132%27%3E%3Cg%20fill%3D%27none%27%20stroke%3D%27%23c3ac86%27%20stroke-width%3D%271.5%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%20opacity%3D%270.42%27%3E%3Ccircle%20cx%3D%2730%27%20cy%3D%2740%27%20r%3D%279%27%2F%3E%3Cpath%20d%3D%27M30%2031%20v-5%20M30%2026%20q5%20-4%208%200%27%2F%3E%3Cpath%20d%3D%27M92%2030%20h9%20v3%20l2%203%20v13%20a3%203%200%200%201%20-3%203%20h-7%20a3%203%200%200%201%20-3%20-3%20v-13%20l2%20-3%20z%27%2F%3E%3Cpath%20d%3D%27M36%2092%20v18%20M28%2097%20l16%208%20M44%2097%20l-16%208%27%2F%3E%3Cellipse%20cx%3D%2798%27%20cy%3D%27104%27%20rx%3D%2711%27%20ry%3D%276%27%2F%3E%3Cpath%20d%3D%27M109%20104%20l7%20-5%20v10%20z%27%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E"); background-size:132px 132px}
+  .brandrow{display:flex; align-items:center; justify-content:space-between; gap:12px}
+  .brand h1{font-family:var(--serif); font-size:25px; font-weight:700; margin:0; letter-spacing:-.03em}
+  .brand p{margin:4px 0 0; font-size:13px; color:var(--ink-soft); font-weight:500}
+  .hbtns{display:flex; gap:8px; align-items:center; flex:none}
+  .bell{width:40px;height:40px;border-radius:50%;background:var(--card);display:grid;place-items:center;color:var(--peach-ink);box-shadow:var(--shadow)}
+  .bell.on{background:var(--peach);color:#fff}
+  .whoami{display:flex; align-items:center; gap:7px; background:var(--card); padding:8px 13px 8px 8px; border-radius:999px; font-size:13px; font-weight:600; box-shadow:var(--shadow)}
+  .whoami .av{width:24px;height:24px;border-radius:50%;background:var(--sage);color:#fff;display:grid;place-items:center;font-size:12px;font-weight:700}
+
+  .spacebar{display:flex;align-items:center;gap:9px;width:100%;margin-top:14px;background:var(--card);border-radius:var(--radius-sm);padding:11px 14px;box-shadow:var(--shadow);text-align:left}
+  .spacebar .sb-ic{font-size:19px;line-height:1}
+  .spacebar .sb-name{font-weight:700;font-size:15px;color:var(--ink)}
+  .spacebar .sb-kind{font-size:11px;font-weight:700;color:#fff;background:var(--sage);border-radius:999px;padding:2px 8px}
+  .spacebar .sb-kind.personal{background:var(--z-cold)}
+  .spacebar .sb-caret{margin-left:auto;color:var(--ink-faint);font-size:13px}
+  .sp-row{display:flex;align-items:center;gap:11px;background:var(--card);border-radius:15px;padding:13px 15px;margin-bottom:9px;box-shadow:var(--shadow);width:100%;text-align:left}
+  .sp-row.on{box-shadow:0 0 0 2px var(--sage)}
+  .sp-row .sp-ic{font-size:20px}
+  .sp-row .sp-info{flex:1;min-width:0}
+  .sp-row .sp-nm{font-weight:700;font-size:15px}
+  .sp-row .sp-sub{font-size:12px;color:var(--ink-faint);font-weight:500;margin-top:1px}
+  .sp-row .sp-on{font-size:12px;font-weight:700;color:var(--sage-deep)}
+  .sp-code{font-family:ui-monospace,Menlo,monospace;font-weight:800;letter-spacing:.12em;font-size:15px;color:var(--peach-ink)}
+  .sp-actions{display:flex;gap:9px;margin:6px 0 4px}
+  .sp-actions button{flex:1;border-radius:14px;padding:13px;font-weight:700;font-size:14.5px;box-shadow:var(--shadow)}
+  .sp-make{background:var(--sage);color:#fff}
+  .sp-join{background:var(--card);color:var(--sage-deep)}
+  .sp-inline{display:flex;gap:8px;margin-top:8px}
+  .sp-inline input{flex:1;background:var(--card);border:none;border-radius:13px;padding:12px 14px;outline:none;box-shadow:var(--shadow);font-size:16px}
+  .sp-inline input:focus{box-shadow:0 0 0 2px var(--sage)}
+  .sp-inline button{background:var(--sage);color:#fff;border-radius:13px;padding:0 18px;font-weight:700;font-size:14.5px}
+  .sp-hint{font-size:12.5px;color:var(--ink-soft);margin:2px 2px 10px;line-height:1.5}
+  .sp-sec{font-size:12px;font-weight:700;color:var(--ink-faint);margin:16px 2px 9px}
+
+  .stats{display:flex; gap:10px; margin-top:18px}
+  .stat{flex:1; background:var(--card); border-radius:var(--radius-sm); padding:13px 14px; box-shadow:var(--shadow); text-align:left}
+  .stat .se{font-size:16px}
+  .stat b{display:block; font-size:23px; font-weight:800; line-height:1.15; letter-spacing:-.03em; margin-top:3px}
+  .stat span{font-size:11.5px; color:var(--ink-soft); font-weight:600}
+  .stat.soon b{color:var(--soon)} .stat.exp b{color:var(--expired)}
+
+  main{flex:1; padding:8px 20px 122px}
+
+  .recipe-cta{display:flex; align-items:center; gap:14px; background:linear-gradient(120deg,#fbe4cf,#f7d7bf); border-radius:var(--radius); padding:15px 17px; box-shadow:var(--shadow); margin:16px 0 6px}
+  .recipe-cta .rc-emoji{font-size:33px; line-height:1}
+  .recipe-cta .rc-txt{flex:1; min-width:0}
+  .recipe-cta .rc-txt b{font-size:16px; font-weight:800; color:#7a4a2a; letter-spacing:-.02em}
+  .recipe-cta .rc-txt p{margin:2px 0 0; font-size:12.5px; color:#a9764f; font-weight:500}
+  .recipe-cta .rc-go{flex:none; background:#fff; color:var(--peach-ink); border-radius:999px; padding:10px 15px; font-weight:700; font-size:13.5px; box-shadow:0 3px 10px -4px rgba(180,110,60,.5)}
+
+  .seg-ctrl{display:flex; background:#ece1cf; border-radius:13px; padding:3px; margin:16px 0 4px}
+  .seg-ctrl button{flex:1; padding:9px; border-radius:10px; font-size:14px; font-weight:700; color:var(--ink-soft); transition:.15s}
+  .seg-ctrl button.on{background:var(--card); box-shadow:0 2px 8px -3px rgba(120,95,70,.4); color:var(--ink)}
+
+  .banner{display:flex; align-items:center; gap:11px; background:var(--soon-bg); border-radius:16px; padding:13px 15px; margin:13px 0 2px}
+  .banner.hasexp{background:var(--expired-bg)}
+  .banner .bi{flex:none; font-size:18px} 
+  .banner .bt{flex:1; font-size:13.5px; font-weight:600; color:var(--ink)}
+  .banner .bg{font-weight:700; color:var(--peach-ink); font-size:14px; padding:6px 6px; white-space:nowrap}
+
+  .search{display:flex; align-items:center; gap:9px; background:var(--card); border-radius:15px; padding:11px 14px; margin:14px 0 12px; box-shadow:var(--shadow)}
+  .search svg{flex:none; color:var(--ink-soft)}
+  .search input{border:none; outline:none; flex:1; background:none; font-size:16px}
+  .search .clr{color:var(--ink-faint); font-size:19px; line-height:1; padding:0 2px; display:none}
+
+  .filters{display:flex; gap:8px; overflow-x:auto; padding:2px 20px 4px; margin:0 -20px; scrollbar-width:none}
+  .filters::-webkit-scrollbar{display:none}
+  .chip{flex:none; padding:8px 15px; border-radius:999px; font-size:13.5px; font-weight:700; background:var(--card); color:var(--ink-soft); white-space:nowrap; box-shadow:var(--shadow)}
+  .chip.on{background:var(--sage); color:#fff}
+  .chip .cnt{opacity:.65; margin-left:4px}
+
+  .sortrow{display:flex; align-items:center; justify-content:space-between; margin:15px 4px 10px}
+  .sortrow .lbl{font-size:13px; color:var(--ink-soft); font-weight:600}
+  .sortrow select{border:none; background:none; font-weight:700; font-size:14px; color:var(--sage-deep); padding:3px 2px}
+
+  .grid{display:grid; grid-template-columns:1fr; gap:12px}
+  @media(min-width:600px){ .grid{grid-template-columns:1fr 1fr} }
+  .card{background:var(--card); border-radius:var(--radius); padding:16px; box-shadow:var(--shadow)}
+  .card .top{display:flex; align-items:flex-start; gap:13px}
+  .emoji-tile{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;font-size:30px;line-height:1;flex:none}
+  .thumb{width:52px;height:52px;border-radius:16px;object-fit:cover;flex:none}
+  .card .info{flex:1; min-width:0}
+  .card .nm{font-weight:700; font-size:17px; letter-spacing:-.02em}
+  .card .qty{font-size:13px; color:var(--ink-soft); font-weight:500; margin-top:1px}
+  .badges{display:flex; gap:6px; flex-wrap:wrap; margin-top:9px}
+  .tag{font-size:11.5px; font-weight:600; padding:4px 10px; border-radius:999px; background:var(--tint); color:var(--ink-soft); display:inline-flex; align-items:center; gap:5px}
+  .tag .zd{width:7px;height:7px;border-radius:50%}
+  .fresh-wrap{margin-top:14px}
+  .fresh-line{display:flex; align-items:center; justify-content:space-between; margin-bottom:6px}
+  .dday{font-size:14px; font-weight:800; letter-spacing:-.02em}
+  .dday.ok{color:var(--fresh)} .dday.soon{color:var(--soon)} .dday.exp{color:var(--expired)}
+  .expdate{font-size:12px; color:var(--ink-faint); font-weight:500}
+  .bar{height:7px; border-radius:4px; background:var(--tint); overflow:hidden}
+  .bar i{display:block; height:100%; border-radius:4px; background:var(--fresh)}
+  .bar.soon i{background:var(--soon)} .bar.exp i{background:var(--expired)}
+  .card .meta{display:flex; align-items:center; justify-content:space-between; margin-top:14px; padding-top:12px; border-top:1px solid var(--line)}
+  .card .by{font-size:12px; color:var(--ink-faint); font-weight:500}
+  .card .acts{display:flex; gap:2px}
+  .icobtn{width:33px; height:33px; border-radius:10px; display:grid; place-items:center; color:var(--ink-soft)}
+  .icobtn:active{background:var(--tint)}
+  .icobtn.del{color:var(--expired)}
+
+  .fridge{position:relative; max-width:400px; margin:16px auto 0; padding-right:8px}
+  .fridge-inner{background:var(--card); border-radius:26px; padding:11px; box-shadow:var(--shadow-lg); overflow:hidden}
+  .cmp{padding:14px 14px 16px; border-radius:19px; background:linear-gradient(180deg,#fffdf9,#f4ecdd); margin-bottom:10px}
+  .cmp:last-child{margin-bottom:0}
+  .cmp-head{display:flex; align-items:center; gap:7px; font-size:12.5px; font-weight:700; color:var(--ink-soft); margin-bottom:12px}
+  .cmp-dot{width:9px;height:9px;border-radius:50%}
+  .cmp-n{margin-left:auto; color:var(--ink-faint); font-weight:700}
+  .shelf{display:flex; flex-wrap:wrap; gap:14px 12px; min-height:40px; padding-top:4px; border-top:1px dashed rgba(120,95,70,.16)}
+  .fitem{display:flex; flex-direction:column; align-items:center; gap:4px; width:54px}
+  .fem{font-size:29px; line-height:1; width:50px;height:50px; display:grid; place-items:center; background:#fff; border-radius:15px; box-shadow:0 3px 9px -3px rgba(120,95,70,.4); overflow:hidden}
+  .fem.soon{box-shadow:0 0 0 2.5px var(--soon)} .fem.exp{box-shadow:0 0 0 2.5px var(--expired)}
+  .fem img{width:100%;height:100%;object-fit:cover}
+  .fnm{font-size:10.5px; color:var(--ink-soft); font-weight:600; max-width:54px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .fempty{font-size:12.5px; color:var(--ink-faint); padding:9px 2px; font-weight:500}
+  .fridge-handle{position:absolute; top:22%; bottom:22%; right:0; width:6px; border-radius:4px; background:rgba(120,95,70,.16)}
+
+  .empty{text-align:center; padding:56px 24px; color:var(--ink-soft)}
+  .empty .ic{width:70px;height:70px;border-radius:22px;background:var(--card);display:grid;place-items:center;margin:0 auto 16px;font-size:33px;box-shadow:var(--shadow)}
+  .empty b{font-family:var(--serif); display:block; font-size:18px; color:var(--ink); font-weight:700; margin-bottom:5px}
+  .empty span{font-size:14px}
+
+  .shop-add{display:flex; gap:10px; margin:18px 0 15px}
+  .shop-add input{flex:1; background:var(--card); border-radius:15px; padding:13px 16px; outline:none; box-shadow:var(--shadow); font-size:16px}
+  .shop-add button{background:var(--sage); color:#fff; border-radius:15px; padding:0 22px; font-weight:700; font-size:15px; box-shadow:var(--shadow)}
+  .shop-item{display:flex; align-items:center; gap:13px; background:var(--card); border-radius:17px; padding:14px 16px; margin-bottom:10px; box-shadow:var(--shadow)}
+  .shop-item.done{opacity:.5}
+  .check{width:25px;height:25px;border-radius:50%;border:2px solid #ddd0bb;flex:none;display:grid;place-items:center;color:#fff}
+  .check.on{background:var(--sage); border-color:var(--sage)}
+  .shop-item .txt{flex:1; font-weight:600; font-size:15.5px}
+  .shop-item.done .txt{text-decoration:line-through}
+  .shop-item .sub{font-size:12px; color:var(--ink-faint); font-weight:500; margin-top:1px}
+  .link{font-size:14px; font-weight:700; color:var(--sage-deep); padding:4px 6px}
+
+  .rc-intro{background:var(--card); border-radius:var(--radius); padding:22px; box-shadow:var(--shadow); margin:18px 0 14px; text-align:center}
+  .rc-intro .rc-big{font-size:40px}
+  .rc-intro h3{font-family:var(--serif); margin:10px 0 6px; font-size:21px; font-weight:700; letter-spacing:-.02em}
+  .rc-intro p{margin:0 0 18px; font-size:14px; color:var(--ink-soft)}
+  .rc-btn{width:100%; background:var(--sage); color:#fff; border-radius:15px; padding:16px; font-weight:700; font-size:16px; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:var(--shadow)}
+  .rc-btn:disabled{opacity:.6}
+  .rcard{background:var(--card); border-radius:var(--radius); padding:19px; box-shadow:var(--shadow); margin-bottom:12px}
+  .rcard h4{font-family:var(--serif); margin:0; font-size:21px; font-weight:700; letter-spacing:-.02em}
+  .rcard .rtime{font-size:12.5px; color:var(--ink-faint); font-weight:500; margin-top:3px}
+  .rcard .rsec{margin-top:15px}
+  .rcard .rlbl{font-size:12px; font-weight:700; color:var(--ink-faint); margin-bottom:8px}
+  .pill{display:inline-block; font-size:12.5px; font-weight:600; padding:5px 12px; border-radius:999px; margin:0 5px 6px 0}
+  .pill.have{background:var(--fresh-bg); color:var(--sage-deep)}
+  .pill.need{background:var(--tint); color:var(--ink-soft)}
+  .pill.need{cursor:pointer; border:none; font-family:inherit}
+  .pill.need.added{background:var(--fresh-bg); color:var(--sage-deep)}
+  .diff-seg{display:flex; background:#ece1cf; border-radius:13px; padding:3px; margin:0 0 14px; gap:2px}
+  .diff-seg button{flex:1; padding:9px 4px; border-radius:10px; font-size:13.5px; font-weight:700; color:var(--ink-soft)}
+  .diff-seg button.on{background:var(--card); box-shadow:0 2px 8px -3px rgba(120,95,70,.4); color:var(--ink)}
+  .rgroup{margin-bottom:20px}
+  .rghead{font-family:var(--serif); font-size:16px; font-weight:700; color:var(--ink); margin:4px 2px 12px; letter-spacing:-.02em}
+  .rhead{display:flex; align-items:flex-start; justify-content:space-between; gap:10px}
+  .difftag{flex:none; font-size:11.5px; font-weight:700; padding:4px 11px; border-radius:999px}
+  .radd{display:block; width:100%; margin-top:9px; background:var(--sage); color:#fff; border-radius:12px; padding:12px; font-weight:700; font-size:13.5px; box-shadow:var(--shadow)}
+  .radd.done{background:var(--tint); color:var(--sage-deep); box-shadow:none}
+  #toast{position:fixed; left:50%; bottom:calc(98px + env(safe-area-inset-bottom)); transform:translateX(-50%) translateY(18px); background:rgba(45,36,26,.94); color:#fff; padding:12px 18px; border-radius:999px; font-size:13.5px; font-weight:600; z-index:60; opacity:0; pointer-events:none; transition:.25s; max-width:90vw; text-align:center}
+  #toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
+  .steps{margin:0; padding-left:2px; list-style:none; counter-reset:s}
+  .steps li{position:relative; padding:0 0 10px 30px; font-size:14px; color:var(--ink); counter-increment:s; line-height:1.55}
+  .steps li::before{content:counter(s); position:absolute; left:0; top:1px; width:21px; height:21px; border-radius:50%; background:var(--sage); color:#fff; font-size:11px; font-weight:700; display:grid; place-items:center}
+  .spinner{width:18px;height:18px;border:2.4px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite}
+  @keyframes sp{to{transform:rotate(360deg)}}
+
+  .fab{position:fixed; right:max(20px, calc(50% - 440px + 20px)); bottom:calc(82px + env(safe-area-inset-bottom)); background:var(--sage); color:#fff; border-radius:999px; padding:15px 24px; font-weight:700; font-size:16px; display:flex; align-items:center; gap:8px; box-shadow:0 10px 26px -8px rgba(110,138,88,.75); z-index:30}
+  .fab:active{transform:scale(.96)}
+
+  nav{position:fixed; left:0; right:0; bottom:0; z-index:25; background:rgba(255,253,249,.86); backdrop-filter:saturate(1.6) blur(18px); border-top:1px solid var(--line); padding-bottom:env(safe-area-inset-bottom)}
+  .navin{max-width:880px; margin:0 auto; display:flex}
+  .navbtn{flex:1; padding:11px 0 9px; display:flex; flex-direction:column; align-items:center; gap:4px; color:var(--ink-faint); font-size:11px; font-weight:600}
+  .navbtn.on{color:var(--sage-deep)}
+  .navbtn .nbdg{position:relative}
+  .navbtn .nbdg em{position:absolute; top:-3px; right:-9px; background:var(--expired); color:#fff; font-style:normal; font-size:9px; font-weight:700; min-width:15px; height:15px; padding:0 3px; border-radius:8px; display:grid; place-items:center}
+
+  .scrim{position:fixed; inset:0; background:rgba(60,45,30,.34); z-index:40; opacity:0; pointer-events:none; transition:opacity .2s}
+  .scrim.show{opacity:1; pointer-events:auto}
+  .sheet{position:fixed; left:50%; bottom:0; transform:translate(-50%,100%); width:100%; max-width:500px; background:var(--bg); border-radius:24px 24px 0 0; z-index:41; padding:8px 20px calc(22px + env(safe-area-inset-bottom)); transition:transform .28s cubic-bezier(.32,.72,0,1); max-height:92vh; overflow-y:auto}
+  @media(min-width:560px){ .sheet{bottom:auto; top:50%; border-radius:24px; transform:translate(-50%,-46%) scale(.97); opacity:0} }
+  .sheet.show{transform:translate(-50%,0)}
+  @media(min-width:560px){ .sheet.show{transform:translate(-50%,-50%) scale(1); opacity:1} }
+  .grab{width:40px;height:5px;border-radius:3px;background:#d8ccb8;margin:8px auto 6px}
+  @media(min-width:560px){ .grab{display:none} }
+  .sheet h2{font-family:var(--serif); font-size:22px; font-weight:700; margin:8px 2px 18px; letter-spacing:-.02em}
+  .media-row{display:flex; gap:14px; align-items:center; margin-bottom:18px}
+  .photo-btn{width:74px;height:74px;border-radius:20px;background:var(--card);display:grid;place-items:center;flex:none;overflow:hidden;box-shadow:var(--shadow)}
+  .photo-btn span{font-size:42px;line-height:1}
+  .photo-btn img{width:100%;height:100%;object-fit:cover}
+  .media-side{flex:1}
+  .media-hint{font-size:12.5px; color:var(--ink-soft); line-height:1.45; margin-bottom:10px}
+  .media-btns{display:flex; gap:8px}
+  .mini-btn{background:var(--card); box-shadow:var(--shadow); border-radius:11px; padding:9px 13px; font-size:13px; font-weight:700; color:var(--sage-deep); display:flex; align-items:center; gap:5px}
+  .field{margin-bottom:14px}
+  .field label{display:block; font-size:12.5px; font-weight:700; color:var(--ink-soft); margin:0 0 6px 3px}
+  .field input,.field select,.field textarea{width:100%; background:var(--card); border:none; border-radius:14px; padding:14px; outline:none; box-shadow:var(--shadow); font-size:16px}
+  .field input:focus,.field select:focus{box-shadow:0 0 0 2px var(--sage)}
+  .exp-hint{font-size:12px; color:var(--ink-faint); font-weight:500; margin:-8px 3px 14px; line-height:1.4}
+  .row3{display:grid; grid-template-columns:1.4fr 1fr; gap:11px}
+  .row2{display:grid; grid-template-columns:1fr 1fr; gap:11px}
+  .segbtns{display:flex; gap:8px; flex-wrap:wrap}
+  .seg{flex:1; min-width:64px; padding:12px 6px; border-radius:13px; background:var(--card); box-shadow:var(--shadow); font-weight:700; font-size:13.5px; color:var(--ink-soft); text-align:center}
+  .sheet .save{width:100%; background:var(--sage); color:#fff; border-radius:16px; padding:16px; font-weight:700; font-size:17px; margin-top:8px; box-shadow:var(--shadow)}
+  .sheet .del2{width:100%; text-align:center; color:var(--expired); font-weight:700; font-size:14px; padding:14px; margin-top:4px}
+  :focus-visible{outline:2px solid var(--sage); outline-offset:2px}
+  @media (prefers-reduced-motion: reduce){ *{transition:none !important; animation:none !important} }
+</style>
+
+<div class="app">
+  <header>
+    <div class="brandrow">
+      <div class="brand"><h1 id="greet">냉장고 프로젝트</h1></div>
+      <div class="hbtns">
+        <button class="bell" id="bellBtn" aria-label="알림"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.5 21a2 2 0 0 0 3 0"/></svg></button>
+        <button class="whoami" id="whoBtn"><span class="av" id="whoAv">?</span><span id="whoName">이름</span></button>
+      </div>
+    </div>
+    <button class="spacebar" id="spaceBtn">
+      <span class="sb-ic" id="sbIc">🧊</span>
+      <span class="sb-name" id="sbName">내 냉장고</span>
+      <span class="sb-kind personal" id="sbKind">개인</span>
+      <span class="sb-caret">전환 ▾</span>
+    </button>
+    <div class="stats" id="stats"></div>
+  </header>
+
+  <main>
+    <section id="tab-fridge">
+      <div id="alertBanner"></div>
+      <div class="recipe-cta" id="recipeCta">
+        <span class="rc-emoji">🍳</span>
+        <div class="rc-txt"><b>오늘 뭐 해먹지?</b><p>임박한 재료로 요리를 추천해 드려요</p></div>
+        <button class="rc-go">추천받기</button>
+      </div>
+      <div class="seg-ctrl" id="viewSeg"><button data-v="list" class="on">목록으로</button><button data-v="fridge">냉장고로</button></div>
+      <div id="listWrap">
+        <div class="search"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input id="q" placeholder="재료 검색" autocomplete="off"/><button class="clr" id="qClr" aria-label="지우기">×</button></div>
+        <div class="filters" id="filters"></div>
+        <div class="sortrow"><span class="lbl" id="listCount"></span><select id="sort"><option value="exp">유통기한 임박순</option><option value="name">이름순</option><option value="new">최근 담은 순</option></select></div>
+        <div class="grid" id="grid"></div>
+      </div>
+      <div id="fridgeView" style="display:none"></div>
+    </section>
+
+    <section id="tab-recipe" style="display:none">
+      <div class="rc-intro"><div class="rc-big">🥘</div><h3>냉장고 털어먹기</h3><p>지금 있는 재료, 특히 곧 상할 것들을 우선으로<br>만들 수 있는 요리를 추천해 드려요.</p><button class="rc-btn" id="recipeBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 3v7a3 3 0 0 0 6 0V3M7 3v18M17 3c-1.5 0-3 1.5-3 5s1.5 4 3 4v9"/></svg>지금 재료로 추천받기</button></div>
+      <div class="diff-seg" id="diffSeg"><button data-d="all" class="on">전체</button><button data-d="간단">간단</button><button data-d="보통">보통</button><button data-d="복잡">복잡</button></div>
+      <div id="recipeOut"></div>
+    </section>
+
+    <section id="tab-shop" style="display:none">
+      <div class="shop-add"><input id="shopInput" placeholder="살 것 적기 (예: 계란 1판)" autocomplete="off"/><button id="shopAdd">담기</button></div>
+      <div id="shopList"></div>
+    </section>
+  </main>
+
+  <button class="fab" id="fab"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>담기</button>
+
+  <nav><div class="navin">
+    <button class="navbtn on" data-tab="fridge"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="3.5"/><path d="M5 10h14M9 5v2M9 13v3"/></svg>냉장고</button>
+    <button class="navbtn" data-tab="recipe"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 3v7a3 3 0 0 0 6 0V3M7 3v18M17 3c-1.5 0-3 1.5-3 5s1.5 4 3 4v9"/></svg>레시피</button>
+    <button class="navbtn" data-tab="shop"><span class="nbdg"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M6 6 5 3H3"/></svg><em id="shopBadge" style="display:none">0</em></span>장보기</button>
+  </div></nav>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<div id="toast"></div>
+
+<div class="sheet" id="itemSheet">
+  <div class="grab"></div>
+  <h2 id="sheetTitle">냉장고에 담기</h2>
+  <div class="media-row">
+    <button class="photo-btn" id="photoBtn"><span id="emojiPrev">🍽️</span></button>
+    <div class="media-side">
+      <div class="media-hint">이름을 적으면 어울리는 이모지가 살짝 붙어요.<br>원하면 직접 사진을 넣어도 좋아요.</div>
+      <div class="media-btns">
+        <button class="mini-btn" id="photoBtn2"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3"/><path d="M8 6l1-2h6l1 2"/></svg>사진</button>
+        <button class="mini-btn" id="scanBtn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 7V4h3M21 7V4h-3M3 17v3h3M21 17v3h-3M6 8v8M10 8v8M14 8v8M18 8v8"/></svg><span id="scanLabel">바코드</span></button>
+      </div>
+    </div>
+    <input type="file" id="photoInput" accept="image/*" capture="environment" hidden/>
+    <input type="file" id="scanInput" accept="image/*" capture="environment" hidden/>
+  </div>
+  <div class="field"><label>재료 이름</label><input id="f_name" placeholder="예: 우유, 시금치, 소고기" autocomplete="off"/></div>
+  <div class="row3">
+    <div class="field"><label>수량</label><input id="f_qty" placeholder="예: 2" inputmode="decimal"/></div>
+    <div class="field"><label>단위</label><select id="f_unit"><option>개</option><option>팩</option><option>봉</option><option>병</option><option>g</option><option>kg</option><option>ml</option><option>L</option><option>판</option><option>줄</option></select></div>
+  </div>
+  <div class="field"><label>분류</label><select id="f_cat"></select></div>
+  <div class="field"><label>보관 위치</label><div class="segbtns" id="zoneSeg"></div></div>
+  <div class="row2">
+    <div class="field"><label>구매일 (선택)</label><input id="f_buy" type="date"/></div>
+    <div class="field"><label>유통기한</label><input id="f_exp" type="date"/></div>
+  </div>
+  <p class="exp-hint">재료에 맞춰 일반적인 보관 기간으로 자동 추정돼요. 직접 바꿔도 괜찮아요.</p>
+  <div class="field"><label>메모 (선택)</label><input id="f_memo" placeholder="예: 개봉함 / 요리용" autocomplete="off"/></div>
+  <button class="save" id="saveItem">담기</button>
+  <button class="del2" id="delItem" style="display:none">이 재료 버리기</button>
+</div>
+
+<div class="sheet" id="spaceSheet">
+  <div class="grab"></div>
+  <h2>냉장고 공간</h2>
+  <p class="sp-hint">개인 냉장고는 나만 봅니다. 공유 냉장고는 초대 코드를 아는 사람끼리 함께 씁니다.</p>
+  <div class="sp-sec">내 공간</div>
+  <div id="spaceList"></div>
+  <div class="sp-actions">
+    <button class="sp-make" id="spMake">+ 공유 냉장고 만들기</button>
+    <button class="sp-join" id="spJoinToggle">코드로 참여</button>
+  </div>
+  <div id="spMakeBox" style="display:none">
+    <div class="sp-inline"><input id="spMakeName" placeholder="공유 냉장고 이름 (예: 우리집)" autocomplete="off"/><button id="spMakeGo">만들기</button></div>
+  </div>
+  <div id="spJoinBox" style="display:none">
+    <div class="sp-inline"><input id="spJoinCode" placeholder="초대 코드 6자리" autocomplete="off" style="text-transform:uppercase"/><button id="spJoinGo">참여</button></div>
+  </div>
+</div>
+
+<div class="sheet" id="nameSheet">
+  <div class="grab"></div>
+  <h2>이름을 알려주세요</h2>
+  <p style="margin:-10px 2px 16px; font-size:14px; color:var(--ink-soft)">누가 무엇을 담았는지 함께 쓰는 사람들에게 살짝 표시돼요.</p>
+  <div class="field"><input id="nameInput" placeholder="예: 지현, 엄마, 룸메A" autocomplete="off"/></div>
+  <button class="save" id="saveName">시작하기</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* ---------- data layer: Supabase(클라우드 DB) + 공간(냉장고) ---------- */
+const SUPABASE_URL = "https://hdkqlpctnprcgbyrrbby.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhka3FscGN0bnByY2dieXJyYmJ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ1MzkzMjUsImV4cCI6MjEwMDExNTMyNX0.ekiLFWcDwZDWKovzbdN1vaKatS3qXAXTg10PbPfcXsg";
+const API = '';  /* 레시피 함수는 같은 도메인(/api/recipes) */
+const K_NAME='user:name', K_UID='user:id', K_SPACE='space:current';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const mem={};
+const kv={
+  async get(k,sh=true){ try{ return localStorage.getItem(k); }catch(e){} return (k in mem)?mem[k]:null; },
+  async set(k,v,sh=true){ try{ localStorage.setItem(k,v); return; }catch(e){} mem[k]=v; }
+};
+/* 이 브라우저(사용자)를 식별하는 고정 ID — 개인 공간 소유자 판별용 */
+let userId = localStorage.getItem(K_UID);
+if(!userId){ userId = 'u_'+Date.now().toString(36)+Math.random().toString(36).slice(2,8); localStorage.setItem(K_UID, userId); }
+let spaces=[], curSpace=null;   /* curSpace = {id,name,kind,code} */
+const curSid = ()=> curSpace ? curSpace.id : '';
+
+async function dbLoadItems(){ if(!curSpace) return []; const {data,error}=await sb.from('items').select('payload').eq('space',curSid()); if(error){ console.warn(error); return items; } return (data||[]).map(r=>r.payload); }
+async function dbLoadShop(){ if(!curSpace) return []; const {data,error}=await sb.from('shopping').select('payload').eq('space',curSid()); if(error){ console.warn(error); return shop; } return (data||[]).map(r=>r.payload); }
+async function dbSaveItem(it){ const {error}=await sb.from('items').upsert({id:it.id,space:curSid(),payload:it}); if(error) console.warn(error); }
+async function dbDelItem(id){ const {error}=await sb.from('items').delete().eq('id',id); if(error) console.warn(error); }
+async function dbSaveShopItem(s){ const {error}=await sb.from('shopping').upsert({id:s.id,space:curSid(),payload:s}); if(error) console.warn(error); }
+async function dbDelShopItem(id){ const {error}=await sb.from('shopping').delete().eq('id',id); if(error) console.warn(error); }
+
+/* ----- 공간(냉장고) 관리 (Supabase RPC) ----- */
+async function ensurePersonal(){ const {data,error}=await sb.rpc('ensure_personal',{p_user:userId,p_name:me}); if(error){ console.warn(error); return null; } return data; }
+async function loadSpaces(){ const {data,error}=await sb.rpc('list_spaces',{p_user:userId}); spaces = error?[]:(data||[]); return spaces; }
+async function createSharedSpace(nm){ const {data,error}=await sb.rpc('create_shared',{p_user:userId,p_name:me,p_space_name:nm}); if(error){ console.warn(error); return null; } await loadSpaces(); return data; }
+async function joinSharedSpace(code){ const {data,error}=await sb.rpc('join_shared',{p_user:userId,p_name:me,p_code:code}); if(error){ console.warn(error); return null; } if(!data) return null; await loadSpaces(); return data; }
+async function leaveSharedSpace(sid){ await sb.rpc('leave_space',{p_user:userId,p_space:sid}); await loadSpaces(); }
+async function setSpace(sp){ curSpace=sp; localStorage.setItem(K_SPACE, sp.id); renderSpaceBar(); items=await dbLoadItems(); shop=await dbLoadShop(); renderAll(); }
+async function initSpaces(){
+  const personal=await ensurePersonal();
+  await loadSpaces();
+  const savedId=localStorage.getItem(K_SPACE);
+  curSpace = spaces.find(s=>s.id===savedId) || spaces.find(s=>s.kind==='personal') || personal;
+  if(curSpace) localStorage.setItem(K_SPACE, curSpace.id);
+  renderSpaceBar();
+}
+
+const ZONES=[{id:'cold',label:'냉장실',c:'var(--z-cold)'},{id:'freeze',label:'냉동실',c:'var(--z-freeze)'},{id:'veg',label:'야채칸',c:'var(--z-veg)'},{id:'door',label:'문칸',c:'var(--z-door)'}];
+const CATS=['채소','과일','육류','수산','유제품','계란','음료','반찬','양념','냉동식품','기타'];
+const CAT_EMOJI={채소:'🥬',과일:'🍎',육류:'🍖',수산:'🐟',유제품:'🧀',계란:'🥚',음료:'🥤',반찬:'🥘',양념:'🧂',냉동식품:'🧊',기타:'🍽️'};
+const ZONE_TINT={cold:'rgba(123,167,173,.18)',freeze:'rgba(139,164,194,.18)',veg:'rgba(143,168,106,.18)',door:'rgba(199,166,132,.2)'};
+const EMOJI=[
+  [['우유','milk'],'🥛'],[['계란','달걀','에그','egg'],'🥚'],[['치즈','cheese'],'🧀'],[['버터','butter'],'🧈'],[['요거트','요구르트','yogurt'],'🥛'],
+  [['소고기','쇠고기','한우','스테이크','beef'],'🥩'],[['삼겹','베이컨','돼지','목살','pork','bacon'],'🥓'],[['닭','치킨','chicken'],'🍗'],[['소시지','소세지','핫도그','sausage'],'🌭'],[['햄','ham'],'🍖'],[['고기','육류'],'🍖'],
+  [['새우','shrimp'],'🦐'],[['오징어','squid'],'🦑'],[['게','대게','꽃게','crab'],'🦀'],[['조개','굴','clam','oyster'],'🦪'],[['문어','octopus'],'🐙'],[['생선','고등어','갈치','연어','참치','salmon','tuna','fish'],'🐟'],
+  [['시금치','상추','양상추','배추','쌈','나물','채소','lettuce','spinach'],'🥬'],[['당근','carrot'],'🥕'],[['양파','onion'],'🧅'],[['마늘','garlic'],'🧄'],[['감자','potato'],'🥔'],[['고구마'],'🍠'],[['토마토','tomato'],'🍅'],[['오이','cucumber'],'🥒'],[['브로콜리','broccoli'],'🥦'],[['버섯','mushroom'],'🍄'],[['옥수수','corn'],'🌽'],[['고추','파프리카','피망','pepper','chili'],'🌶️'],[['가지','eggplant'],'🍆'],[['호박','pumpkin'],'🎃'],[['파','대파','쪽파'],'🥬'],[['두부','콩','tofu','bean'],'🫘'],[['아보카도','avocado'],'🥑'],
+  [['사과','apple'],'🍎'],[['바나나','banana'],'🍌'],[['딸기','strawberry'],'🍓'],[['포도','grape'],'🍇'],[['수박','watermelon'],'🍉'],[['참외','멜론','melon'],'🍈'],[['오렌지','귤','orange'],'🍊'],[['레몬','lemon'],'🍋'],[['복숭아','peach'],'🍑'],[['배','pear'],'🍐'],[['체리','cherry'],'🍒'],[['키위','kiwi'],'🥝'],[['파인애플','pineapple'],'🍍'],[['망고','mango'],'🥭'],[['블루베리','베리','berry'],'🫐'],[['코코넛','coconut'],'🥥'],
+  [['밥','쌀','rice'],'🍚'],[['빵','토스트','베이글','bread'],'🍞'],[['라면','ramen'],'🍜'],[['국수','면','파스타','스파게티','pasta','noodle'],'🍝'],[['만두','교자','dumpling'],'🥟'],[['김밥','초밥','스시','sushi'],'🍣'],[['피자','pizza'],'🍕'],[['버거','햄버거','burger'],'🍔'],[['샐러드','salad'],'🥗'],[['국','찌개','탕','수프','스프','soup'],'🍲'],[['떡'],'🍡'],[['시리얼','cereal'],'🥣'],
+  [['소금','salt'],'🧂'],[['간장','된장','고추장','소스','케찹','케첩','마요','sauce'],'🥫'],[['기름','오일','참기름','올리브','oil'],'🫒'],[['설탕','꿀','잼','시럽','honey','jam','sugar'],'🍯'],
+  [['생수','물','water'],'💧'],[['커피','아메리카노','라떼','coffee'],'☕'],[['주스','juice'],'🧃'],[['콜라','사이다','탄산','소다','cola','soda'],'🥤'],[['맥주','beer'],'🍺'],[['소주','막걸리','청주','사케'],'🍶'],[['와인','wine'],'🍷'],[['차','녹차','홍차','tea'],'🍵'],
+  [['아이스크림','아이스','ice cream'],'🍦'],[['초콜릿','초코','chocolate'],'🍫'],[['사탕','캔디','candy'],'🍬'],[['쿠키','과자','비스킷','cookie'],'🍪'],[['케이크','cake'],'🍰'],[['도넛','donut'],'🍩'],
+  [['김치'],'🥬']
+];
+const SHELF=[
+  [['우유','milk'],7],[['계란','달걀','egg'],21],[['치즈','cheese'],21],[['버터','butter'],60],[['요거트','요구르트','yogurt'],14],
+  [['소시지','소세지','햄','핫도그','베이컨','ham','sausage','bacon'],14],[['소고기','쇠고기','한우','스테이크','beef'],3],[['삼겹','돼지','목살','pork'],3],[['닭','치킨','chicken'],2],[['고기','육류'],3],
+  [['새우','오징어','조개','굴','문어','생선','고등어','갈치','연어','참치','shrimp','squid','fish','salmon'],2],
+  [['시금치','상추','양상추','배추','쌈','나물','lettuce','spinach'],5],[['당근','carrot'],21],[['양파','onion'],30],[['마늘','garlic'],30],[['감자','potato'],30],[['고구마'],21],[['토마토','tomato'],7],[['오이','cucumber'],7],[['브로콜리','broccoli'],7],[['버섯','mushroom'],7],[['옥수수','corn'],5],[['고추','파프리카','피망','pepper'],10],[['가지','eggplant'],7],[['호박','pumpkin'],14],[['대파','쪽파'],10],[['두부','tofu'],7],[['콩','bean'],30],[['아보카도','avocado'],5],
+  [['사과','apple'],21],[['바나나','banana'],5],[['딸기','strawberry'],3],[['포도','grape'],7],[['수박','watermelon'],7],[['참외','멜론','melon'],7],[['오렌지','귤','orange'],14],[['레몬','lemon'],21],[['복숭아','peach'],4],[['배','pear'],14],[['체리','cherry'],5],[['키위','kiwi'],10],[['파인애플','pineapple'],5],[['망고','mango'],5],[['블루베리','베리','berry'],5],[['코코넛','coconut'],14],
+  [['라면','ramen'],180],[['국수','파스타','스파게티','pasta','noodle','면'],7],[['만두','교자','dumpling'],90],[['김밥','초밥','스시','sushi'],1],[['피자','pizza'],3],[['버거','burger'],3],[['샐러드','salad'],3],[['찌개','국','탕','수프','스프','soup'],3],[['떡'],3],[['시리얼','cereal'],180],[['빵','토스트','베이글','bread'],5],[['밥'],3],[['쌀'],180],
+  [['소금','salt'],3650],[['간장','된장','고추장','소스','케찹','케첩','마요','sauce'],365],[['기름','오일','참기름','올리브','oil'],365],[['설탕','꿀','잼','시럽','honey','jam','sugar'],365],
+  [['생수','물','water'],180],[['커피','coffee'],30],[['주스','juice'],14],[['콜라','사이다','탄산','소다','음료','soda'],90],[['맥주','beer'],90],[['막걸리'],10],[['소주','청주','사케'],3650],[['와인','wine'],365],[['녹차','홍차','tea'],365],
+  [['아이스크림','아이스'],180],[['초콜릿','초코','chocolate'],180],[['사탕','캔디','candy'],365],[['쿠키','과자','비스킷','cookie'],60],[['케이크','cake'],3],[['도넛','donut'],3],[['김치'],30]
+];
+const CAT_SHELF={채소:7,과일:7,육류:3,수산:2,유제품:10,계란:21,음료:30,반찬:5,양념:365,냉동식품:180,기타:14};
+function shelfDays(name,cat){ const s=(name||'').toLowerCase(); for(const [keys,d] of SHELF){ for(const k of keys){ if(s.includes(k)) return d; } } return CAT_SHELF[cat]||14; }
+const zoneOf=id=>ZONES.find(z=>z.id===id)||ZONES[0];
+function matchEmoji(name){ const s=(name||'').toLowerCase(); for(const [keys,e] of EMOJI){ for(const k of keys){ if(s.includes(k)) return e; } } return ''; }
+function emojiFor(x){ return matchEmoji(x.name) || CAT_EMOJI[x.cat] || '🍽️'; }
+function foodEmoji(name){ return matchEmoji(name) || '🍳'; }
+function addDays(base,n){ const d=new Date(base+'T00:00:00'); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10); }
+function autoExp(){ if(editingId||expTouched) return; const base=$('#f_buy').value||todayStr(); $('#f_exp').value=addDays(base, shelfDays($('#f_name').value,$('#f_cat').value)); }
+const CAT_KW=[
+  ['유제품',['우유','치즈','버터','요거트','요구르트','생크림','휘핑','milk','cheese','butter','yogurt']],
+  ['계란',['계란','달걀','에그','메추리알','egg']],
+  ['육류',['소고기','쇠고기','한우','돼지','삼겹','목살','항정','베이컨','햄','소시지','소세지','닭','치킨','오리','양고기','스테이크','불고기','갈비','beef','pork','chicken','ham','sausage','bacon']],
+  ['수산',['새우','오징어','낙지','문어','조개','굴','전복','홍합','바지락','생선','고등어','갈치','연어','참치','멸치','조기','명태','동태','코다리','장어','대게','꽃게','shrimp','squid','crab','fish','salmon','tuna']],
+  ['양념',['소금','설탕','간장','된장','고추장','고춧가루','쌈장','소스','케찹','케첩','마요','머스타드','식초','물엿','참기름','들기름','올리브유','식용유','후추','꿀','시럽','다시다','굴소스','sauce','salt','sugar']],
+  ['냉동식품',['냉동','만두','교자','군만두','돈까스','돈가스','너겟','피자','감자튀김','아이스크림','붕어빵','핫바']],
+  ['반찬',['김치','깍두기','단무지','장아찌','피클','절임','젓갈','무침','볶음','조림','장조림','밑반찬','반찬','어묵','맛살']],
+  ['채소',['시금치','상추','양상추','배추','쌈','나물','당근','양파','마늘','감자','고구마','토마토','오이','브로콜리','버섯','팽이','새송이','옥수수','고추','파프리카','피망','가지','호박','애호박','단호박','대파','쪽파','부추','미나리','깻잎','콩나물','숙주','셀러리','두부','아보카도','lettuce','spinach','carrot','onion','garlic','potato','tomato','cucumber','broccoli','mushroom']],
+  ['과일',['사과','바나나','딸기','포도','샤인','수박','참외','멜론','오렌지','귤','한라봉','레몬','라임','복숭아','자두','배','체리','키위','파인애플','망고','블루베리','베리','코코넛','홍시','무화과','석류','apple','banana','strawberry','grape','orange','lemon','peach','pear','kiwi','mango','berry']],
+  ['음료',['생수','물','커피','아메리카노','라떼','주스','콜라','사이다','탄산','소다','음료','맥주','소주','막걸리','와인','청주','녹차','홍차','보리차','water','coffee','juice','cola','soda','beer','wine']],
+];
+function autoCat(name){ const s=(name||'').toLowerCase(); for(const [cat,keys] of CAT_KW){ for(const k of keys){ if(s.includes(k)) return cat; } } return ''; }
+
+let items=[], shop=[], me='', tab='fridge', viewMode='list';
+let filterZone='all', sortBy='exp', query='', editingId=null, pickedZone='cold', pendingPhoto='', expTouched=false, catTouched=false;
+
+const $=s=>document.querySelector(s);
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const todayStr=()=>new Date().toISOString().slice(0,10);
+function daysLeft(exp){ if(!exp) return null; return Math.round((new Date(exp+'T00:00:00')-new Date(todayStr()+'T00:00:00'))/86400000); }
+function esc(s){return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function state(d){ if(d===null) return 'none'; if(d<0) return 'exp'; if(d<=3) return 'soon'; return 'ok'; }
+
+async function loadAll(){ me=(await kv.get(K_NAME,false))||''; if(me){ await initSpaces(); items=await dbLoadItems(); shop=await dbLoadShop(); } }
+
+function counts(){ const soon=items.filter(x=>{const d=daysLeft(x.exp);return d!==null&&d>=0&&d<=3;}); const exp=items.filter(x=>{const d=daysLeft(x.exp);return d!==null&&d<0;}); return {soon,exp}; }
+function renderStats(){ const {soon,exp}=counts(); $('#stats').innerHTML=`<div class="stat"><span class="se">🧺</span><b>${items.length}</b><span>전체 재료</span></div><div class="stat soon"><span class="se">⏰</span><b>${soon.length}</b><span>곧 먹어요</span></div><div class="stat exp"><span class="se">🗑️</span><b>${exp.length}</b><span>지났어요</span></div>`; }
+function renderBanner(){ const {soon,exp}=counts(); const el=$('#alertBanner'); if(!soon.length&&!exp.length){el.innerHTML='';return;} const names=[...exp,...soon].slice(0,2).map(x=>x.name); const more=(soon.length+exp.length)-names.length; const txt=exp.length?`${names.join(', ')}${more>0?` 외 ${more}개`:''}, 유통기한을 확인해 주세요`:`${names.join(', ')}${more>0?` 외 ${more}개`:''}, 곧 먹어야 해요`;
+  el.innerHTML=`<div class="banner ${exp.length?'hasexp':''}"><span class="bi">${exp.length?'🗑️':'⏰'}</span><span class="bt">${txt}</span><button class="bg" id="bannerGo">먼저 보기</button></div>`;
+  $('#bannerGo').onclick=()=>{ if(viewMode!=='list') setView('list'); $('#sort').value='exp'; sortBy='exp'; filterZone='all'; renderFilters(); renderList(); window.scrollTo({top:0,behavior:'smooth'}); };
+}
+function renderFilters(){ const c={all:items.length}; ZONES.forEach(z=>c[z.id]=items.filter(x=>x.zone===z.id).length); const mk=(id,l)=>`<button class="chip ${filterZone===id?'on':''}" data-z="${id}">${l}<span class="cnt">${c[id]||0}</span></button>`; $('#filters').innerHTML=mk('all','전체')+ZONES.map(z=>mk(z.id,z.label)).join(''); $('#filters').querySelectorAll('.chip').forEach(b=>b.onclick=()=>{filterZone=b.dataset.z;renderList();renderFilters();}); }
+
+function renderList(){
+  let list=items.filter(x=>filterZone==='all'||x.zone===filterZone);
+  if(query) list=list.filter(x=>x.name.toLowerCase().includes(query));
+  list.sort((a,b)=>{ if(sortBy==='name') return a.name.localeCompare(b.name,'ko'); if(sortBy==='new') return (b.added||0)-(a.added||0); const da=daysLeft(a.exp),db=daysLeft(b.exp); if(da===null&&db===null) return 0; if(da===null) return 1; if(db===null) return -1; return da-db; });
+  $('#listCount').textContent=list.length?`${list.length}개`:'';
+  const grid=$('#grid');
+  if(!list.length){ grid.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="ic">🧺</div><b>${query||filterZone!=='all'?'해당하는 재료가 없어요':'아직 냉장고가 비어 있어요'}</b><span>${query||filterZone!=='all'?'다른 조건으로 찾아보세요':'아래 담기 버튼으로 재료를 넣어보세요'}</span></div>`; return; }
+  grid.innerHTML=list.map(x=>{
+    const d=daysLeft(x.exp), st=state(d), z=zoneOf(x.zone), stc=st==='none'?'ok':st;
+    let dd='',pct=100; if(d===null){dd='기한 없음';} else if(d<0){dd=`${-d}일 지남`;pct=0;} else if(d===0){dd='오늘까지';pct=8;} else {dd=`D-${d}`;pct=Math.max(8,Math.min(100,d/14*100));}
+    const cat=x.cat?`<span class="tag">${esc(x.cat)}</span>`:''; const memo=x.memo?`<span class="tag">📝 ${esc(x.memo)}</span>`:'';
+    const icon=x.photo?`<img class="thumb" src="${x.photo}" alt="">`:`<div class="emoji-tile" style="background:${ZONE_TINT[x.zone]||'var(--tint)'}">${emojiFor(x)}</div>`;
+    return `<div class="card"><div class="top">${icon}<div class="info"><div class="nm">${esc(x.name)}</div><div class="qty">${esc(x.qty||'')} ${esc(x.unit||'')}</div>
+      <div class="badges"><span class="tag"><span class="zd" style="background:${z.c}"></span>${z.label}</span>${cat}${memo}</div></div></div>
+      <div class="fresh-wrap"><div class="fresh-line"><span class="dday ${stc}">${dd}</span><span class="expdate">${x.exp?'~ '+x.exp.slice(5).replace('-','.'):''}</span></div><div class="bar ${st==='exp'?'exp':st==='soon'?'soon':''}"><i style="width:${pct}%"></i></div></div>
+      <div class="meta"><span class="by">${x.by?esc(x.by)+' 담음':''}</span><span class="acts">
+        <button class="icobtn" data-edit="${x.id}" aria-label="수정"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>
+        <button class="icobtn del" data-del="${x.id}" aria-label="버리기"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13"/></svg></button>
+      </span></div></div>`;
+  }).join('');
+  grid.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>openItem(b.dataset.edit));
+  grid.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>delItem(b.dataset.del));
+}
+
+function renderFridge(){
+  const el=$('#fridgeView');
+  const comp=ZONES.map(z=>{
+    const its=items.filter(x=>x.zone===z.id);
+    const cells=its.length?its.map(x=>{ const d=daysLeft(x.exp), st=state(d); const face=x.photo?`<img src="${x.photo}" alt="">`:emojiFor(x); return `<button class="fitem" data-open="${x.id}"><span class="fem ${st==='exp'?'exp':st==='soon'?'soon':''}">${face}</span><span class="fnm">${esc(x.name)}</span></button>`; }).join(''):`<div class="fempty">아직 비어 있어요</div>`;
+    return `<div class="cmp"><div class="cmp-head"><span class="cmp-dot" style="background:${z.c}"></span>${z.label}<span class="cmp-n">${its.length}</span></div><div class="shelf">${cells}</div></div>`;
+  }).join('');
+  el.innerHTML=`<div class="fridge"><div class="fridge-inner">${comp}</div><div class="fridge-handle"></div></div>`;
+  el.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>openItem(b.dataset.open));
+}
+function setView(v){ viewMode=v; $('#viewSeg').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v===v)); $('#listWrap').style.display=v==='list'?'block':'none'; $('#fridgeView').style.display=v==='fridge'?'block':'none'; if(v==='fridge') renderFridge(); }
+$('#viewSeg').querySelectorAll('button').forEach(b=>b.onclick=()=>setView(b.dataset.v));
+
+function renderShop(){
+  const remain=shop.filter(s=>!s.done).length, bdg=$('#shopBadge'); if(remain){bdg.style.display='grid';bdg.textContent=remain;}else bdg.style.display='none';
+  const el=$('#shopList');
+  if(!shop.length){ el.innerHTML=`<div class="empty"><div class="ic">🛒</div><b>장보기 목록이 비었어요</b><span>필요한 걸 적어두면 함께 쓰는 사람도 볼 수 있어요</span></div>`; return; }
+  const sorted=[...shop].sort((a,b)=>(a.done?1:0)-(b.done?1:0));
+  el.innerHTML=sorted.map(s=>`<div class="shop-item ${s.done?'done':''}"><button class="check ${s.done?'on':''}" data-tg="${s.id}" aria-label="완료">${s.done?'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg>':''}</button><div class="txt">${esc(s.text)}<div class="sub">${s.by?esc(s.by):''}</div></div>${s.done?`<button class="link" data-move="${s.id}">냉장고로</button>`:''}<button class="icobtn del" data-rm="${s.id}" aria-label="삭제"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>`).join('');
+  el.querySelectorAll('[data-tg]').forEach(b=>b.onclick=()=>{const s=shop.find(x=>x.id===b.dataset.tg);s.done=!s.done;dbSaveShopItem(s);renderShop();});
+  el.querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{const id=b.dataset.rm;shop=shop.filter(x=>x.id!==id);dbDelShopItem(id);renderShop();});
+  el.querySelectorAll('[data-move]').forEach(b=>b.onclick=()=>{const s=shop.find(x=>x.id===b.dataset.move);shop=shop.filter(x=>x.id!==s.id);dbDelShopItem(s.id);renderShop();switchTab('fridge');openItem(null,s.text);});
+}
+
+let recipesLoaded=false, lastRecipes=[], diffPick='all';
+const DIFF_META={'간단':{e:'⚡',t:'간단하게 뚝딱',bg:'var(--fresh-bg)',fg:'var(--sage-deep)'},'보통':{e:'🍳',t:'적당히 손이 가는',bg:'var(--soon-bg)',fg:'#b07d2e'},'복잡':{e:'👩‍🍳',t:'제대로 차리는',bg:'var(--expired-bg)',fg:'#b85c4c'}};
+async function getRecipes(){
+  if(!items.length){ $('#recipeOut').innerHTML=`<div class="empty"><div class="ic">🍳</div><b>냉장고가 비었어요</b><span>재료를 먼저 담아주세요</span></div>`; return; }
+  const btn=$('#recipeBtn'); btn.disabled=true; btn.innerHTML=`<span class="spinner"></span> 추천 만드는 중…`;
+  const info=items.map(x=>{const d=daysLeft(x.exp);return x.name+(d!=null?(d<0?`(${-d}일 지남)`:`(D-${d})`):'');});
+  const soon=items.filter(x=>{const d=daysLeft(x.exp);return d!==null&&d<=3;}).map(x=>x.name);
+  const want = diffPick==='all' ? '난이도별로 간단 2개, 보통 2개, 복잡 1~2개를 골고루 추천해줘.' : `난이도 "${diffPick}" 요리 3개를 추천해줘.`;
+  const prompt=`냉장고 재료: ${info.join(', ')}.\n유통기한이 임박하거나 지난 재료(${soon.join(', ')||'없음'})를 우선으로 활용하는 요리를 추천해줘.\n조건:\n- 실제로 많이 만들어 먹는 대중적이고 검증된 한국 가정식·자취요리 위주로 (새로 지어낸 퓨전 말고, 인터넷에 흔히 있는 익숙한 레시피).\n- ${want}\n- 냉장고에 있는 재료를 주로 쓰고, 없어서 새로 사야 하는 재료만 missing에 정확히 적어줘.\n- difficulty는 "간단"(10분 내외·3~4단계), "보통"(15~30분), "복잡"(30분 이상·손이 많이 감) 중 하나.\n반드시 JSON 배열만 출력(설명·마크다운 금지):\n[{"name":"요리명","difficulty":"간단","time":"약 10분","use":["사용할 냉장고 재료"],"missing":["추가로 사야 하는 재료"],"steps":["1단계","2단계"]}]`;
+  try{
+    const res=await fetch(API+"/api/recipes",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({prompt})});
+    const data=await res.json();
+    if(data.error) throw new Error(data.error);
+    const text=(data.text||'').replace(/```json|```/g,'').trim();
+    lastRecipes=JSON.parse(text);
+    renderRecipes(); recipesLoaded=true;
+  }catch(e){ console.warn(e); $('#recipeOut').innerHTML=`<div class="empty"><div class="ic">😢</div><b>추천을 불러오지 못했어요</b><span>레시피 AI(Ollama)가 준비 중이거나 응답 형식이 어긋났어요. 잠시 후 다시 시도해 주세요.</span></div>`; }
+  btn.disabled=false; btn.innerHTML=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 3v7a3 3 0 0 0 6 0V3M7 3v18M17 3c-1.5 0-3 1.5-3 5s1.5 4 3 4v9"/></svg>${recipesLoaded?'다시 추천받기':'지금 재료로 추천받기'}`;
+}
+function inShop(name){ return shop.some(s=>s.text.trim()===(name||'').trim()); }
+function addToShop(name){ if(!name||inShop(name)) return false; const o={id:uid(),text:name.trim(),done:false,by:me}; shop.push(o); dbSaveShopItem(o); return true; }
+function recipeCard(r,ri){
+  const miss=(r.missing||[]);
+  const meta=DIFF_META[r.difficulty]||{bg:'var(--tint)',fg:'var(--ink-soft)'};
+  const allAdded=miss.length&&miss.every(inShop);
+  const missHtml=miss.length?`<div class="rsec"><div class="rlbl">추가로 필요</div>${miss.map((m,mi)=>`<button class="pill need ${inShop(m)?'added':''}" data-add="${ri}-${mi}">${inShop(m)?'✓ ':'+ '}${esc(m)}</button>`).join('')}<button class="radd ${allAdded?'done':''}" data-addall="${ri}">${allAdded?'✓ 장보기에 담음':'부족한 재료 장보기에 담기'}</button></div>`:'';
+  const tag=r.difficulty?`<span class="difftag" style="background:${meta.bg};color:${meta.fg}">${esc(r.difficulty)}</span>`:'';
+  return `<div class="rcard"><div class="rhead"><h4>${foodEmoji(r.name)} ${esc(r.name)}</h4>${tag}</div><div class="rtime">${esc(r.time||'')}</div>
+    <div class="rsec"><div class="rlbl">냉장고에서</div>${(r.use||[]).map(u=>`<span class="pill have">${esc(u)}</span>`).join('')||'<span class="pill need" style="cursor:default">-</span>'}</div>
+    ${missHtml}
+    <div class="rsec"><div class="rlbl">만드는 법</div><ol class="steps">${(r.steps||[]).map(s=>`<li>${esc(s)}</li>`).join('')}</ol></div></div>`;
+}
+function renderRecipes(){
+  const out=$('#recipeOut');
+  if(!lastRecipes.length){ out.innerHTML=`<div class="empty"><div class="ic">🍽️</div><b>추천 결과가 없어요</b><span>다시 시도해 주세요</span></div>`; return; }
+  const order=['간단','보통','복잡']; let html='';
+  order.forEach(d=>{ const grp=lastRecipes.filter(r=>(r.difficulty||'보통')===d); if(!grp.length) return; const m=DIFF_META[d]; html+=`<div class="rgroup"><div class="rghead">${m.e} ${m.t}</div>${grp.map(r=>recipeCard(r,lastRecipes.indexOf(r))).join('')}</div>`; });
+  out.innerHTML=html||lastRecipes.map((r,i)=>recipeCard(r,i)).join('');
+}
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),1800); }
+$('#recipeOut').addEventListener('click',e=>{
+  const one=e.target.closest('[data-add]'), all=e.target.closest('[data-addall]');
+  if(one){ const [ri,mi]=one.dataset.add.split('-').map(Number); const nm=(lastRecipes[ri].missing||[])[mi]; if(addToShop(nm)){ renderShop(); toast(`'${nm}' 장보기에 담았어요`); } renderRecipes(); }
+  else if(all){ const ri=Number(all.dataset.addall); let n=0; (lastRecipes[ri].missing||[]).forEach(m=>{ if(addToShop(m)) n++; }); if(n){ renderShop(); toast(`부족한 재료 ${n}개를 장보기에 담았어요`); } else toast('이미 장보기에 다 있어요'); renderRecipes(); }
+});
+$('#diffSeg').querySelectorAll('button').forEach(b=>b.onclick=()=>{ diffPick=b.dataset.d; $('#diffSeg').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b)); if(recipesLoaded) getRecipes(); });
+$('#recipeBtn').onclick=getRecipes;
+$('#recipeCta').onclick=()=>{ switchTab('recipe'); getRecipes(); };
+
+/* ---------- sheets ---------- */
+function showSheet(id){ $('#scrim').classList.add('show'); $(id).classList.add('show'); }
+function hideSheets(){ $('#scrim').classList.remove('show'); document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('show')); }
+$('#scrim').onclick=hideSheets;
+
+function renderZoneSeg(){ $('#zoneSeg').innerHTML=ZONES.map(z=>`<button class="seg" data-zs="${z.id}" style="${pickedZone===z.id?`background:${z.c};color:#fff`:''}">${z.label}</button>`).join(''); $('#zoneSeg').querySelectorAll('[data-zs]').forEach(b=>b.onclick=()=>{pickedZone=b.dataset.zs;renderZoneSeg();}); }
+function renderMediaPreview(){ const btn=$('#photoBtn'); if(pendingPhoto){ btn.innerHTML=`<img src="${pendingPhoto}" alt="">`; } else { const n=$('#f_name').value, c=$('#f_cat').value; btn.innerHTML=`<span id="emojiPrev">${matchEmoji(n)||CAT_EMOJI[c]||'🍽️'}</span>`; } }
+function openItem(id, prefill){
+  editingId=id; const it=id?items.find(x=>x.id===id):null;
+  $('#sheetTitle').textContent=it?'재료 수정':'냉장고에 담기'; $('#saveItem').textContent=it?'저장하기':'담기'; $('#delItem').style.display=it?'block':'none';
+  $('#f_name').value=it?it.name:(prefill||''); $('#f_qty').value=it?it.qty:''; $('#f_unit').value=it?it.unit:'개';
+  $('#f_cat').value=it?(it.cat||'기타'):'채소'; $('#f_buy').value=it?(it.buy||''):todayStr(); $('#f_exp').value=it?(it.exp||''):''; $('#f_memo').value=it?(it.memo||''):'';
+  pickedZone=it?it.zone:'cold'; renderZoneSeg(); pendingPhoto=it?(it.photo||''):''; renderMediaPreview(); catTouched=false; expTouched=false; autoExp();
+  showSheet('#itemSheet'); setTimeout(()=>$('#f_name').focus(),280);
+}
+$('#f_name').addEventListener('input',()=>{ if(!editingId&&!catTouched){ const c=autoCat($('#f_name').value); if(c) $('#f_cat').value=c; } renderMediaPreview(); autoExp(); });
+$('#f_cat').addEventListener('change',()=>{ catTouched=true; renderMediaPreview(); autoExp(); });
+$('#f_buy').addEventListener('change',autoExp);
+$('#f_exp').addEventListener('input',()=>{expTouched=true;});
+$('#f_exp').addEventListener('change',()=>{expTouched=true;});
+$('#saveItem').onclick=async()=>{
+  const name=$('#f_name').value.trim(); if(!name){$('#f_name').focus();return;}
+  const data={name,qty:$('#f_qty').value.trim(),unit:$('#f_unit').value,cat:$('#f_cat').value,zone:pickedZone,buy:$('#f_buy').value,exp:$('#f_exp').value,memo:$('#f_memo').value.trim(),photo:pendingPhoto};
+  let obj; if(editingId){ obj=items.find(x=>x.id===editingId); Object.assign(obj,data); } else { obj={id:uid(),added:Date.now(),by:me,...data}; items.push(obj); }
+  await dbSaveItem(obj); hideSheets(); renderAll();
+};
+$('#delItem').onclick=async()=>{ if(editingId){ const _id=editingId; items=items.filter(x=>x.id!==_id); await dbDelItem(_id); hideSheets(); renderAll(); } };
+async function delItem(id){ items=items.filter(x=>x.id!==id); await dbDelItem(id); renderAll(); }
+
+/* ---------- photo + barcode ---------- */
+function downscale(file,cb){ const rd=new FileReader(); rd.onload=()=>{ const img=new Image(); img.onload=()=>{ const max=120; const s=Math.min(1,max/Math.max(img.width,img.height)); const c=document.createElement('canvas'); c.width=Math.round(img.width*s); c.height=Math.round(img.height*s); c.getContext('2d').drawImage(img,0,0,c.width,c.height); cb(c.toDataURL('image/jpeg',0.6)); }; img.src=rd.result; }; rd.readAsDataURL(file); }
+$('#photoBtn').onclick=()=>$('#photoInput').click();
+$('#photoBtn2').onclick=()=>$('#photoInput').click();
+$('#photoInput').onchange=e=>{ const f=e.target.files[0]; if(!f)return; downscale(f,src=>{pendingPhoto=src;renderMediaPreview();}); e.target.value=''; };
+const canScan=('BarcodeDetector' in window);
+if(!canScan){ $('#scanLabel').textContent='바코드 입력'; }
+$('#scanBtn').onclick=()=>{ if(canScan){$('#scanInput').click();} else {const code=prompt('바코드 번호를 입력하세요'); if(code) lookupBarcode(code);} };
+$('#scanInput').onchange=async e=>{ const f=e.target.files[0]; if(!f)return; e.target.value=''; try{ const bmp=await createImageBitmap(f); const det=new BarcodeDetector(); const codes=await det.detect(bmp); if(codes.length){lookupBarcode(codes[0].rawValue);} else {alert('바코드를 인식하지 못했어요. 이름을 직접 입력해 주세요.');} }catch(err){ alert('스캔에 실패했어요. 이름을 직접 입력해 주세요.'); } };
+async function lookupBarcode(code){ $('#scanLabel').textContent='조회 중…'; let nm=''; try{ const r=await fetch(`https://world.openfoodfacts.org/api/v0/product/${code}.json`); const j=await r.json(); if(j.status===1) nm=j.product.product_name_ko||j.product.product_name||''; }catch(e){} if(nm){ $('#f_name').value=nm; renderMediaPreview(); } $('#scanLabel').textContent=canScan?'바코드':'바코드 입력'; if(!nm){ alert(`바코드(${code}) 상품명을 못 찾았어요. 이름을 직접 입력해 주세요.`); } }
+
+/* ---------- name / notifications / shopping / tabs ---------- */
+function refreshWho(){ $('#whoName').textContent=me||'이름'; $('#whoAv').textContent=me?me.slice(0,1):'?'; $('#greet').textContent='냉장고 프로젝트'; }
+$('#whoBtn').onclick=()=>{ $('#nameInput').value=me; showSheet('#nameSheet'); setTimeout(()=>$('#nameInput').focus(),280); };
+$('#saveName').onclick=async()=>{ const n=$('#nameInput').value.trim(); if(!n)return; me=n; await kv.set(K_NAME,n,false); refreshWho(); hideSheets(); if(!curSpace){ await initSpaces(); await setSpace(curSpace); } };
+
+/* ---------- 공간(냉장고) 전환 UI ---------- */
+function renderSpaceBar(){
+  if(!curSpace) return;
+  const per=curSpace.kind==='personal';
+  $('#sbName').textContent=curSpace.name;
+  $('#sbIc').textContent=per?'🧊':'👨‍👩‍👧';
+  const k=$('#sbKind'); k.textContent=per?'개인':'공유'; k.classList.toggle('personal',per);
+}
+function renderSpaceList(){
+  const el=$('#spaceList');
+  el.innerHTML=spaces.map(s=>{
+    const per=s.kind==='personal', on=curSpace&&s.id===curSpace.id;
+    const sub=per?'나만 보는 공간':`공유 · ${s.members||1}명`+(s.code?` · 코드 <span class="sp-code">${esc(s.code)}</span>`:'');
+    return `<button class="sp-row ${on?'on':''}" data-sp="${s.id}"><span class="sp-ic">${per?'🧊':'👨‍👩‍👧'}</span><span class="sp-info"><div class="sp-nm">${esc(s.name)}</div><div class="sp-sub">${sub}</div></span>${on?'<span class="sp-on">사용 중</span>':''}</button>`;
+  }).join('');
+  el.querySelectorAll('[data-sp]').forEach(b=>b.onclick=async()=>{ const sp=spaces.find(x=>x.id===b.dataset.sp); await setSpace(sp); renderSpaceList(); toast(`'${sp.name}'(으)로 전환했어요`); });
+}
+$('#spaceBtn').onclick=()=>{ if(!me){ $('#whoBtn').click(); return; } renderSpaceList(); $('#spMakeBox').style.display='none'; $('#spJoinBox').style.display='none'; showSheet('#spaceSheet'); };
+$('#spMake').onclick=()=>{ const b=$('#spMakeBox'); const show=b.style.display==='none'; b.style.display=show?'block':'none'; $('#spJoinBox').style.display='none'; if(show) setTimeout(()=>$('#spMakeName').focus(),50); };
+$('#spJoinToggle').onclick=()=>{ const b=$('#spJoinBox'); const show=b.style.display==='none'; b.style.display=show?'block':'none'; $('#spMakeBox').style.display='none'; if(show) setTimeout(()=>$('#spJoinCode').focus(),50); };
+$('#spMakeGo').onclick=async()=>{ const nm=$('#spMakeName').value.trim(); if(!nm)return; const sp=await createSharedSpace(nm); $('#spMakeName').value=''; $('#spMakeBox').style.display='none'; await setSpace(sp); renderSpaceList(); toast(`'${sp.name}' 만들었어요 · 코드 ${sp.code}`); };
+$('#spJoinGo').onclick=async()=>{ const code=$('#spJoinCode').value.trim().toUpperCase(); if(!code)return; const sp=await joinSharedSpace(code); if(!sp){ toast('그 코드의 공유 냉장고를 못 찾았어요'); return; } $('#spJoinCode').value=''; $('#spJoinBox').style.display='none'; await setSpace(sp); renderSpaceList(); toast(`'${sp.name}'에 참여했어요`); };
+$('#spMakeName').addEventListener('keydown',e=>{if(e.key==='Enter')$('#spMakeGo').click();});
+$('#spJoinCode').addEventListener('keydown',e=>{if(e.key==='Enter')$('#spJoinGo').click();});
+
+$('#bellBtn').onclick=async()=>{ if(!('Notification' in window)){alert('이 브라우저는 알림을 지원하지 않아요.');return;} if(Notification.permission==='granted'){$('#bellBtn').classList.toggle('on');fireNotif();return;} const p=await Notification.requestPermission(); if(p==='granted'){$('#bellBtn').classList.add('on');fireNotif();} };
+function fireNotif(){ const {soon,exp}=counts(); if(!soon.length&&!exp.length){new Notification('냉장고 프로젝트',{body:'지금은 임박하거나 지난 재료가 없어요 🧡'});return;} const parts=[]; if(exp.length)parts.push(`${exp.length}개 지남`); if(soon.length)parts.push(`${soon.length}개 임박`); new Notification('냉장고를 확인해 주세요',{body:`${parts.join(' · ')} — ${[...exp,...soon].slice(0,3).map(x=>x.name).join(', ')}`}); }
+
+function addShop(){ const v=$('#shopInput').value.trim(); if(!v)return; const o={id:uid(),text:v,done:false,by:me}; shop.push(o); $('#shopInput').value=''; dbSaveShopItem(o); renderShop(); }
+$('#shopAdd').onclick=addShop;
+$('#shopInput').addEventListener('keydown',e=>{if(e.key==='Enter')addShop();});
+
+function switchTab(name){ tab=name; document.querySelectorAll('.navbtn').forEach(x=>x.classList.toggle('on',x.dataset.tab===name)); ['fridge','recipe','shop'].forEach(t=>$('#tab-'+t).style.display=(t===name)?'block':'none'); $('#fab').style.display=name==='fridge'?'flex':'none'; if(name==='fridge'&&viewMode==='fridge')renderFridge(); window.scrollTo({top:0}); }
+document.querySelectorAll('.navbtn').forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
+$('#q').addEventListener('input',e=>{query=e.target.value.trim().toLowerCase();$('#qClr').style.display=query?'block':'none';renderList();});
+$('#qClr').onclick=()=>{$('#q').value='';query='';$('#qClr').style.display='none';renderList();};
+$('#sort').onchange=e=>{sortBy=e.target.value;renderList();};
+$('#fab').onclick=()=>openItem(null);
+
+/* ---------- boot ---------- */
+function renderAll(){ renderStats(); renderBanner(); renderFilters(); renderList(); if(viewMode==='fridge')renderFridge(); renderShop(); }
+async function syncFromShared(){ if(document.querySelector('.sheet.show')) return; const ni=await dbLoadItems(), ns=await dbLoadShop(); if(JSON.stringify(ni)!==JSON.stringify(items)||JSON.stringify(ns)!==JSON.stringify(shop)){ items=ni; shop=ns; renderAll(); } }
+(async()=>{ $('#f_cat').innerHTML=CATS.map(c=>`<option>${c}</option>`).join(''); await loadAll(); refreshWho(); renderAll(); if(!me) setTimeout(()=>{$('#nameInput').value='';showSheet('#nameSheet');},400); setInterval(syncFromShared,8000); document.addEventListener('visibilitychange',()=>{ if(!document.hidden) syncFromShared(); }); })();
+</script>
+<script>
+/* PWA: 서비스워커 등록 (홈 화면 설치·앱처럼 실행) */
+if('serviceWorker' in navigator){ window.addEventListener('load',()=>{ navigator.serviceWorker.register('sw.js').catch(e=>console.warn('sw',e)); }); }
+</script>
