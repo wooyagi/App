@@ -1,7 +1,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>냉장고 프로젝트</title>
-<meta name="theme-color" content="#7f9b6c" />
+<meta name="theme-color" content="#ffffff" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -12,292 +12,292 @@
 <style>
   @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
   :root{
-    --bg:#f6f7f9; --card:#ffffff; --card-2:#f1f3f6; --tint:#eef1f6;
-    --ink:#1c1c1e; --ink-soft:#8a8d94; --ink-faint:#c1c4cc; --line:#ededf1;
-    --sage:#4a8cf7; --sage-deep:#3b7ef0; --peach:#fff1e3; --peach-ink:#f2870f; --rose:#ff5a5f;
+    /* Apple Home-inspired tokens */
+    --bg:#f2f2f7; --card:#ffffff; --card-2:#ffffff; --tint:#e9e9ee;
+    --ink:#1c1c1e; --ink-soft:#8a8a8e; --ink-faint:#b5b5ba; --line:#e4e4e9;
+    --sage:#1c1c1e; --sage-deep:#000000; --peach:#f2f2f7; --peach-ink:#1c1c1e; --rose:#ff3b30;
     --fresh:#34c759; --soon:#ff9500; --expired:#ff3b30;
-    --fresh-bg:#e7f8ec; --soon-bg:#fff2e0; --expired-bg:#ffe9e7;
+    --fresh-bg:#eafaef; --soon-bg:#fff3e2; --expired-bg:#ffece9;
+    --fresh-ink:#1f8f42; --soon-ink:#c67b12; --expired-ink:#d33224;
     --z-cold:#5ac8fa; --z-freeze:#64d2ff; --z-veg:#34c759; --z-door:#ff9f0a;
-    --font:"Pretendard Variable",Pretendard,-apple-system,"Apple SD Gothic Neo","Noto Sans KR",system-ui,Roboto,"Malgun Gothic",sans-serif;
-    --serif:"Pretendard Variable",Pretendard,-apple-system,"Apple SD Gothic Neo","Noto Sans KR",system-ui,Roboto,"Malgun Gothic",sans-serif;
-    --radius:18px; --radius-sm:14px;
-    --shadow:0 2px 10px -3px rgba(30,40,60,.07), 0 8px 22px -12px rgba(30,40,60,.08);
-    --shadow-lg:0 14px 34px -12px rgba(30,40,60,.16);
+    --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Pretendard Variable",Pretendard,"Apple SD Gothic Neo","Noto Sans KR",system-ui,Roboto,"Malgun Gothic",sans-serif;
+    --serif:-apple-system,BlinkMacSystemFont,"SF Pro Display","Pretendard Variable",Pretendard,"Apple SD Gothic Neo","Noto Sans KR",system-ui,Roboto,"Malgun Gothic",sans-serif;
+    --radius:22px; --radius-sm:16px;
+    --shadow:0 1px 3px rgba(0,0,0,.04), 0 10px 30px -18px rgba(0,0,0,.14);
+    --shadow-lg:0 16px 40px -18px rgba(0,0,0,.22);
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;padding:0}
   body{font-family:var(--font); color:var(--ink); background-color:var(--bg); font-size:15px; line-height:1.5; letter-spacing:-.01em; -webkit-font-smoothing:antialiased; padding-bottom:env(safe-area-inset-bottom)}
   button{font-family:inherit; cursor:pointer; border:none; background:none; color:inherit}
-  input,select,textarea{font-family:inherit; font-size:16px; color:var(--ink)}
+  input,select,textarea{font-family:inherit; font-size:16px; color:var(--ink); accent-color:var(--ink)}
   ::placeholder{color:var(--ink-faint)}
-  .app{max-width:880px; margin:0 auto; min-height:100vh; display:flex; flex-direction:column}
+  .app{max-width:900px; margin:0 auto; min-height:100vh; display:flex; flex-direction:column}
 
-  header{padding:24px 20px 8px; position:sticky; top:0; z-index:20; background-color:var(--bg)}
-  .brandrow{display:flex; align-items:center; justify-content:space-between; gap:12px}
-  .brand h1{font-family:var(--serif); font-size:30px; font-weight:800; margin:0; letter-spacing:-.04em}
-  .brand p{margin:4px 0 0; font-size:13px; color:var(--ink-soft); font-weight:500}
-  .hbtns{display:flex; gap:8px; align-items:center; flex:none}
-  .bell{width:40px;height:40px;border-radius:50%;background:var(--card);display:grid;place-items:center;color:var(--peach-ink);box-shadow:var(--shadow)}
-  .bell.on{background:var(--peach);color:#fff}
-  .whoami{display:flex; align-items:center; gap:7px; background:var(--card); padding:8px 13px 8px 8px; border-radius:999px; font-size:13px; font-weight:600; box-shadow:var(--shadow)}
-  .whoami .av{width:24px;height:24px;border-radius:50%;background:var(--sage);color:#fff;display:grid;place-items:center;font-size:12px;font-weight:700}
+  /* ---------- Header (Home app: big title + subtitle, generous top space) ---------- */
+  header{padding:26px 22px 6px; position:sticky; top:0; z-index:20; background:linear-gradient(var(--bg) 78%, rgba(242,242,247,0))}
+  .titlerow{display:flex; align-items:flex-start; justify-content:space-between; gap:12px}
+  .brand h1{font-family:var(--serif); font-size:30px; font-weight:800; margin:0; letter-spacing:-.035em; line-height:1.1}
+  .brand p{margin:5px 0 0; font-size:14px; color:var(--ink-soft); font-weight:500}
+  .hbtns{display:flex; gap:9px; align-items:center; flex:none}
+  .bell{width:38px;height:38px;border-radius:50%;background:var(--card);display:grid;place-items:center;color:var(--ink);box-shadow:var(--shadow)}
+  .bell.on{background:var(--ink);color:#fff}
+  .whoami{display:flex; align-items:center; gap:7px; background:var(--card); padding:6px 13px 6px 6px; border-radius:999px; font-size:13.5px; font-weight:600; box-shadow:var(--shadow)}
+  .whoami .av{width:24px;height:24px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-size:12px;font-weight:700}
 
-  .spacebar{display:flex;align-items:center;gap:9px;width:100%;margin-top:14px;background:var(--card);border-radius:var(--radius-sm);padding:11px 14px;box-shadow:var(--shadow);text-align:left}
-  .spacebar .sb-ic{font-size:19px;line-height:1}
-  .spacebar .sb-name{font-weight:700;font-size:15px;color:var(--ink)}
-  .spacebar .sb-kind{font-size:11px;font-weight:700;color:#fff;background:var(--sage);border-radius:999px;padding:2px 8px}
+  /* space (fridge) selector — pill */
+  .subrow{display:flex; align-items:center; gap:9px; margin-top:16px}
+  .spacebar{display:inline-flex;align-items:center;gap:8px;background:var(--card);border-radius:999px;padding:9px 16px 9px 13px;box-shadow:var(--shadow);text-align:left; max-width:100%}
+  .spacebar .sb-ic{display:inline-flex;align-items:center;color:var(--ink)}
+  .spacebar .sb-ic svg{width:17px;height:17px}
+  .spacebar .sb-name{font-weight:700;font-size:14px;color:var(--ink); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:150px}
+  .spacebar .sb-kind{font-size:10.5px;font-weight:700;color:#fff;background:var(--ink);border-radius:999px;padding:2px 8px; flex:none}
   .spacebar .sb-kind.personal{background:var(--z-cold)}
-  .spacebar .sb-caret{margin-left:auto;color:var(--ink-faint);font-size:13px}
-  .sp-row{display:flex;align-items:center;gap:11px;background:var(--card);border-radius:15px;padding:13px 15px;margin-bottom:9px;box-shadow:var(--shadow);width:100%;text-align:left}
-  .sp-row.on{box-shadow:0 0 0 2px var(--sage)}
-  .sp-row .sp-ic{font-size:20px}
-  .sp-row .sp-info{flex:1;min-width:0}
-  .sp-row .sp-nm{font-weight:700;font-size:15px}
-  .sp-row .sp-sub{font-size:12px;color:var(--ink-faint);font-weight:500;margin-top:1px}
-  .sp-row .sp-on{font-size:12px;font-weight:700;color:var(--sage-deep)}
-  .sp-code{font-family:ui-monospace,Menlo,monospace;font-weight:800;letter-spacing:.12em;font-size:15px;color:var(--peach-ink)}
-  .sp-actions{display:flex;gap:9px;margin:6px 0 4px}
-  .sp-actions button{flex:1;border-radius:14px;padding:13px;font-weight:700;font-size:14.5px;box-shadow:var(--shadow)}
-  .sp-make{background:var(--sage);color:#fff}
-  .sp-join{background:var(--card);color:var(--sage-deep)}
-  .sp-inline{display:flex;gap:8px;margin-top:8px}
-  .sp-inline input{flex:1;background:var(--card);border:none;border-radius:13px;padding:12px 14px;outline:none;box-shadow:var(--shadow);font-size:16px}
-  .sp-inline input:focus{box-shadow:0 0 0 2px var(--sage)}
-  .sp-inline button{background:var(--sage);color:#fff;border-radius:13px;padding:0 18px;font-weight:700;font-size:14.5px}
-  .sp-hint{font-size:12.5px;color:var(--ink-soft);margin:2px 2px 10px;line-height:1.5}
-  .sp-sec{font-size:12px;font-weight:700;color:var(--ink-faint);margin:16px 2px 9px}
+  .spacebar .sb-caret{color:var(--ink-faint);font-size:12px; margin-left:2px}
 
-  .stats{display:flex; gap:11px; margin-top:20px}
-  .stat{flex:1; background:var(--card); border-radius:var(--radius-sm); padding:16px 16px; box-shadow:var(--shadow); text-align:left}
-  .stat .se{font-size:17px}
-  .stat b{display:block; font-size:27px; font-weight:800; line-height:1.1; letter-spacing:-.035em; margin-top:5px}
-  .stat span{font-size:12px; color:var(--ink-soft); font-weight:600}
-  .stat.soon b{color:var(--soon)} .stat.exp b{color:var(--expired)}
+  /* ---------- Summary tiles (Home: status tiles) ---------- */
+  .stats{display:grid; grid-template-columns:repeat(3,1fr); gap:11px; margin-top:16px}
+  .stat{background:var(--card); border-radius:var(--radius-sm); padding:15px 16px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:10px; text-align:left}
+  .stat .si{width:24px;height:24px;color:var(--ink-soft)}
+  .stat.soon{background:var(--soon-bg)} .stat.exp{background:var(--expired-bg)}
+  .stat.soon .si{color:var(--soon-ink)} .stat.exp .si{color:var(--expired-ink)}
+  .stat b{font-size:26px; font-weight:800; line-height:1; letter-spacing:-.03em}
+  .stat.soon b{color:var(--soon-ink)} .stat.exp b{color:var(--expired-ink)}
+  .stat span:last-child{font-size:12px; color:var(--ink-soft); font-weight:600}
+  .stat.soon span:last-child{color:var(--soon-ink)} .stat.exp span:last-child{color:var(--expired-ink)}
 
-  main{flex:1; padding:6px 20px 130px}
+  main{flex:1; padding:10px 22px 130px}
 
-  .recipe-cta{display:flex; align-items:center; gap:14px; background:var(--peach); border-radius:var(--radius); padding:16px 18px; box-shadow:var(--shadow); margin:18px 0 6px}
-  .recipe-cta .rc-emoji{font-size:33px; line-height:1}
-  .recipe-cta .rc-txt{flex:1; min-width:0}
-  .recipe-cta .rc-txt b{font-size:16px; font-weight:800; color:#9a5a2b; letter-spacing:-.02em}
-  .recipe-cta .rc-txt p{margin:3px 0 0; font-size:12.5px; color:#b47a4c; font-weight:500}
-  .recipe-cta .rc-go{flex:none; background:#fff; color:var(--peach-ink); border-radius:999px; padding:10px 16px; font-weight:700; font-size:13.5px; box-shadow:0 3px 10px -5px rgba(180,110,60,.4)}
+  /* ---------- AI recipe hero (large photo-ish tile) ---------- */
+  .recipe-cta{display:flex; align-items:center; gap:16px; background:var(--card); border-radius:var(--radius); padding:20px 22px; box-shadow:var(--shadow); margin:16px 0 8px; position:relative; overflow:hidden}
+  .recipe-cta::before{content:''; position:absolute; inset:0; background:radial-gradient(120% 140% at 100% 0%, rgba(255,149,0,.14), transparent 55%); pointer-events:none}
+  .recipe-cta .rc-emoji{font-size:44px; line-height:1; flex:none}
+  .recipe-cta .rc-txt{flex:1; min-width:0; position:relative}
+  .recipe-cta .rc-txt b{font-size:18px; font-weight:800; color:var(--ink); letter-spacing:-.02em; display:block}
+  .recipe-cta .rc-txt p{margin:4px 0 0; font-size:13px; color:var(--ink-soft); font-weight:500; line-height:1.4}
+  .recipe-cta .rc-go{flex:none; position:relative; background:var(--ink); color:#fff; border-radius:999px; padding:12px 18px; font-weight:700; font-size:13.5px}
 
-  .seg-ctrl{display:flex; background:rgba(60,64,56,.06); border-radius:13px; padding:3px; margin:18px 0 4px}
-  .seg-ctrl button{flex:1; padding:10px; border-radius:10px; font-size:14px; font-weight:700; color:var(--ink-soft); transition:.15s}
-  .seg-ctrl button.on{background:var(--card); box-shadow:0 2px 7px -3px rgba(90,105,80,.3); color:var(--ink)}
-
-  .banner{display:flex; align-items:center; gap:11px; background:var(--soon-bg); border-radius:16px; padding:13px 15px; margin:13px 0 2px}
+  /* ---------- Alert banner (soft status strip) ---------- */
+  .banner{display:flex; align-items:center; gap:12px; background:var(--soon-bg); border-radius:var(--radius-sm); padding:15px 17px; margin:14px 0 2px; box-shadow:var(--shadow)}
   .banner.hasexp{background:var(--expired-bg)}
-  .banner .bi{flex:none; font-size:18px} 
+  .banner .bi{flex:none; display:inline-flex; align-items:center}
+  .banner .bi svg{width:20px;height:20px;color:var(--soon-ink)}
+  .banner.hasexp .bi svg{color:var(--expired-ink)}
   .banner .bt{flex:1; font-size:13.5px; font-weight:600; color:var(--ink)}
-  .banner .bg{font-weight:700; color:var(--peach-ink); font-size:14px; padding:6px 6px; white-space:nowrap}
+  .banner .bg{flex:none; background:var(--card); color:var(--ink); border-radius:999px; padding:9px 14px; font-weight:700; font-size:13px; box-shadow:var(--shadow)}
 
-  .search{display:flex; align-items:center; gap:9px; background:var(--card); border-radius:15px; padding:11px 14px; margin:14px 0 12px; box-shadow:var(--shadow)}
+  /* ---------- Search (soft rounded) ---------- */
+  .search{display:flex; align-items:center; gap:10px; background:var(--card); border-radius:14px; padding:13px 16px; margin:8px 0 12px; box-shadow:var(--shadow)}
   .search svg{flex:none; color:var(--ink-soft)}
   .search input{border:none; outline:none; flex:1; background:none; font-size:16px}
   .search .clr{color:var(--ink-faint); font-size:19px; line-height:1; padding:0 2px; display:none}
 
-  .filters{display:flex; gap:8px; overflow-x:auto; padding:2px 20px 4px; margin:0 -20px; scrollbar-width:none}
+  /* ---------- Zone filter chips ---------- */
+  .filters{display:flex; gap:9px; overflow-x:auto; padding:2px 22px 4px; margin:0 -22px; scrollbar-width:none}
   .filters::-webkit-scrollbar{display:none}
-  .chip{flex:none; padding:8px 15px; border-radius:999px; font-size:13.5px; font-weight:700; background:var(--card); color:var(--ink-soft); white-space:nowrap; box-shadow:var(--shadow)}
-  .chip.on{background:var(--sage); color:#fff}
-  .chip .cnt{opacity:.65; margin-left:4px}
+  .chip{flex:none; padding:10px 16px; border-radius:999px; font-size:14px; font-weight:600; background:var(--card); color:var(--ink); white-space:nowrap; box-shadow:var(--shadow)}
+  .chip.on{background:var(--ink); color:#fff}
+  .chip .cnt{opacity:.5; margin-left:5px; font-weight:600}
+  .chip.on .cnt{opacity:.6}
 
-  .sortrow{display:flex; align-items:center; justify-content:space-between; margin:15px 4px 10px}
-  .sortrow .lbl{font-size:13px; color:var(--ink-soft); font-weight:600}
-  .sortrow select{border:none; background:none; font-weight:700; font-size:14px; color:var(--sage-deep); padding:3px 2px}
+  /* hide legacy view toggle + sort (kept for JS, not shown) */
+  #viewSeg, .sortrow{display:none !important}
 
-  /* 정리: iOS 클린 레이아웃 위해 뷰 토글·구역칩·정렬 숨김 */
-  #viewSeg, #filters, .sortrow{display:none !important}
-  /* 2열 사진형 카드 */
-  .grid{display:grid; grid-template-columns:1fr 1fr; gap:13px}
-  .pcard{display:block; text-align:left; background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; transition:transform .12s}
+  /* ---------- Section title (Home: room header) ---------- */
+  .sec-title{font-size:20px; font-weight:800; letter-spacing:-.025em; margin:26px 2px 14px; color:var(--ink)}
+
+  /* ---------- Category circles (Home: scene chips) ---------- */
+  .cat-grid{display:flex; gap:16px; overflow-x:auto; padding:4px 22px 8px; margin:14px -22px 2px; scrollbar-width:none}
+  .cat-grid::-webkit-scrollbar{display:none}
+  .catchip{flex:none; display:flex; flex-direction:column; align-items:center; gap:9px; width:62px}
+  .catchip .ci{width:62px; height:62px; border-radius:50%; display:grid; place-items:center; font-size:28px; box-shadow:var(--shadow); background:var(--card); transition:.15s}
+  .catchip:active .ci{transform:scale(.93)}
+  .catchip .cl{font-size:12px; font-weight:600; color:var(--ink-soft); white-space:nowrap}
+  .catchip.on .cl{color:var(--ink); font-weight:700}
+
+  /* ---------- Ingredient tiles (Home: big accessory tiles, emoji-forward) ---------- */
+  .grid{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+  .pcard{display:flex; flex-direction:column; text-align:left; background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; transition:transform .12s; min-height:150px}
   .pcard:active{transform:scale(.975)}
-  .pcard-img{height:104px; display:grid; place-items:center}
-  .pcard-img .pemoji{font-size:48px; line-height:1}
-  .pcard-img img{width:100%; height:100%; object-fit:cover}
-  .pcard-body{padding:11px 14px 14px}
-  .pcard-nm{font-weight:700; font-size:15.5px; letter-spacing:-.02em; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-  .pcard-meta{display:flex; align-items:center; justify-content:space-between; gap:6px; margin-top:5px}
-  .pcard-day{font-size:12.5px; color:var(--ink-soft); font-weight:600}
-  .pcard-day.soon{color:var(--soon)} .pcard-day.exp{color:var(--expired); font-weight:700}
-  .pcard-qty{font-size:11.5px; color:var(--ink-faint); font-weight:600}
-  .card{background:var(--card); border-radius:var(--radius); padding:17px 18px; box-shadow:var(--shadow)}
-  .card .top{display:flex; align-items:flex-start; gap:13px}
-  .emoji-tile{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;font-size:30px;line-height:1;flex:none}
-  .thumb{width:52px;height:52px;border-radius:16px;object-fit:cover;flex:none}
-  .card .info{flex:1; min-width:0}
-  .card .nm{font-weight:700; font-size:17px; letter-spacing:-.02em}
-  .card .qty{font-size:13px; color:var(--ink-soft); font-weight:500; margin-top:1px}
-  .badges{display:flex; gap:6px; flex-wrap:wrap; margin-top:9px}
-  .tag{font-size:11.5px; font-weight:600; padding:4px 10px; border-radius:999px; background:var(--tint); color:var(--ink-soft); display:inline-flex; align-items:center; gap:5px}
-  .tag .zd{width:7px;height:7px;border-radius:50%}
-  .fresh-wrap{margin-top:14px}
-  .fresh-line{display:flex; align-items:center; justify-content:space-between; margin-bottom:6px}
-  .dday{font-size:14px; font-weight:800; letter-spacing:-.02em}
-  .dday.ok{color:var(--fresh)} .dday.soon{color:var(--soon)} .dday.exp{color:var(--expired)}
-  .expdate{font-size:12px; color:var(--ink-faint); font-weight:500}
-  .bar{height:7px; border-radius:4px; background:var(--tint); overflow:hidden}
-  .bar i{display:block; height:100%; border-radius:4px; background:var(--fresh)}
-  .bar.soon i{background:var(--soon)} .bar.exp i{background:var(--expired)}
-  .card .meta{display:flex; align-items:center; justify-content:space-between; margin-top:14px; padding-top:12px; border-top:1px solid var(--line)}
-  .card .by{font-size:12px; color:var(--ink-faint); font-weight:500}
-  .card .acts{display:flex; gap:2px}
-  .icobtn{width:33px; height:33px; border-radius:10px; display:grid; place-items:center; color:var(--ink-soft)}
-  .icobtn:active{background:var(--tint)}
-  .icobtn.del{color:var(--expired)}
+  .pcard.soon{background:var(--soon-bg)} .pcard.exp{background:var(--expired-bg)}
+  .pcard-img{flex:1; display:grid; place-items:center; padding:22px 0 6px}
+  .pcard-img .pemoji{font-size:56px; line-height:1}
+  .pcard-img img{width:64px; height:64px; object-fit:cover; border-radius:16px}
+  .pcard-body{padding:0 16px 16px}
+  .pcard-cat{font-size:12px; color:var(--ink-soft); font-weight:600; margin-bottom:2px}
+  .pcard.soon .pcard-cat{color:var(--soon-ink)} .pcard.exp .pcard-cat{color:var(--expired-ink)}
+  .pcard-nm{font-weight:700; font-size:17px; letter-spacing:-.02em; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .pcard-meta{display:flex; align-items:center; justify-content:space-between; gap:6px; margin-top:4px}
+  .pcard-day{font-size:13.5px; color:var(--ink-soft); font-weight:700}
+  .pcard-day.soon{color:var(--soon-ink)} .pcard-day.exp{color:var(--expired-ink)}
+  .pcard-qty{font-size:12px; color:var(--ink-faint); font-weight:600}
 
-  .fridge{position:relative; max-width:400px; margin:16px auto 0; padding-right:8px}
-  .fridge-inner{background:var(--card); border-radius:26px; padding:11px; box-shadow:var(--shadow-lg); overflow:hidden}
-  .cmp{padding:14px 14px 16px; border-radius:19px; background:linear-gradient(180deg,#fffdf9,#f4ecdd); margin-bottom:10px}
+  /* ---------- Fridge view (kept) ---------- */
+  .fridge{position:relative; max-width:420px; margin:16px auto 0}
+  .fridge-inner{background:var(--card); border-radius:26px; padding:12px; box-shadow:var(--shadow); overflow:hidden}
+  .cmp{padding:15px 15px 17px; border-radius:19px; background:var(--bg); margin-bottom:11px}
   .cmp:last-child{margin-bottom:0}
-  .cmp-head{display:flex; align-items:center; gap:7px; font-size:12.5px; font-weight:700; color:var(--ink-soft); margin-bottom:12px}
+  .cmp-head{display:flex; align-items:center; gap:8px; font-size:13px; font-weight:700; color:var(--ink); margin-bottom:13px}
   .cmp-dot{width:9px;height:9px;border-radius:50%}
   .cmp-n{margin-left:auto; color:var(--ink-faint); font-weight:700}
-  .shelf{display:flex; flex-wrap:wrap; gap:14px 12px; min-height:40px; padding-top:4px; border-top:1px dashed rgba(60,64,56,.1)}
-  .fitem{display:flex; flex-direction:column; align-items:center; gap:4px; width:54px}
-  .fem{font-size:29px; line-height:1; width:50px;height:50px; display:grid; place-items:center; background:#fff; border-radius:15px; box-shadow:0 3px 9px -3px rgba(90,105,80,.3); overflow:hidden}
+  .shelf{display:flex; flex-wrap:wrap; gap:15px 13px; min-height:40px}
+  .fitem{display:flex; flex-direction:column; align-items:center; gap:5px; width:56px}
+  .fem{font-size:30px; line-height:1; width:52px;height:52px; display:grid; place-items:center; background:var(--card); border-radius:16px; box-shadow:var(--shadow); overflow:hidden}
   .fem.soon{box-shadow:0 0 0 2.5px var(--soon)} .fem.exp{box-shadow:0 0 0 2.5px var(--expired)}
   .fem img{width:100%;height:100%;object-fit:cover}
-  .fnm{font-size:10.5px; color:var(--ink-soft); font-weight:600; max-width:54px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
-  .fempty{font-size:12.5px; color:var(--ink-faint); padding:9px 2px; font-weight:500}
-  .fridge-handle{position:absolute; top:22%; bottom:22%; right:0; width:6px; border-radius:4px; background:rgba(60,64,56,.1)}
+  .fnm{font-size:11px; color:var(--ink-soft); font-weight:600; max-width:56px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .fempty{font-size:13px; color:var(--ink-faint); padding:9px 2px; font-weight:500}
 
-  .empty{text-align:center; padding:56px 24px; color:var(--ink-soft)}
-  .empty .ic{width:70px;height:70px;border-radius:22px;background:var(--card);display:grid;place-items:center;margin:0 auto 16px;font-size:33px;box-shadow:var(--shadow)}
-  .empty b{font-family:var(--serif); display:block; font-size:18px; color:var(--ink); font-weight:700; margin-bottom:5px}
+  /* ---------- Empty ---------- */
+  .empty{text-align:center; padding:60px 24px; color:var(--ink-soft)}
+  .empty .ic{width:74px;height:74px;border-radius:24px;background:var(--card);display:grid;place-items:center;margin:0 auto 18px;font-size:34px;box-shadow:var(--shadow)}
+  .empty b{font-family:var(--serif); display:block; font-size:19px; color:var(--ink); font-weight:800; margin-bottom:6px}
   .empty span{font-size:14px}
 
-  .shop-add{display:flex; gap:10px; margin:18px 0 15px}
-  .shop-add input{flex:1; background:var(--card); border-radius:15px; padding:13px 16px; outline:none; box-shadow:var(--shadow); font-size:16px}
-  .shop-add button{background:var(--sage); color:#fff; border-radius:15px; padding:0 22px; font-weight:700; font-size:15px; box-shadow:var(--shadow)}
-  .shop-item{display:flex; align-items:center; gap:13px; background:var(--card); border-radius:17px; padding:14px 16px; margin-bottom:10px; box-shadow:var(--shadow)}
+  /* ---------- Shopping ---------- */
+  .shop-add{display:flex; gap:10px; margin:16px 0 15px}
+  .shop-add input{flex:1; background:var(--card); border-radius:15px; padding:14px 16px; outline:none; box-shadow:var(--shadow); font-size:16px}
+  .shop-add button{background:var(--ink); color:#fff; border-radius:15px; padding:0 22px; font-weight:700; font-size:15px; box-shadow:var(--shadow)}
+  .shop-item{display:flex; align-items:center; gap:14px; background:var(--card); border-radius:17px; padding:15px 17px; margin-bottom:11px; box-shadow:var(--shadow)}
   .shop-item.done{opacity:.5}
-  .check{width:25px;height:25px;border-radius:50%;border:2px solid #d4dbcf;flex:none;display:grid;place-items:center;color:#fff}
-  .check.on{background:var(--sage); border-color:var(--sage)}
-  .shop-item .txt{flex:1; font-weight:600; font-size:15.5px}
+  .check{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);flex:none;display:grid;place-items:center;color:#fff}
+  .check.on{background:var(--ink); border-color:var(--ink)}
+  .shop-item .txt{flex:1; font-weight:600; font-size:16px}
   .shop-item.done .txt{text-decoration:line-through}
   .shop-item .sub{font-size:12px; color:var(--ink-faint); font-weight:500; margin-top:1px}
-  .link{font-size:14px; font-weight:700; color:var(--sage-deep); padding:4px 6px}
+  .link{font-size:14px; font-weight:700; color:var(--ink); padding:4px 6px}
 
-  .rc-intro{background:var(--card); border-radius:var(--radius); padding:22px; box-shadow:var(--shadow); margin:18px 0 14px; text-align:center}
-  .rc-intro .rc-big{font-size:40px}
-  .rc-intro h3{font-family:var(--serif); margin:10px 0 6px; font-size:21px; font-weight:700; letter-spacing:-.02em}
-  .rc-intro p{margin:0 0 18px; font-size:14px; color:var(--ink-soft)}
-  .rc-btn{width:100%; background:var(--sage); color:#fff; border-radius:15px; padding:16px; font-weight:700; font-size:16px; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:var(--shadow)}
+  /* ---------- Recipe tab ---------- */
+  .rc-intro{background:var(--card); border-radius:var(--radius); padding:26px 24px; box-shadow:var(--shadow); margin:16px 0 16px; text-align:center}
+  .rc-intro .rc-big{font-size:46px}
+  .rc-intro h3{font-family:var(--serif); font-size:21px; font-weight:800; margin:14px 0 8px; letter-spacing:-.02em}
+  .rc-intro p{font-size:14px; color:var(--ink-soft); line-height:1.55; margin:0 0 18px}
+  .rc-btn{width:100%; background:var(--ink); color:#fff; border-radius:15px; padding:16px; font-weight:700; font-size:16px; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:var(--shadow)}
   .rc-btn:disabled{opacity:.6}
-  .rcard{background:var(--card); border-radius:var(--radius); padding:19px; box-shadow:var(--shadow); margin-bottom:12px}
-  .rcard h4{font-family:var(--serif); margin:0; font-size:21px; font-weight:700; letter-spacing:-.02em}
-  .rcard .rtime{font-size:12.5px; color:var(--ink-faint); font-weight:500; margin-top:3px}
-  .rcard .rsec{margin-top:15px}
-  .rcard .rlbl{font-size:12px; font-weight:700; color:var(--ink-faint); margin-bottom:8px}
-  .pill{display:inline-block; font-size:12.5px; font-weight:600; padding:5px 12px; border-radius:999px; margin:0 5px 6px 0}
-  .pill.have{background:var(--fresh-bg); color:var(--sage-deep)}
-  .pill.need{background:var(--tint); color:var(--ink-soft)}
-  .pill.need{cursor:pointer; border:none; font-family:inherit}
-  .pill.need.added{background:var(--fresh-bg); color:var(--sage-deep)}
-  .diff-seg{display:flex; background:rgba(60,64,56,.06); border-radius:13px; padding:3px; margin:0 0 14px; gap:2px}
-  .diff-seg button{flex:1; padding:9px 4px; border-radius:10px; font-size:13.5px; font-weight:700; color:var(--ink-soft)}
-  .diff-seg button.on{background:var(--card); box-shadow:0 2px 8px -3px rgba(90,105,80,.3); color:var(--ink)}
-  .rgroup{margin-bottom:20px}
-  .rghead{font-family:var(--serif); font-size:16px; font-weight:700; color:var(--ink); margin:4px 2px 12px; letter-spacing:-.02em}
+  .diff-seg{display:flex; background:var(--tint); border-radius:13px; padding:3px; margin:0 0 16px; gap:2px}
+  .diff-seg button{flex:1; padding:10px 4px; border-radius:10px; font-size:13.5px; font-weight:700; color:var(--ink-soft)}
+  .diff-seg button.on{background:var(--card); box-shadow:var(--shadow); color:var(--ink)}
+  .rgroup{margin-bottom:18px}
+  .rghead{font-family:var(--serif); font-size:16px; font-weight:800; color:var(--ink); margin:4px 2px 12px; letter-spacing:-.02em}
+  .rcard{background:var(--card); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow); margin-bottom:13px}
   .rhead{display:flex; align-items:flex-start; justify-content:space-between; gap:10px}
-  .difftag{flex:none; font-size:11.5px; font-weight:700; padding:4px 11px; border-radius:999px}
-  .radd{display:block; width:100%; margin-top:9px; background:var(--sage); color:#fff; border-radius:12px; padding:12px; font-weight:700; font-size:13.5px; box-shadow:var(--shadow)}
-  .radd.done{background:var(--tint); color:var(--sage-deep); box-shadow:none}
-  #toast{position:fixed; left:50%; bottom:calc(98px + env(safe-area-inset-bottom)); transform:translateX(-50%) translateY(18px); background:rgba(45,36,26,.94); color:#fff; padding:12px 18px; border-radius:999px; font-size:13.5px; font-weight:600; z-index:60; opacity:0; pointer-events:none; transition:.25s; max-width:90vw; text-align:center}
-  #toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
+  .rcard h4{font-size:17px; font-weight:800; margin:0; letter-spacing:-.02em}
+  .rtime{font-size:13px; color:var(--ink-soft); font-weight:600; margin:4px 0 12px}
+  .difftag{flex:none; font-size:11.5px; font-weight:700; padding:5px 11px; border-radius:999px}
+  .rsec{margin-top:12px}
+  .rlbl{font-size:12px; font-weight:700; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.03em; margin-bottom:7px}
+  .pill{display:inline-block; font-size:13px; font-weight:600; padding:6px 12px; border-radius:999px; margin:0 6px 6px 0; background:var(--tint); color:var(--ink)}
+  .pill.need{background:var(--card); border:1.3px solid var(--line); cursor:pointer}
+  .pill.need.added{background:var(--fresh-bg); border-color:var(--fresh-bg); color:var(--fresh-ink)}
+  .radd{display:block; width:100%; margin-top:9px; background:var(--ink); color:#fff; border-radius:12px; padding:13px; font-weight:700; font-size:13.5px; box-shadow:var(--shadow)}
+  .radd.done{background:var(--tint); color:var(--ink); box-shadow:none}
   .steps{margin:0; padding-left:2px; list-style:none; counter-reset:s}
-  .steps li{position:relative; padding:0 0 10px 30px; font-size:14px; color:var(--ink); counter-increment:s; line-height:1.55}
-  .steps li::before{content:counter(s); position:absolute; left:0; top:1px; width:21px; height:21px; border-radius:50%; background:var(--sage); color:#fff; font-size:11px; font-weight:700; display:grid; place-items:center}
+  .steps li{position:relative; padding:0 0 11px 32px; font-size:14.5px; color:var(--ink); counter-increment:s; line-height:1.6}
+  .steps li::before{content:counter(s); position:absolute; left:0; top:1px; width:22px; height:22px; border-radius:50%; background:var(--ink); color:#fff; font-size:11px; font-weight:700; display:grid; place-items:center}
   .spinner{width:18px;height:18px;border:2.4px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite}
   @keyframes sp{to{transform:rotate(360deg)}}
 
-  /* 섹션 타이틀 */
-  .sec-title{font-size:17px; font-weight:800; letter-spacing:-.02em; margin:22px 2px 12px; color:var(--ink)}
-  /* 카테고리 칩 (가로 스크롤·색상별) */
-  .cat-grid{display:flex; gap:13px; overflow-x:auto; padding:4px 20px 8px; margin:14px -20px 2px; scrollbar-width:none}
-  .cat-grid::-webkit-scrollbar{display:none}
-  .catchip{flex:none; display:flex; flex-direction:column; align-items:center; gap:7px; width:56px}
-  .catchip .ci{width:54px; height:54px; border-radius:17px; display:grid; place-items:center; font-size:25px; transition:.15s}
-  .catchip:active .ci{transform:scale(.93)}
-  .catchip .cl{font-size:11.5px; font-weight:600; color:var(--ink-soft); white-space:nowrap}
-  .catchip.on .cl{color:var(--ink); font-weight:700}
+  #toast{position:fixed; left:50%; bottom:calc(100px + env(safe-area-inset-bottom)); transform:translateX(-50%) translateY(18px); background:rgba(28,28,30,.95); color:#fff; padding:13px 20px; border-radius:999px; font-size:13.5px; font-weight:600; z-index:60; opacity:0; pointer-events:none; transition:.25s; max-width:90vw; text-align:center}
+  #toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
 
-  /* iOS 탭바 + 중앙 담기 버튼 */
-  nav{position:fixed; left:0; right:0; bottom:0; z-index:25; background:rgba(255,255,255,.82); backdrop-filter:saturate(1.6) blur(20px); -webkit-backdrop-filter:saturate(1.6) blur(20px); border-top:1px solid var(--line); padding-bottom:env(safe-area-inset-bottom)}
-  .navin{max-width:880px; margin:0 auto; display:flex; align-items:center}
-  .navbtn{flex:1; padding:10px 0 8px; display:flex; flex-direction:column; align-items:center; gap:4px; color:var(--ink-faint); font-size:11px; font-weight:600}
-  .navbtn.on{color:var(--sage-deep)}
+  /* ---------- Tab bar (icons, Home style) ---------- */
+  nav{position:fixed; left:0; right:0; bottom:0; z-index:25; background:rgba(255,255,255,.86); backdrop-filter:saturate(1.6) blur(22px); -webkit-backdrop-filter:saturate(1.6) blur(22px); border-top:1px solid var(--line); padding-bottom:env(safe-area-inset-bottom)}
+  .navin{max-width:900px; margin:0 auto; display:flex; align-items:center}
+  .navbtn{flex:1; padding:13px 0 11px; display:flex; flex-direction:column; align-items:center; gap:4px; color:var(--ink-faint); font-size:11px; font-weight:600}
+  .navbtn.on{color:var(--ink)}
+  .navbtn svg{width:24px; height:24px}
   .navbtn .nbdg{position:relative}
   .navbtn .nbdg em{position:absolute; top:-3px; right:-9px; background:var(--expired); color:#fff; font-style:normal; font-size:9px; font-weight:700; min-width:15px; height:15px; padding:0 3px; border-radius:8px; display:grid; place-items:center}
-  .nav-fab{flex:none; width:54px; height:54px; margin:0 8px; border-radius:50%; background:var(--sage-deep); color:#fff; display:grid; place-items:center; box-shadow:0 8px 20px -6px rgba(140,176,127,.75); transform:translateY(-14px); transition:transform .12s}
-  .nav-fab:active{transform:translateY(-14px) scale(.94)}
+  .nav-fab{flex:none; width:56px; height:56px; margin:0 10px; border-radius:50%; background:var(--ink); color:#fff; display:grid; place-items:center; box-shadow:0 10px 24px -8px rgba(0,0,0,.4); transform:translateY(-16px); transition:transform .12s}
+  .nav-fab:active{transform:translateY(-16px) scale(.94)}
 
-  .scrim{position:fixed; inset:0; background:rgba(60,45,30,.34); z-index:40; opacity:0; pointer-events:none; transition:opacity .2s}
+  /* ---------- Sheets ---------- */
+  .scrim{position:fixed; inset:0; background:rgba(0,0,0,.32); z-index:40; opacity:0; pointer-events:none; transition:opacity .2s}
   .scrim.show{opacity:1; pointer-events:auto}
-  .sheet{position:fixed; left:50%; bottom:0; transform:translate(-50%,100%); width:100%; max-width:500px; background:var(--bg); border-radius:24px 24px 0 0; z-index:41; padding:8px 20px calc(22px + env(safe-area-inset-bottom)); transition:transform .28s cubic-bezier(.32,.72,0,1); max-height:92vh; overflow-y:auto}
-  @media(min-width:560px){ .sheet{bottom:auto; top:50%; border-radius:24px; transform:translate(-50%,-46%) scale(.97); opacity:0} }
+  .sheet{position:fixed; left:50%; bottom:0; transform:translate(-50%,100%); width:100%; max-width:520px; background:var(--bg); border-radius:28px 28px 0 0; z-index:41; padding:8px 22px calc(24px + env(safe-area-inset-bottom)); transition:transform .28s cubic-bezier(.32,.72,0,1); max-height:92vh; overflow-y:auto}
+  @media(min-width:560px){ .sheet{bottom:auto; top:50%; border-radius:28px; transform:translate(-50%,-46%) scale(.97); opacity:0} }
   .sheet.show{transform:translate(-50%,0)}
   @media(min-width:560px){ .sheet.show{transform:translate(-50%,-50%) scale(1); opacity:1} }
-  .grab{width:40px;height:5px;border-radius:3px;background:#d4dbcf;margin:8px auto 6px}
+  .grab{width:40px;height:5px;border-radius:3px;background:var(--line);margin:8px auto 8px}
   @media(min-width:560px){ .grab{display:none} }
-  .sheet h2{font-family:var(--serif); font-size:22px; font-weight:700; margin:8px 2px 18px; letter-spacing:-.02em}
-  .media-row{display:flex; gap:14px; align-items:center; margin-bottom:18px}
-  .photo-btn{width:74px;height:74px;border-radius:20px;background:var(--card);display:grid;place-items:center;flex:none;overflow:hidden;box-shadow:var(--shadow)}
-  .photo-btn span{font-size:42px;line-height:1}
+  .sheet h2{font-family:var(--serif); font-size:24px; font-weight:800; margin:10px 2px 20px; letter-spacing:-.025em}
+  .media-row{display:flex; gap:15px; align-items:center; margin-bottom:20px}
+  .photo-btn{width:78px;height:78px;border-radius:20px;background:var(--card);display:grid;place-items:center;flex:none;overflow:hidden;box-shadow:var(--shadow)}
+  .photo-btn span{font-size:44px;line-height:1}
   .photo-btn img{width:100%;height:100%;object-fit:cover}
   .media-side{flex:1}
-  .media-hint{font-size:12.5px; color:var(--ink-soft); line-height:1.45; margin-bottom:10px}
-  .media-btns{display:flex; gap:8px}
-  .mini-btn{background:var(--card); box-shadow:var(--shadow); border-radius:11px; padding:9px 13px; font-size:13px; font-weight:700; color:var(--sage-deep); display:flex; align-items:center; gap:5px}
-  .field{margin-bottom:14px}
-  .field label{display:block; font-size:12.5px; font-weight:700; color:var(--ink-soft); margin:0 0 6px 3px}
-  .field input,.field select,.field textarea{width:100%; background:var(--card); border:none; border-radius:14px; padding:14px; outline:none; box-shadow:var(--shadow); font-size:16px}
-  .field input:focus,.field select:focus{box-shadow:0 0 0 2px var(--sage)}
-  .exp-hint{font-size:12px; color:var(--ink-faint); font-weight:500; margin:-8px 3px 14px; line-height:1.4}
+  .media-hint{font-size:12.5px; color:var(--ink-soft); line-height:1.5; margin-bottom:11px}
+  .media-btns{display:flex; gap:9px}
+  .mini-btn{background:var(--card); box-shadow:var(--shadow); border-radius:12px; padding:10px 14px; font-size:13px; font-weight:700; color:var(--ink); display:flex; align-items:center; gap:6px}
+  .field{margin-bottom:15px}
+  .field label{display:block; font-size:12px; font-weight:700; color:var(--ink-soft); margin:0 0 7px 3px; text-transform:uppercase; letter-spacing:.03em}
+  .field input,.field select,.field textarea{width:100%; background:var(--card); border:none; border-radius:14px; padding:15px; outline:none; box-shadow:var(--shadow); font-size:16px; color:var(--ink); accent-color:var(--ink); -webkit-appearance:none; appearance:none}
+  .field input::-webkit-calendar-picker-indicator{filter:grayscale(1) opacity(.55); cursor:pointer}
+  .field input:focus,.field select:focus,.field textarea:focus{box-shadow:0 0 0 2px var(--ink)}
+  .exp-hint{font-size:12px; color:var(--ink-faint); font-weight:500; margin:-9px 3px 15px; line-height:1.45}
   .row3{display:grid; grid-template-columns:1.4fr 1fr; gap:11px}
   .row2{display:grid; grid-template-columns:1fr 1fr; gap:11px}
-  .segbtns{display:flex; gap:8px; flex-wrap:wrap}
-  .seg{flex:1; min-width:64px; padding:12px 6px; border-radius:13px; background:var(--card); box-shadow:var(--shadow); font-weight:700; font-size:13.5px; color:var(--ink-soft); text-align:center}
-  .sheet .save{width:100%; background:var(--sage); color:#fff; border-radius:16px; padding:16px; font-weight:700; font-size:17px; margin-top:8px; box-shadow:var(--shadow)}
-  .sheet .del2{width:100%; text-align:center; color:var(--expired); font-weight:700; font-size:14px; padding:14px; margin-top:4px}
-  :focus-visible{outline:2px solid var(--sage); outline-offset:2px}
+  .segbtns{display:flex; gap:9px; flex-wrap:wrap}
+  .seg{flex:1; min-width:66px; padding:13px 6px; border-radius:13px; background:var(--card); box-shadow:var(--shadow); font-weight:700; font-size:13.5px; color:var(--ink-soft); text-align:center}
+  .sheet .save{width:100%; background:var(--ink); color:#fff; border-radius:16px; padding:17px; font-weight:700; font-size:17px; margin-top:10px; box-shadow:var(--shadow)}
+  .sheet .del2{width:100%; text-align:center; color:var(--expired); font-weight:700; font-size:14px; padding:15px; margin-top:4px}
+
+  /* space sheet */
+  .sp-hint{font-size:13px; color:var(--ink-soft); margin:2px 2px 14px; line-height:1.55}
+  .sp-sec{font-size:12px; font-weight:700; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.03em; margin:16px 2px 10px}
+  .sp-row{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:16px;padding:14px 16px;margin-bottom:10px;box-shadow:var(--shadow);width:100%;text-align:left}
+  .sp-row.on{box-shadow:0 0 0 2px var(--ink)}
+  .sp-row .sp-ic{font-size:22px}
+  .sp-row .sp-info{flex:1;min-width:0}
+  .sp-row .sp-nm{font-weight:700;font-size:16px}
+  .sp-row .sp-sub{font-size:12.5px;color:var(--ink-faint);font-weight:500;margin-top:2px}
+  .sp-row .sp-on{font-size:12px;font-weight:700;color:var(--ink)}
+  .sp-code{font-family:ui-monospace,Menlo,monospace;font-weight:800;letter-spacing:.12em;font-size:15px;color:var(--ink)}
+  .sp-actions{display:flex;gap:10px;margin:8px 0 4px}
+  .sp-actions button{flex:1;border-radius:14px;padding:14px;font-weight:700;font-size:14.5px;box-shadow:var(--shadow)}
+  .sp-make{background:var(--ink);color:#fff}
+  .sp-join{background:var(--card);color:var(--ink)}
+  .sp-inline{display:flex;gap:9px;margin-top:9px}
+  .sp-inline input{flex:1;background:var(--card);border:none;border-radius:14px;padding:13px 15px;outline:none;box-shadow:var(--shadow);font-size:16px}
+  .sp-inline button{background:var(--ink);color:#fff;border-radius:14px;padding:0 20px;font-weight:700;font-size:14.5px}
+
+  :focus-visible{outline:2px solid var(--ink); outline-offset:2px}
   @media (prefers-reduced-motion: reduce){ *{transition:none !important; animation:none !important} }
 </style>
 
 <div class="app">
   <header>
-    <div class="brandrow">
+    <div class="titlerow">
       <div class="brand"><h1 id="greet">냉장고 프로젝트</h1></div>
       <div class="hbtns">
         <button class="bell" id="bellBtn" aria-label="알림"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.5 21a2 2 0 0 0 3 0"/></svg></button>
         <button class="whoami" id="whoBtn"><span class="av" id="whoAv">?</span><span id="whoName">이름</span></button>
       </div>
     </div>
-    <button class="spacebar" id="spaceBtn">
-      <span class="sb-ic" id="sbIc">🧊</span>
-      <span class="sb-name" id="sbName">내 냉장고</span>
-      <span class="sb-kind personal" id="sbKind">개인</span>
-      <span class="sb-caret">전환 ▾</span>
-    </button>
+    <div class="subrow">
+      <button class="spacebar" id="spaceBtn">
+        <span class="sb-ic" id="sbIc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="3.5"/><path d="M5 10h14M9 5v2M9 13v3"/></svg></span>
+        <span class="sb-name" id="sbName">내 냉장고</span>
+        <span class="sb-kind personal" id="sbKind">개인</span>
+        <span class="sb-caret">▾</span>
+      </button>
+    </div>
     <div class="stats" id="stats"></div>
   </header>
 
   <main>
     <section id="tab-fridge">
       <div id="alertBanner"></div>
-      <p class="sec-title" id="catSecTitle" style="display:none">카테고리별 현황</p>
-      <div class="cat-grid" id="catGrid" style="display:none"></div>
       <div class="recipe-cta" id="recipeCta">
         <span class="rc-emoji">🍳</span>
         <div class="rc-txt"><b>오늘 뭐 해먹지?</b><p>임박한 재료로 요리를 추천해 드려요</p></div>
         <button class="rc-go">추천받기</button>
       </div>
-      <div class="seg-ctrl" id="viewSeg"><button data-v="list" class="on">목록으로</button><button data-v="fridge">냉장고로</button></div>
+      <p class="sec-title" id="catSecTitle" style="display:none">카테고리</p>
+      <div class="cat-grid" id="catGrid" style="display:none"></div>
+      <div class="seg-ctrl" id="viewSeg"><button data-v="list" class="on">목록</button><button data-v="fridge">냉장고</button></div>
       <div id="listWrap">
-        <div class="search"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input id="q" placeholder="재료 검색" autocomplete="off"/><button class="clr" id="qClr" aria-label="지우기">×</button></div>
+        <div class="search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input id="q" placeholder="재료 검색" autocomplete="off"/><button class="clr" id="qClr" aria-label="지우기">×</button></div>
         <div class="filters" id="filters"></div>
         <div class="sortrow"><span class="lbl" id="listCount"></span><select id="sort"><option value="exp">유통기한 임박순</option><option value="name">이름순</option><option value="new">최근 담은 순</option></select></div>
         <p class="sec-title" id="listTitle" style="display:none">보관 중인 재료</p>
@@ -319,11 +319,11 @@
   </main>
 
   <nav><div class="navin">
-    <button class="navbtn on" data-tab="fridge"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="3.5"/><path d="M5 10h14M9 5v2M9 13v3"/></svg>냉장고</button>
-    <button class="navbtn" data-tab="shop"><span class="nbdg"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M6 6 5 3H3"/></svg><em id="shopBadge" style="display:none">0</em></span>장보기</button>
+    <button class="navbtn on" data-tab="fridge"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="3.5"/><path d="M5 10h14M9 5v2M9 13v3"/></svg>냉장고</button>
+    <button class="navbtn" data-tab="shop"><span class="nbdg"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 6h15l-1.5 9h-12z"/><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M6 6 5 3H3"/></svg><em id="shopBadge" style="display:none">0</em></span>장보기</button>
     <button class="nav-fab" id="navAdd" aria-label="재료 담기"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
-    <button class="navbtn" data-tab="recipe"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 3v7a3 3 0 0 0 6 0V3M7 3v18M17 3c-1.5 0-3 1.5-3 5s1.5 4 3 4v9"/></svg>레시피</button>
-    <button class="navbtn" id="navMy"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>마이</button>
+    <button class="navbtn" data-tab="recipe"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 3v7a3 3 0 0 0 6 0V3M7 3v18M17 3c-1.5 0-3 1.5-3 5s1.5 4 3 4v9"/></svg>레시피</button>
+    <button class="navbtn" id="navMy"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>마이</button>
   </div></nav>
 </div>
 
@@ -387,7 +387,6 @@
   <div class="field"><input id="nameInput" placeholder="예: 지현, 엄마, 룸메A" autocomplete="off"/></div>
   <button class="save" id="saveName">시작하기</button>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 /* ---------- data layer: Supabase(클라우드 DB) + 공간(냉장고) ---------- */
@@ -494,9 +493,16 @@ function state(d){ if(d===null) return 'none'; if(d<0) return 'exp'; if(d<=3) re
 async function loadAll(){ me=(await kv.get(K_NAME,false))||''; if(me){ await initSpaces(); items=await dbLoadItems(); shop=await dbLoadShop(); } }
 
 function counts(){ const soon=items.filter(x=>{const d=daysLeft(x.exp);return d!==null&&d>=0&&d<=3;}); const exp=items.filter(x=>{const d=daysLeft(x.exp);return d!==null&&d<0;}); return {soon,exp}; }
-function renderStats(){ const {soon,exp}=counts(); $('#stats').innerHTML=`<div class="stat"><span class="se">🧺</span><b>${items.length}</b><span>전체 재료</span></div><div class="stat soon"><span class="se">⏰</span><b>${soon.length}</b><span>곧 먹어요</span></div><div class="stat exp"><span class="se">🗑️</span><b>${exp.length}</b><span>지났어요</span></div>`; }
+const ICN={
+  box:'<svg class="si" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="16" height="13" rx="2"/><path d="M4 11h16M9 7V4h6v3"/></svg>',
+  clock:'<svg class="si" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l2.5 2"/></svg>',
+  warn:'<svg class="si" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20L12 3z"/><path d="M12 10v4M12 17.5v.5"/></svg>',
+  fridge:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="3.5"/><path d="M5 10h14M9 5v2M9 13v3"/></svg>',
+  people:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.3 2.9-5 6.5-5s6.5 1.7 6.5 5"/><path d="M16 5.5a3 3 0 0 1 0 5.8M21.5 20c0-2.6-1.7-4.2-4-4.7"/></svg>'
+};
+function renderStats(){ const {soon,exp}=counts(); $('#stats').innerHTML=`<div class="stat">${ICN.box}<b>${items.length}</b><span>전체 재료</span></div><div class="stat soon">${ICN.clock}<b>${soon.length}</b><span>곧 먹어요</span></div><div class="stat exp">${ICN.warn}<b>${exp.length}</b><span>지났어요</span></div>`; }
 function renderBanner(){ const {soon,exp}=counts(); const el=$('#alertBanner'); if(!soon.length&&!exp.length){el.innerHTML='';return;} const names=[...exp,...soon].slice(0,2).map(x=>x.name); const more=(soon.length+exp.length)-names.length; const txt=exp.length?`${names.join(', ')}${more>0?` 외 ${more}개`:''}, 유통기한을 확인해 주세요`:`${names.join(', ')}${more>0?` 외 ${more}개`:''}, 곧 먹어야 해요`;
-  el.innerHTML=`<div class="banner ${exp.length?'hasexp':''}"><span class="bi">${exp.length?'🗑️':'⏰'}</span><span class="bt">${txt}</span><button class="bg" id="bannerGo">먼저 보기</button></div>`;
+  el.innerHTML=`<div class="banner ${exp.length?'hasexp':''}"><span class="bi">${exp.length?ICN.warn:ICN.clock}</span><span class="bt">${txt}</span><button class="bg" id="bannerGo">먼저 보기</button></div>`;
   $('#bannerGo').onclick=()=>{ if(viewMode!=='list') setView('list'); $('#sort').value='exp'; sortBy='exp'; filterZone='all'; renderFilters(); renderList(); window.scrollTo({top:0,behavior:'smooth'}); };
 }
 function renderFilters(){ const c={all:items.length}; ZONES.forEach(z=>c[z.id]=items.filter(x=>x.zone===z.id).length); const mk=(id,l)=>`<button class="chip ${filterZone===id?'on':''}" data-z="${id}">${l}<span class="cnt">${c[id]||0}</span></button>`; $('#filters').innerHTML=mk('all','전체')+ZONES.map(z=>mk(z.id,z.label)).join(''); $('#filters').querySelectorAll('.chip').forEach(b=>b.onclick=()=>{filterZone=b.dataset.z;renderList();renderFilters();}); }
@@ -514,9 +520,9 @@ function renderList(){
     let dd=''; if(d===null){dd='기한 없음';} else if(d<0){dd=`${-d}일 지남`;} else if(d===0){dd='오늘까지';} else {dd=`${d}일 남음`;}
     const col=catColor(x);
     const img=x.photo?`<img src="${x.photo}" alt="">`:`<span class="pemoji">${emojiFor(x)}</span>`;
-    return `<button class="pcard" data-open="${x.id}">
-      <div class="pcard-img" style="background:${col}1e">${img}</div>
-      <div class="pcard-body"><div class="pcard-nm">${esc(x.name)}</div>
+    return `<button class="pcard ${st==='soon'?'soon':st==='exp'?'exp':''}" data-open="${x.id}">
+      <div class="pcard-img">${img}</div>
+      <div class="pcard-body"><div class="pcard-cat">${esc(x.cat||'기타')}</div><div class="pcard-nm">${esc(x.name)}</div>
       <div class="pcard-meta"><span class="pcard-day ${stc}">${dd}</span>${x.qty?`<span class="pcard-qty">${esc(x.qty)}${esc(x.unit||'')}</span>`:''}</div></div>
     </button>`;
   }).join('');
@@ -637,7 +643,7 @@ $('#scanInput').onchange=async e=>{ const f=e.target.files[0]; if(!f)return; e.t
 async function lookupBarcode(code){ $('#scanLabel').textContent='조회 중…'; let nm=''; try{ const r=await fetch(`https://world.openfoodfacts.org/api/v0/product/${code}.json`); const j=await r.json(); if(j.status===1) nm=j.product.product_name_ko||j.product.product_name||''; }catch(e){} if(nm){ $('#f_name').value=nm; renderMediaPreview(); } $('#scanLabel').textContent=canScan?'바코드':'바코드 입력'; if(!nm){ alert(`바코드(${code}) 상품명을 못 찾았어요. 이름을 직접 입력해 주세요.`); } }
 
 /* ---------- name / notifications / shopping / tabs ---------- */
-function refreshWho(){ $('#whoName').textContent=me||'이름'; $('#whoAv').textContent=me?me.slice(0,1):'?'; $('#greet').textContent='내 냉장고'; }
+function refreshWho(){ $('#whoName').textContent=me||'이름'; $('#whoAv').textContent=me?me.slice(0,1):'?'; $('#greet').textContent='냉장고 프로젝트'; }
 $('#whoBtn').onclick=()=>{ $('#nameInput').value=me; showSheet('#nameSheet'); setTimeout(()=>$('#nameInput').focus(),280); };
 $('#saveName').onclick=async()=>{ const n=$('#nameInput').value.trim(); if(!n)return; me=n; await kv.set(K_NAME,n,false); refreshWho(); hideSheets(); if(!curSpace){ await initSpaces(); await setSpace(curSpace); } };
 
@@ -646,7 +652,7 @@ function renderSpaceBar(){
   if(!curSpace) return;
   const per=curSpace.kind==='personal';
   $('#sbName').textContent=curSpace.name;
-  $('#sbIc').textContent=per?'🧊':'👨‍👩‍👧';
+  $('#sbIc').innerHTML=per?ICN.fridge:ICN.people;
   const k=$('#sbKind'); k.textContent=per?'개인':'공유'; k.classList.toggle('personal',per);
 }
 function renderSpaceList(){
@@ -694,7 +700,7 @@ function renderCatGrid(){
     const st=on?`background:${color};box-shadow:0 7px 15px -6px ${color}99`:`background:${color}22`;
     return `<button class="catchip ${on?'on':''}" data-cat="${esc(cat)}"><span class="ci" style="${st}">${emoji}</span><span class="cl">${esc(label)}</span></button>`;
   };
-  let html=chip('','전체','🧺','#4a8cf7');
+  let html=chip('','전체','🧺','#0a0a0a');
   html+=cats.map(c=>chip(c,c,CAT_EMOJI[c]||'🍽️',CAT_COLOR[c]||'#8e8e93')).join('');
   el.innerHTML=html;
   el.querySelectorAll('[data-cat]').forEach(b=>b.onclick=()=>{ filterCat=b.dataset.cat; if(viewMode!=='list') setView('list'); renderCatGrid(); renderList(); });
