@@ -12,17 +12,17 @@
 <style>
   @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
   :root{
-    --bg:#f5f6f1; --card:#ffffff; --card-2:#f3f5ef; --tint:#edf1e8;
-    --ink:#3c4038; --ink-soft:#8b8f85; --ink-faint:#b6bab0; --line:rgba(60,64,56,.07);
-    --sage:#a8c5a1; --sage-deep:#8cb07f; --peach:#ffe8d6; --peach-ink:#e07d3c; --rose:#e39a92;
-    --fresh:#8cb07f; --soon:#ff9f4d; --expired:#ef7a4d;
-    --fresh-bg:#eaf1e3; --soon-bg:#ffe8d6; --expired-bg:#fbe0d4;
-    --z-cold:#7ba7ad; --z-freeze:#8ba4c2; --z-veg:#8fa86a; --z-door:#c7a684;
+    --bg:#f6f7f9; --card:#ffffff; --card-2:#f1f3f6; --tint:#eef1f6;
+    --ink:#1c1c1e; --ink-soft:#8a8d94; --ink-faint:#c1c4cc; --line:#ededf1;
+    --sage:#4a8cf7; --sage-deep:#3b7ef0; --peach:#fff1e3; --peach-ink:#f2870f; --rose:#ff5a5f;
+    --fresh:#34c759; --soon:#ff9500; --expired:#ff3b30;
+    --fresh-bg:#e7f8ec; --soon-bg:#fff2e0; --expired-bg:#ffe9e7;
+    --z-cold:#5ac8fa; --z-freeze:#64d2ff; --z-veg:#34c759; --z-door:#ff9f0a;
     --font:"Pretendard Variable",Pretendard,-apple-system,"Apple SD Gothic Neo","Noto Sans KR",system-ui,Roboto,"Malgun Gothic",sans-serif;
     --serif:"Pretendard Variable",Pretendard,-apple-system,"Apple SD Gothic Neo","Noto Sans KR",system-ui,Roboto,"Malgun Gothic",sans-serif;
-    --radius:20px; --radius-sm:15px;
-    --shadow:0 4px 16px -8px rgba(90,105,80,.16);
-    --shadow-lg:0 14px 32px -14px rgba(90,105,80,.22);
+    --radius:18px; --radius-sm:14px;
+    --shadow:0 2px 10px -3px rgba(30,40,60,.07), 0 8px 22px -12px rgba(30,40,60,.08);
+    --shadow-lg:0 14px 34px -12px rgba(30,40,60,.16);
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;padding:0}
@@ -108,8 +108,21 @@
   .sortrow .lbl{font-size:13px; color:var(--ink-soft); font-weight:600}
   .sortrow select{border:none; background:none; font-weight:700; font-size:14px; color:var(--sage-deep); padding:3px 2px}
 
-  .grid{display:grid; grid-template-columns:1fr; gap:13px}
-  @media(min-width:600px){ .grid{grid-template-columns:1fr 1fr} }
+  /* 정리: iOS 클린 레이아웃 위해 뷰 토글·구역칩·정렬 숨김 */
+  #viewSeg, #filters, .sortrow{display:none !important}
+  /* 2열 사진형 카드 */
+  .grid{display:grid; grid-template-columns:1fr 1fr; gap:13px}
+  .pcard{display:block; text-align:left; background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; transition:transform .12s}
+  .pcard:active{transform:scale(.975)}
+  .pcard-img{height:104px; display:grid; place-items:center}
+  .pcard-img .pemoji{font-size:48px; line-height:1}
+  .pcard-img img{width:100%; height:100%; object-fit:cover}
+  .pcard-body{padding:11px 14px 14px}
+  .pcard-nm{font-weight:700; font-size:15.5px; letter-spacing:-.02em; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .pcard-meta{display:flex; align-items:center; justify-content:space-between; gap:6px; margin-top:5px}
+  .pcard-day{font-size:12.5px; color:var(--ink-soft); font-weight:600}
+  .pcard-day.soon{color:var(--soon)} .pcard-day.exp{color:var(--expired); font-weight:700}
+  .pcard-qty{font-size:11.5px; color:var(--ink-faint); font-weight:600}
   .card{background:var(--card); border-radius:var(--radius); padding:17px 18px; box-shadow:var(--shadow)}
   .card .top{display:flex; align-items:flex-start; gap:13px}
   .emoji-tile{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;font-size:30px;line-height:1;flex:none}
@@ -201,15 +214,16 @@
   .spinner{width:18px;height:18px;border:2.4px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite}
   @keyframes sp{to{transform:rotate(360deg)}}
 
-  /* 카테고리별 현황 그리드 */
-  .sec-title{font-size:15px; font-weight:800; letter-spacing:-.02em; margin:22px 2px 12px; color:var(--ink)}
-  .cat-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:9px}
-  .cat-cell{background:var(--card); border-radius:var(--radius-sm); padding:14px 8px; box-shadow:var(--shadow); text-align:center; transition:transform .12s}
-  .cat-cell:active{transform:scale(.96)}
-  .cat-cell.on{box-shadow:0 0 0 2px var(--sage)}
-  .cat-cell .ce{font-size:24px; line-height:1}
-  .cat-cell .cn{font-size:12px; font-weight:600; color:var(--ink-soft); margin-top:6px}
-  .cat-cell .cc{font-size:17px; font-weight:800; letter-spacing:-.02em; margin-top:2px; color:var(--ink)}
+  /* 섹션 타이틀 */
+  .sec-title{font-size:17px; font-weight:800; letter-spacing:-.02em; margin:22px 2px 12px; color:var(--ink)}
+  /* 카테고리 칩 (가로 스크롤·색상별) */
+  .cat-grid{display:flex; gap:13px; overflow-x:auto; padding:4px 20px 8px; margin:14px -20px 2px; scrollbar-width:none}
+  .cat-grid::-webkit-scrollbar{display:none}
+  .catchip{flex:none; display:flex; flex-direction:column; align-items:center; gap:7px; width:56px}
+  .catchip .ci{width:54px; height:54px; border-radius:17px; display:grid; place-items:center; font-size:25px; transition:.15s}
+  .catchip:active .ci{transform:scale(.93)}
+  .catchip .cl{font-size:11.5px; font-weight:600; color:var(--ink-soft); white-space:nowrap}
+  .catchip.on .cl{color:var(--ink); font-weight:700}
 
   /* iOS 탭바 + 중앙 담기 버튼 */
   nav{position:fixed; left:0; right:0; bottom:0; z-index:25; background:rgba(255,255,255,.82); backdrop-filter:saturate(1.6) blur(20px); -webkit-backdrop-filter:saturate(1.6) blur(20px); border-top:1px solid var(--line); padding-bottom:env(safe-area-inset-bottom)}
@@ -286,6 +300,7 @@
         <div class="search"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input id="q" placeholder="재료 검색" autocomplete="off"/><button class="clr" id="qClr" aria-label="지우기">×</button></div>
         <div class="filters" id="filters"></div>
         <div class="sortrow"><span class="lbl" id="listCount"></span><select id="sort"><option value="exp">유통기한 임박순</option><option value="name">이름순</option><option value="new">최근 담은 순</option></select></div>
+        <p class="sec-title" id="listTitle" style="display:none">보관 중인 재료</p>
         <div class="grid" id="grid"></div>
       </div>
       <div id="fridgeView" style="display:none"></div>
@@ -418,6 +433,8 @@ async function initSpaces(){
 const ZONES=[{id:'cold',label:'냉장실',c:'var(--z-cold)'},{id:'freeze',label:'냉동실',c:'var(--z-freeze)'},{id:'veg',label:'야채칸',c:'var(--z-veg)'},{id:'door',label:'문칸',c:'var(--z-door)'}];
 const CATS=['채소','과일','육류','수산','유제품','계란','음료','반찬','양념','냉동식품','기타'];
 const CAT_EMOJI={채소:'🥬',과일:'🍎',육류:'🍖',수산:'🐟',유제품:'🧀',계란:'🥚',음료:'🥤',반찬:'🥘',양념:'🧂',냉동식품:'🧊',기타:'🍽️'};
+const CAT_COLOR={채소:'#34c759',과일:'#ff9500',육류:'#ff5a5f',수산:'#00c7be',유제품:'#34aadc',계란:'#ffcc00',음료:'#5856d6',반찬:'#ff9f0a',양념:'#af52de',냉동식품:'#64d2ff',기타:'#8e8e93'};
+function catColor(x){ return CAT_COLOR[(x&&x.cat)||x]||'#8e8e93'; }
 const ZONE_TINT={cold:'rgba(123,167,173,.18)',freeze:'rgba(139,164,194,.18)',veg:'rgba(143,168,106,.18)',door:'rgba(199,166,132,.2)'};
 const EMOJI=[
   [['우유','milk'],'🥛'],[['계란','달걀','에그','egg'],'🥚'],[['치즈','cheese'],'🧀'],[['버터','butter'],'🧈'],[['요거트','요구르트','yogurt'],'🥛'],
@@ -489,23 +506,21 @@ function renderList(){
   if(query) list=list.filter(x=>x.name.toLowerCase().includes(query));
   list.sort((a,b)=>{ if(sortBy==='name') return a.name.localeCompare(b.name,'ko'); if(sortBy==='new') return (b.added||0)-(a.added||0); const da=daysLeft(a.exp),db=daysLeft(b.exp); if(da===null&&db===null) return 0; if(da===null) return 1; if(db===null) return -1; return da-db; });
   $('#listCount').textContent=list.length?`${list.length}개`:'';
+  const lt=$('#listTitle'); if(lt) lt.style.display=list.length?'block':'none';
   const grid=$('#grid');
-  if(!list.length){ grid.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="ic">🧺</div><b>${query||filterZone!=='all'?'해당하는 재료가 없어요':'아직 냉장고가 비어 있어요'}</b><span>${query||filterZone!=='all'?'다른 조건으로 찾아보세요':'아래 담기 버튼으로 재료를 넣어보세요'}</span></div>`; return; }
+  if(!list.length){ const filtering=query||filterCat||filterZone!=='all'; grid.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="ic">🧺</div><b>${filtering?'해당하는 재료가 없어요':'아직 냉장고가 비어 있어요'}</b><span>${filtering?'다른 조건으로 찾아보세요':'가운데 + 버튼으로 재료를 넣어보세요'}</span></div>`; return; }
   grid.innerHTML=list.map(x=>{
-    const d=daysLeft(x.exp), st=state(d), z=zoneOf(x.zone), stc=st==='none'?'ok':st;
-    let dd='',pct=100; if(d===null){dd='기한 없음';} else if(d<0){dd=`${-d}일 지남`;pct=0;} else if(d===0){dd='오늘까지';pct=8;} else {dd=`D-${d}`;pct=Math.max(8,Math.min(100,d/14*100));}
-    const cat=x.cat?`<span class="tag">${esc(x.cat)}</span>`:''; const memo=x.memo?`<span class="tag">📝 ${esc(x.memo)}</span>`:'';
-    const icon=x.photo?`<img class="thumb" src="${x.photo}" alt="">`:`<div class="emoji-tile" style="background:${ZONE_TINT[x.zone]||'var(--tint)'}">${emojiFor(x)}</div>`;
-    return `<div class="card"><div class="top">${icon}<div class="info"><div class="nm">${esc(x.name)}</div><div class="qty">${esc(x.qty||'')} ${esc(x.unit||'')}</div>
-      <div class="badges"><span class="tag"><span class="zd" style="background:${z.c}"></span>${z.label}</span>${cat}${memo}</div></div></div>
-      <div class="fresh-wrap"><div class="fresh-line"><span class="dday ${stc}">${dd}</span><span class="expdate">${x.exp?'~ '+x.exp.slice(5).replace('-','.'):''}</span></div><div class="bar ${st==='exp'?'exp':st==='soon'?'soon':''}"><i style="width:${pct}%"></i></div></div>
-      <div class="meta"><span class="by">${x.by?esc(x.by)+' 담음':''}</span><span class="acts">
-        <button class="icobtn" data-edit="${x.id}" aria-label="수정"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>
-        <button class="icobtn del" data-del="${x.id}" aria-label="버리기"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13"/></svg></button>
-      </span></div></div>`;
+    const d=daysLeft(x.exp), st=state(d), stc=st==='none'?'ok':st;
+    let dd=''; if(d===null){dd='기한 없음';} else if(d<0){dd=`${-d}일 지남`;} else if(d===0){dd='오늘까지';} else {dd=`${d}일 남음`;}
+    const col=catColor(x);
+    const img=x.photo?`<img src="${x.photo}" alt="">`:`<span class="pemoji">${emojiFor(x)}</span>`;
+    return `<button class="pcard" data-open="${x.id}">
+      <div class="pcard-img" style="background:${col}1e">${img}</div>
+      <div class="pcard-body"><div class="pcard-nm">${esc(x.name)}</div>
+      <div class="pcard-meta"><span class="pcard-day ${stc}">${dd}</span>${x.qty?`<span class="pcard-qty">${esc(x.qty)}${esc(x.unit||'')}</span>`:''}</div></div>
+    </button>`;
   }).join('');
-  grid.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>openItem(b.dataset.edit));
-  grid.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>delItem(b.dataset.del));
+  grid.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>openItem(b.dataset.open));
 }
 
 function renderFridge(){
@@ -622,7 +637,7 @@ $('#scanInput').onchange=async e=>{ const f=e.target.files[0]; if(!f)return; e.t
 async function lookupBarcode(code){ $('#scanLabel').textContent='조회 중…'; let nm=''; try{ const r=await fetch(`https://world.openfoodfacts.org/api/v0/product/${code}.json`); const j=await r.json(); if(j.status===1) nm=j.product.product_name_ko||j.product.product_name||''; }catch(e){} if(nm){ $('#f_name').value=nm; renderMediaPreview(); } $('#scanLabel').textContent=canScan?'바코드':'바코드 입력'; if(!nm){ alert(`바코드(${code}) 상품명을 못 찾았어요. 이름을 직접 입력해 주세요.`); } }
 
 /* ---------- name / notifications / shopping / tabs ---------- */
-function refreshWho(){ $('#whoName').textContent=me||'이름'; $('#whoAv').textContent=me?me.slice(0,1):'?'; $('#greet').textContent='냉장고 프로젝트'; }
+function refreshWho(){ $('#whoName').textContent=me||'이름'; $('#whoAv').textContent=me?me.slice(0,1):'?'; $('#greet').textContent='내 냉장고'; }
 $('#whoBtn').onclick=()=>{ $('#nameInput').value=me; showSheet('#nameSheet'); setTimeout(()=>$('#nameInput').focus(),280); };
 $('#saveName').onclick=async()=>{ const n=$('#nameInput').value.trim(); if(!n)return; me=n; await kv.set(K_NAME,n,false); refreshWho(); hideSheets(); if(!curSpace){ await initSpaces(); await setSpace(curSpace); } };
 
@@ -669,12 +684,20 @@ $('#sort').onchange=e=>{sortBy=e.target.value;renderList();};
 /* ---------- boot ---------- */
 function renderCatGrid(){
   const el=$('#catGrid'), title=$('#catSecTitle'); if(!el) return;
+  if(title) title.style.display='none';
   const counts={}; items.forEach(x=>{ const c=x.cat||'기타'; counts[c]=(counts[c]||0)+1; });
   const cats=CATS.filter(c=>counts[c]);
-  if(!cats.length){ el.style.display='none'; if(title)title.style.display='none'; return; }
-  el.style.display='grid'; if(title)title.style.display='block';
-  el.innerHTML=cats.map(c=>`<button class="cat-cell ${filterCat===c?'on':''}" data-cat="${esc(c)}"><div class="ce">${CAT_EMOJI[c]||'🍽️'}</div><div class="cn">${esc(c)}</div><div class="cc">${counts[c]}</div></button>`).join('');
-  el.querySelectorAll('[data-cat]').forEach(b=>b.onclick=()=>{ filterCat=(filterCat===b.dataset.cat)?'':b.dataset.cat; if(viewMode!=='list') setView('list'); renderCatGrid(); renderList(); if(filterCat){ $('#listWrap').scrollIntoView({behavior:'smooth',block:'nearest'}); } });
+  if(!cats.length){ el.style.display='none'; return; }
+  el.style.display='flex';
+  const chip=(cat,label,emoji,color)=>{
+    const on=(filterCat===cat);
+    const st=on?`background:${color};box-shadow:0 7px 15px -6px ${color}99`:`background:${color}22`;
+    return `<button class="catchip ${on?'on':''}" data-cat="${esc(cat)}"><span class="ci" style="${st}">${emoji}</span><span class="cl">${esc(label)}</span></button>`;
+  };
+  let html=chip('','전체','🧺','#4a8cf7');
+  html+=cats.map(c=>chip(c,c,CAT_EMOJI[c]||'🍽️',CAT_COLOR[c]||'#8e8e93')).join('');
+  el.innerHTML=html;
+  el.querySelectorAll('[data-cat]').forEach(b=>b.onclick=()=>{ filterCat=b.dataset.cat; if(viewMode!=='list') setView('list'); renderCatGrid(); renderList(); });
 }
 function renderAll(){ renderStats(); renderBanner(); renderCatGrid(); renderFilters(); renderList(); if(viewMode==='fridge')renderFridge(); renderShop(); }
 async function syncFromShared(){ if(document.querySelector('.sheet.show')) return; const ni=await dbLoadItems(), ns=await dbLoadShop(); if(JSON.stringify(ni)!==JSON.stringify(items)||JSON.stringify(ns)!==JSON.stringify(shop)){ items=ni; shop=ns; renderAll(); } }
