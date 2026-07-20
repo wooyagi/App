@@ -1,7 +1,11 @@
 // 냉장고 프로젝트 서비스워커 — 설치 가능(PWA) + 앱 셸 캐시
-const CACHE = 'fridge-v1';
+const CACHE = 'fridge-v3';
 self.addEventListener('install', (e) => { self.skipWaiting(); });
-self.addEventListener('activate', (e) => { e.waitUntil(self.clients.claim()); });
+self.addEventListener('activate', (e) => { e.waitUntil((async () => {
+  const keys = await caches.keys();
+  await Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)));
+  await self.clients.claim();
+})()); });
 self.addEventListener('fetch', (e) => {
   const req = e.request;
   if (req.method !== 'GET') return;                 // 저장/삭제/레시피 등은 항상 네트워크
