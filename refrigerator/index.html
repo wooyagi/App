@@ -641,10 +641,10 @@ const ZONES=[{id:'cold',label:'냉장실',c:'var(--z-cold)'},{id:'freeze',label:
 const CATS=['채소','과일','육류','수산','유제품','계란','음료','반찬','양념','냉동식품','기타'];
 /* ----- 냉장고 종류 (실제 냉장고처럼 보여주기) ----- */
 const FRIDGE_TYPES=[
-  {id:'top',ko:'상부 냉동형',en:'Top Freezer',svg:{split:0.32,twin:false},box:{freeze:'top:8%;left:16%;width:68%;height:22%',cold:'top:35%;left:16%;width:68%;height:52%'}},
-  {id:'bottom',ko:'하부 냉동형',en:'Bottom Freezer',svg:{split:0.66,twin:false},box:{cold:'top:8%;left:16%;width:68%;height:50%',freeze:'top:63%;left:16%;width:68%;height:24%'}},
-  {id:'sbs',ko:'좌우 분리형',en:'Side-by-Side',svg:{split:0.52,twin:true},box:{cold:'top:8%;left:16%;width:68%;height:39%',freeze:'top:53%;left:16%;width:68%;height:34%'}},
-  {id:'french',ko:'4도어형',en:'French Door',svg:{split:0.52,twin:true},box:{cold:'top:8%;left:16%;width:68%;height:39%',freeze:'top:53%;left:16%;width:68%;height:34%'}},
+  {id:'sbs',ko:'양문형 2도어',en:'Side-by-Side',svg:{split:0.52,twin:true},box:{cold:'top:8%;left:16%;width:68%;height:39%',freeze:'top:53%;left:16%;width:68%;height:34%'}},
+  {id:'top',ko:'일반형 2도어',en:'Top Mount 2-Door',svg:{split:0.66,twin:false},box:{cold:'top:8%;left:16%;width:68%;height:50%',freeze:'top:63%;left:16%;width:68%;height:24%'}},
+  {id:'four',ko:'일반형 4도어',en:'4-Door',svg:{split:0.52,twin:true},box:{cold:'top:8%;left:16%;width:68%;height:39%',freeze:'top:53%;left:16%;width:68%;height:34%'}},
+  {id:'french',ko:'서랍형 4도어',en:'French Door',svg:{split:0.62,twin:true},box:{cold:'top:8%;left:16%;width:68%;height:46%',freeze:'top:58%;left:16%;width:68%;height:30%'}},
 ];
 let heroOpen='';
 const fridgeType=()=> (curSpace?localStorage.getItem('ftype:'+curSid()):'')||'';
