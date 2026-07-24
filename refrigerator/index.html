@@ -351,7 +351,7 @@
   /* ===== 냉장고 종류 선택 (온보딩 게이트) ===== */
   #typeGate{position:fixed; inset:0; z-index:70; background:var(--bg); background-image:radial-gradient(rgba(43,52,80,.045) 1px,transparent 1.4px); background-size:20px 20px; display:none; flex-direction:column; padding:calc(env(safe-area-inset-top) + 34px) 22px 34px; overflow-y:auto}
   #typeGate.show{display:flex}
-  .tg-h{font-family:var(--serif); font-size:30px; font-weight:700; text-align:center; margin:4px 0 2px; color:var(--ink)}
+  .tg-h{font-family:var(--serif); font-size:30px; font-weight:700; text-align:center; margin:4px 0 22px; color:var(--ink)}
   .tg-sub{text-align:center; color:var(--ink-soft); font-size:14px; margin-bottom:22px; font-weight:500}
   .tg-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; width:100%; max-width:520px; margin:0 auto}
   .tg-card{background:var(--card); border-radius:var(--radius); padding:18px 12px 15px; box-shadow:var(--shadow); display:flex; flex-direction:column; align-items:center; gap:9px; transition:transform .12s}
@@ -539,7 +539,6 @@
 
 <div id="typeGate">
   <div class="tg-h">어떤 냉장고를 쓰세요?</div>
-  <div class="tg-sub">냉장고 모양을 고르면 실제처럼 보여드려요</div>
   <div class="tg-grid" id="tgGrid"></div>
   <button id="tgSkip">닫기</button>
 </div>
@@ -784,7 +783,7 @@ function setView(v){ viewMode=v; $('#viewSeg').querySelectorAll('button').forEac
 $('#viewSeg').querySelectorAll('button').forEach(b=>b.onclick=()=>setView(b.dataset.v));
 
 /* ----- 냉장고 종류 선택 게이트 + 메인 인터랙티브 냉장고 ----- */
-function typeCardHTML(t){ return `<button class="tg-card" data-t="${t.id}"><span class="tg-ill"><img src="fridges/${t.id}.png" alt="${t.ko}" loading="lazy"></span><span class="tg-ko">${t.ko}</span><span class="tg-en">${t.en}</span></button>`; }
+function typeCardHTML(t){ return `<button class="tg-card" data-t="${t.id}"><span class="tg-ill"><img src="fridges/${t.id}.png" alt="${t.ko}" loading="lazy"></span><span class="tg-ko">${t.ko}</span></button>`; }
 function openTypeGate(change){
   const el=$('#typeGate');
   $('#tgGrid').innerHTML=FRIDGE_TYPES.map(typeCardHTML).join('');
