@@ -66,6 +66,8 @@
   .stat.soon b{color:var(--soon-ink)} .stat.exp b{color:var(--expired-ink)}
   .stat span:last-child{font-size:12px; color:var(--ink-soft); font-weight:600}
   .stat.soon span:last-child{color:var(--soon-ink)} .stat.exp span:last-child{color:var(--expired-ink)}
+  .stat{cursor:pointer; transition:transform .1s} .stat:active{transform:scale(.96)}
+  .stat.on{box-shadow:inset 0 0 0 2.6px var(--ink), 2px 2.5px 0 rgba(43,52,80,.16)}
 
   main{flex:1; padding:10px 22px 130px}
 
@@ -433,7 +435,7 @@
     <div class="field"><label>구매일 (선택)</label><input id="f_buy" type="date"/></div>
     <div class="field"><label>유통기한</label><input id="f_exp" type="date"/></div>
   </div>
-  <p class="exp-hint">재료에 맞춰 일반적인 보관 기간으로 자동 추정돼요. 직접 바꿔도 괜찮아요.</p>
+  <p class="exp-hint">재료와 보관 위치에 맞춰 자동 추정돼요. 냉동실은 더 길게 잡아드려요. 직접 바꿔도 괜찮아요.</p>
   <div class="field"><label>메모 (선택)</label><input id="f_memo" placeholder="예: 개봉함 / 요리용" autocomplete="off"/></div>
   <button class="save" id="saveItem">담기</button>
   <button class="del2" id="delItem" style="display:none">이 재료 버리기</button>
@@ -553,7 +555,8 @@ function matchEmoji(name){ const s=(name||'').toLowerCase(); for(const [keys,e] 
 function emojiFor(x){ return matchEmoji(x.name) || CAT_EMOJI[x.cat] || '🍽️'; }
 function foodEmoji(name){ return matchEmoji(name) || '🍳'; }
 function addDays(base,n){ const d=new Date(base+'T00:00:00'); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10); }
-function autoExp(){ if(editingId||expTouched) return; const base=$('#f_buy').value||todayStr(); $('#f_exp').value=addDays(base, shelfDays($('#f_name').value,$('#f_cat').value)); }
+function freezeExtend(days){ return Math.min(365, Math.max(90, Math.round(days*15))); }
+function autoExp(){ if(editingId||expTouched) return; const base=$('#f_buy').value||todayStr(); let days=shelfDays($('#f_name').value,$('#f_cat').value); if(pickedZone==='freeze') days=freezeExtend(days); $('#f_exp').value=addDays(base, days); }
 const CAT_KW=[
   ['유제품',['우유','치즈','버터','요거트','요구르트','생크림','휘핑','milk','cheese','butter','yogurt']],
   ['계란',['계란','달걀','에그','메추리알','egg']],
@@ -569,7 +572,7 @@ const CAT_KW=[
 function autoCat(name){ const s=(name||'').toLowerCase(); for(const [cat,keys] of CAT_KW){ for(const k of keys){ if(s.includes(k)) return cat; } } return ''; }
 
 let items=[], shop=[], me='', tab='fridge', viewMode='list';
-let filterZone='all', filterCat='', sortBy='exp', query='', editingId=null, pickedZone='cold', pendingPhoto='', expTouched=false, catTouched=false;
+let filterZone='all', filterCat='', filterState='all', sortBy='exp', query='', editingId=null, pickedZone='cold', pendingPhoto='', expTouched=false, catTouched=false;
 
 const $=s=>document.querySelector(s);
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
@@ -588,7 +591,8 @@ const ICN={
   fridge:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="3.5"/><path d="M5 10h14M9 5v2M9 13v3"/></svg>',
   people:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.3 2.9-5 6.5-5s6.5 1.7 6.5 5"/><path d="M16 5.5a3 3 0 0 1 0 5.8M21.5 20c0-2.6-1.7-4.2-4-4.7"/></svg>'
 };
-function renderStats(){ const {soon,exp}=counts(); $('#stats').innerHTML=`<div class="stat">${ICN.box}<b>${items.length}</b><span>전체 재료</span></div><div class="stat soon">${ICN.clock}<b>${soon.length}</b><span>곧 먹어요</span></div><div class="stat exp">${ICN.warn}<b>${exp.length}</b><span>지났어요</span></div>`; }
+function renderStats(){ const {soon,exp}=counts(); const t=(k,cls,ic,val,lbl)=>`<button class="stat ${cls} ${filterState===k?'on':''}" data-st="${k}">${ic}<b>${val}</b><span>${lbl}</span></button>`; $('#stats').innerHTML=t('all','',ICN.box,items.length,'전체 재료')+t('soon','soon',ICN.clock,soon.length,'곧 먹어요')+t('exp','exp',ICN.warn,exp.length,'지났어요'); $('#stats').querySelectorAll('[data-st]').forEach(b=>b.onclick=()=>onStatClick(b.dataset.st)); }
+function onStatClick(k){ filterState=(k!=='all'&&filterState===k)?'all':k; filterZone='all'; filterCat=''; sortBy='exp'; const sel=$('#sort'); if(sel) sel.value='exp'; if(viewMode!=='list') setView('list'); renderStats(); renderCatGrid(); renderFilters(); renderList(); const el=$('#listWrap'); if(el){ const hd=document.querySelector('header'); const off=(hd?hd.offsetHeight:80)+12; const y=el.getBoundingClientRect().top+window.scrollY-off; window.scrollTo({top:Math.max(0,y),behavior:'smooth'}); } }
 function renderBanner(){ const {soon,exp}=counts(); const el=$('#alertBanner'); if(!soon.length&&!exp.length){el.innerHTML='';return;} const names=[...exp,...soon].slice(0,2).map(x=>x.name); const more=(soon.length+exp.length)-names.length; const txt=exp.length?`${names.join(', ')}${more>0?` 외 ${more}개`:''}, 유통기한을 확인해 주세요`:`${names.join(', ')}${more>0?` 외 ${more}개`:''}, 곧 먹어야 해요`;
   el.innerHTML=`<div class="banner ${exp.length?'hasexp':''}"><span class="bi">${exp.length?ICN.warn:ICN.clock}</span><span class="bt">${txt}</span><button class="bg" id="bannerGo">먼저 보기</button></div>`;
   $('#bannerGo').onclick=()=>{ if(viewMode!=='list') setView('list'); $('#sort').value='exp'; sortBy='exp'; filterZone='all'; renderFilters(); renderList(); window.scrollTo({top:0,behavior:'smooth'}); };
@@ -597,12 +601,13 @@ function renderFilters(){ const c={all:items.length}; ZONES.forEach(z=>c[z.id]=i
 
 function renderList(){
   let list=items.filter(x=>(filterZone==='all'||x.zone===filterZone)&&(!filterCat||(x.cat||'기타')===filterCat));
+  if(filterState!=='all'){ list=list.filter(x=>{ const d=daysLeft(x.exp); if(filterState==='soon') return d!==null&&d>=0&&d<=3; if(filterState==='exp') return d!==null&&d<0; return true; }); }
   if(query) list=list.filter(x=>x.name.toLowerCase().includes(query));
   list.sort((a,b)=>{ if(sortBy==='name') return a.name.localeCompare(b.name,'ko'); if(sortBy==='new') return (b.added||0)-(a.added||0); const da=daysLeft(a.exp),db=daysLeft(b.exp); if(da===null&&db===null) return 0; if(da===null) return 1; if(db===null) return -1; return da-db; });
   $('#listCount').textContent=list.length?`${list.length}개`:'';
   const lt=$('#listTitle'); if(lt) lt.style.display=list.length?'block':'none';
   const grid=$('#grid');
-  if(!list.length){ const filtering=query||filterCat||filterZone!=='all'; grid.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="ic">🧺</div><b>${filtering?'해당하는 재료가 없어요':'아직 냉장고가 비어 있어요'}</b><span>${filtering?'다른 조건으로 찾아보세요':'가운데 + 버튼으로 재료를 넣어보세요'}</span></div>`; return; }
+  if(!list.length){ const filtering=query||filterCat||filterZone!=='all'||filterState!=='all'; grid.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="ic">🧺</div><b>${filtering?'해당하는 재료가 없어요':'아직 냉장고가 비어 있어요'}</b><span>${filtering?'다른 조건으로 찾아보세요':'가운데 + 버튼으로 재료를 넣어보세요'}</span></div>`; return; }
   grid.innerHTML=list.map(x=>{
     const d=daysLeft(x.exp), st=state(d), stc=st==='none'?'ok':st;
     let dd=''; if(d===null){dd='기한 없음';} else if(d<0){dd=`${-d}일 지남`;} else if(d===0){dd='오늘까지';} else {dd=`${d}일 남음`;}
@@ -687,7 +692,7 @@ async function getRecipes(){
     const text=(data.text||'').replace(/```json|```/g,'').trim();
     lastRecipes=JSON.parse(text);
     renderRecipes(); recipesLoaded=true;
-  }catch(e){ console.warn(e); $('#recipeOut').innerHTML=`<div class="empty"><div class="ic">😢</div><b>추천을 불러오지 못했어요</b><span>레시피 AI(Ollama)가 준비 중이거나 응답 형식이 어긋났어요. 잠시 후 다시 시도해 주세요.</span></div>`; }
+  }catch(e){ console.warn(e); $('#recipeOut').innerHTML=`<div class="empty"><div class="ic">😢</div><b>추천을 불러오지 못했어요</b><span>레시피 AI가 잠시 바쁘거나 응답 형식이 어긋났어요. 잠시 후 다시 시도해 주세요.</span></div>`; }
   btn.disabled=false; btn.innerHTML=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 3v7a3 3 0 0 0 6 0V3M7 3v18M17 3c-1.5 0-3 1.5-3 5s1.5 4 3 4v9"/></svg>${recipesLoaded?'다시 추천받기':'지금 재료로 추천받기'}`;
 }
 function inShop(name){ return shop.some(s=>s.text.trim()===(name||'').trim()); }
@@ -725,7 +730,7 @@ function showSheet(id){ $('#scrim').classList.add('show'); $(id).classList.add('
 function hideSheets(){ $('#scrim').classList.remove('show'); document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('show')); }
 $('#scrim').onclick=hideSheets;
 
-function renderZoneSeg(){ $('#zoneSeg').innerHTML=ZONES.map(z=>`<button class="seg" data-zs="${z.id}" style="${pickedZone===z.id?`background:${z.c};color:#fff`:''}">${z.label}</button>`).join(''); $('#zoneSeg').querySelectorAll('[data-zs]').forEach(b=>b.onclick=()=>{pickedZone=b.dataset.zs;renderZoneSeg();}); }
+function renderZoneSeg(){ $('#zoneSeg').innerHTML=ZONES.map(z=>`<button class="seg" data-zs="${z.id}" style="${pickedZone===z.id?`background:${z.c};color:#fff`:''}">${z.label}</button>`).join(''); $('#zoneSeg').querySelectorAll('[data-zs]').forEach(b=>b.onclick=()=>{pickedZone=b.dataset.zs;renderZoneSeg();autoExp();}); }
 function renderMediaPreview(){ const btn=$('#photoBtn'); if(pendingPhoto){ btn.innerHTML=`<img src="${pendingPhoto}" alt="">`; } else { const n=$('#f_name').value, c=$('#f_cat').value; btn.innerHTML=`<span id="emojiPrev">${matchEmoji(n)||CAT_EMOJI[c]||'🍽️'}</span>`; } }
 function openItem(id, prefill){
   editingId=id; const it=id?items.find(x=>x.id===id):null;
