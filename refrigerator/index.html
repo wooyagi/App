@@ -699,7 +699,7 @@ const EMOJI=[
   [['우유','milk'],'🥛'],[['계란','달걀','에그','egg'],'🥚'],[['치즈','cheese'],'🧀'],[['버터','butter'],'🧈'],[['요거트','요구르트','yogurt'],'🥛'],
   [['소고기','쇠고기','한우','스테이크','beef'],'🥩'],[['삼겹','베이컨','돼지','목살','pork','bacon'],'🥓'],[['닭','치킨','chicken'],'🍗'],[['소시지','소세지','핫도그','sausage'],'🌭'],[['햄','ham'],'🍖'],[['고기','육류'],'🍖'],
   [['새우','shrimp'],'🦐'],[['오징어','squid'],'🦑'],[['게','대게','꽃게','crab'],'🦀'],[['조개','굴','clam','oyster'],'🦪'],[['문어','octopus'],'🐙'],[['생선','고등어','갈치','연어','참치','salmon','tuna','fish'],'🐟'],
-  [['시금치','상추','양상추','배추','쌈','나물','채소','lettuce','spinach'],'🥬'],[['당근','carrot'],'🥕'],[['양파','onion'],'🧅'],[['마늘','garlic'],'🧄'],[['감자','potato'],'🥔'],[['고구마'],'🍠'],[['토마토','tomato'],'🍅'],[['오이','cucumber'],'🥒'],[['브로콜리','broccoli'],'🥦'],[['버섯','mushroom'],'🍄'],[['옥수수','corn'],'🌽'],[['고추','파프리카','피망','pepper','chili'],'🌶️'],[['가지','eggplant'],'🍆'],[['호박','pumpkin'],'🎃'],[['파','대파','쪽파'],'🥬'],[['두부','콩','tofu','bean'],'🫘'],[['아보카도','avocado'],'🥑'],
+  [['시금치','상추','양상추','배추','쌈','채소','lettuce','spinach'],'🥬'],[['당근','carrot'],'🥕'],[['양파','onion'],'🧅'],[['마늘','garlic'],'🧄'],[['감자','potato'],'🥔'],[['고구마'],'🍠'],[['토마토','tomato'],'🍅'],[['오이','cucumber'],'🥒'],[['브로콜리','broccoli'],'🥦'],[['버섯','mushroom'],'🍄'],[['옥수수','corn'],'🌽'],[['고추','파프리카','피망','pepper','chili'],'🌶️'],[['가지','eggplant'],'🍆'],[['호박','pumpkin'],'🎃'],[['파','대파','쪽파'],'🥬'],[['두부','콩','tofu','bean'],'🫘'],[['아보카도','avocado'],'🥑'],
   [['사과','apple'],'🍎'],[['바나나','banana'],'🍌'],[['딸기','strawberry'],'🍓'],[['포도','grape'],'🍇'],[['수박','watermelon'],'🍉'],[['참외','멜론','melon'],'🍈'],[['오렌지','귤','orange'],'🍊'],[['레몬','lemon'],'🍋'],[['복숭아','peach'],'🍑'],[['배','pear'],'🍐'],[['체리','cherry'],'🍒'],[['키위','kiwi'],'🥝'],[['파인애플','pineapple'],'🍍'],[['망고','mango'],'🥭'],[['블루베리','베리','berry'],'🫐'],[['코코넛','coconut'],'🥥'],
   [['밥','쌀','rice'],'🍚'],[['빵','토스트','베이글','bread'],'🍞'],[['라면','ramen'],'🍜'],[['국수','면','파스타','스파게티','pasta','noodle'],'🍝'],[['만두','교자','dumpling'],'🥟'],[['김밥','초밥','스시','sushi'],'🍣'],[['피자','pizza'],'🍕'],[['버거','햄버거','burger'],'🍔'],[['샐러드','salad'],'🥗'],[['국','찌개','탕','수프','스프','soup'],'🍲'],[['떡'],'🍡'],[['시리얼','cereal'],'🥣'],
   [['소금','salt'],'🧂'],[['간장','된장','고추장','소스','케찹','케첩','마요','sauce'],'🥫'],[['기름','오일','참기름','올리브','oil'],'🫒'],[['설탕','꿀','잼','시럽','honey','jam','sugar'],'🍯'],
@@ -721,14 +721,19 @@ const SHELF=[
 const CAT_SHELF={채소:7,과일:7,육류:3,수산:2,유제품:10,계란:21,음료:30,반찬:5,양념:365,냉동식품:180,기타:14};
 function shelfDays(name,cat){ const s=(name||'').toLowerCase(); for(const [keys,d] of SHELF){ for(const k of keys){ if(s.includes(k)) return d; } } return CAT_SHELF[cat]||14; }
 const zoneOf=id=>ZONES.find(z=>z.id===id)||ZONES[0];
-function matchEmoji(name){ const s=(name||'').toLowerCase(); for(const [keys,e] of EMOJI){ for(const k of keys){ if(s.includes(k)) return e; } } return ''; }
+let EMOJI_FLAT=null;
+function emojiFlat(){ if(EMOJI_FLAT) return EMOJI_FLAT; const a=[]; for(const [keys,e] of EMOJI){ for(const k of keys){ a.push([String(k).toLowerCase(),e]); } } a.sort((x,y)=>y[0].length-x[0].length); EMOJI_FLAT=a; return a; }
+/* 정확도 개선: ①이름과 정확히 일치하는 키 우선 ②그다음 2글자 이상 키만 부분일치(긴 키 우선).
+   한 글자 키(파·콩·배 등)는 정확히 일치할 때만 매칭 → 파인애플→🍍, 콩나물·용과·아몬드는 이모지 없음→이미지로. */
+function matchEmoji(name){ const s=(name||'').toLowerCase().trim(); if(!s) return ''; const F=emojiFlat(); for(const [k,e] of F){ if(k===s) return e; } for(const [k,e] of F){ if(k.length>=2 && s.includes(k)) return e; } return ''; }
 let emojiCache={}; try{ emojiCache=JSON.parse(localStorage.getItem('emojiCache')||'{}'); }catch(e){}
 const emojiPending={};
 function emojiFor(x){ return matchEmoji(x.name) || x.emoji || emojiCache[x.name] || CAT_EMOJI[x.cat] || '🍽️'; }
 /* ----- 재료 실제 이미지 아이콘 (위키백과에서 찾기, 키 불필요) ----- */
 let iconCache={}; try{ iconCache=JSON.parse(localStorage.getItem('iconCache')||'{}'); }catch(e){}
 const iconPending={};
-function faceSrc(x){ return (x&&(x.photo||x.icon||iconCache[x.name]))||''; }
+/* 우선순위: 내 사진 > 잘 맞는 이모지 > 찾은 이미지 > 폴백 이모지 */
+function faceSrc(x){ if(!x) return ''; if(x.photo) return x.photo; if(matchEmoji(x.name)) return ''; return x.icon||iconCache[x.name]||''; }
 function faceHTML(x){ const s=faceSrc(x); return s?`<img src="${esc(s)}" alt="" loading="lazy">`:emojiFor(x); }
 async function findIcon(name){
   const q=(name||'').trim(); if(!q) return '';
@@ -743,6 +748,7 @@ async function findIcon(name){
 async function ensureIcon(x){
   if(!x||x.photo||x.icon) return;
   const nm=x.name; if(!nm) return;
+  if(matchEmoji(nm)) return;   // 잘 맞는 이모지가 있으면 이미지 불필요
   const c=iconCache[nm];
   if(c!==undefined){ if(c){ x.icon=c; dbSaveItem&&dbSaveItem(x); } else ensureAiEmoji(x); return; }
   if(iconPending[nm]) return; iconPending[nm]=1;
@@ -913,6 +919,19 @@ $('#ingPick').addEventListener('click',e=>{
   if(e.target.closest('#ingAll')){ const names=ingNames(); selIng=(selIng.size===names.length)?new Set():new Set(names); renderIngPick(); }
 });
 const DIFF_META={'간단':{e:'⚡',t:'간단하게 뚝딱',bg:'var(--fresh-bg)',fg:'var(--sage-deep)'},'보통':{e:'🍳',t:'적당히 손이 가는',bg:'var(--soon-bg)',fg:'#b07d2e'},'복잡':{e:'👩‍🍳',t:'제대로 차리는',bg:'var(--expired-bg)',fg:'#b85c4c'}};
+/* 추천 요리가 유튜브에 실제 있는지 확인 → 없는 건 제외, 있으면 영상 id 부착 */
+async function ytVerify(recipes){
+  if(!Array.isArray(recipes)||!recipes.length) return recipes||[];
+  try{
+    const r=await fetch(API+'/api/ytsearch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({names:recipes.map(x=>x.name)})});
+    if(!r.ok) return recipes;
+    const j=await r.json(); const map={};
+    (j.results||[]).forEach(x=>{ if(x&&x.name) map[x.name]=x; });
+    const kept=[];
+    recipes.forEach(x=>{ const m=map[x.name]; if(m&&m.ok===false) return; if(m&&m.videoId) x.videoId=m.videoId; kept.push(x); });
+    return kept.length?kept:recipes;   // 전부 걸러지면 원본 유지(과필터 방지)
+  }catch(e){ return recipes; }
+}
 async function getRecipes(){
   if(!items.length){ $('#recipeOut').innerHTML=`<div class="empty"><div class="ic">🍳</div><b>냉장고가 비었어요</b><span>재료를 먼저 담아주세요</span></div>`; return; }
   if(selIng===null) renderIngPick();
@@ -933,7 +952,9 @@ async function getRecipes(){
     const data=await res.json();
     if(data.error) throw new Error(data.error);
     const text=(data.text||'').replace(/```json|```/g,'').trim();
-    lastRecipes=JSON.parse(text);
+    let parsed=JSON.parse(text);
+    parsed=await ytVerify(parsed);
+    lastRecipes=parsed;
     renderRecipes(); recipesLoaded=true;
   }catch(e){ console.warn(e); $('#recipeOut').innerHTML=`<div class="empty"><div class="ic">😢</div><b>추천을 불러오지 못했어요</b><span>레시피 AI가 잠시 바쁘거나 응답 형식이 어긋났어요. 잠시 후 다시 시도해 주세요.</span></div>`; }
   btn.disabled=false; btn.innerHTML=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 3v7a3 3 0 0 0 6 0V3M7 3v18M17 3c-1.5 0-3 1.5-3 5s1.5 4 3 4v9"/></svg>${recipesLoaded?'다시 추천받기':'고른 재료로 추천받기'}`;
@@ -963,7 +984,7 @@ function renderRecipes(){
 function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),1800); }
 $('#recipeOut').addEventListener('click',e=>{
   const yt=e.target.closest('[data-yt]');
-  if(yt){ const r=lastRecipes[Number(yt.dataset.yt)]; const q=encodeURIComponent(((r&&r.name)||'')+' 레시피'); window.open('https://www.youtube.com/results?search_query='+q,'_blank','noopener'); return; }
+  if(yt){ const r=lastRecipes[Number(yt.dataset.yt)]; const url=(r&&r.videoId)?('https://www.youtube.com/watch?v='+r.videoId):('https://www.youtube.com/results?search_query='+encodeURIComponent(((r&&r.name)||'')+' 레시피')); window.open(url,'_blank','noopener'); return; }
   const ck=e.target.closest('[data-cook]');
   if(ck){ openCook(lastRecipes[Number(ck.dataset.cook)]); return; }
   const one=e.target.closest('[data-add]'), all=e.target.closest('[data-addall]');
@@ -1059,9 +1080,11 @@ function renderMediaPreview(){
   const btn=$('#photoBtn');
   if(pendingPhoto){ btn.innerHTML=`<img src="${pendingPhoto}" alt="">`; return; }
   const n=($('#f_name').value||'').trim(), c=$('#f_cat').value;
+  const em=matchEmoji(n);
+  if(em){ btn.innerHTML=`<span id="emojiPrev">${em}</span>`; return; }
   const cached=iconCache[n];
   if(n&&cached){ btn.innerHTML=`<img src="${esc(cached)}" alt="">`; return; }
-  btn.innerHTML=`<span id="emojiPrev">${matchEmoji(n)||CAT_EMOJI[c]||'🍽️'}</span>`;
+  btn.innerHTML=`<span id="emojiPrev">${CAT_EMOJI[c]||'🍽️'}</span>`;
   if(n&&cached===undefined){
     clearTimeout(_iconPrevT);
     _iconPrevT=setTimeout(async()=>{ if(($('#f_name').value||'').trim()!==n) return; const src=await findIcon(n); iconCache[n]=src||''; try{localStorage.setItem('iconCache',JSON.stringify(iconCache))}catch(_){}; if(($('#f_name').value||'').trim()===n&&!pendingPhoto) renderMediaPreview(); },600);
