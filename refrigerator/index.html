@@ -758,7 +758,7 @@ function openTypeGate(change){
   const el=$('#typeGate');
   $('#tgGrid').innerHTML=FRIDGE_TYPES.map(typeCardHTML).join('');
   $('#tgSkip').style.display=change?'block':'none';
-  el.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{ setFridgeType(b.dataset.t); el.classList.remove('show'); heroOpen=''; renderAll(); toast('냉장고 종류를 설정했어요'); if(!localStorage.getItem('tut:seen')) setTimeout(openTut,450); });
+  el.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{ setFridgeType(b.dataset.t); heroOpen=''; renderAll(); if(!localStorage.getItem('tut:seen')){ openTut(); el.classList.remove('show'); } else { el.classList.remove('show'); toast('냉장고 종류를 설정했어요'); } });
   el.classList.add('show');
 }
 $('#tgSkip').onclick=()=>$('#typeGate').classList.remove('show');
@@ -910,7 +910,7 @@ function refreshWho(){ $('#whoName').textContent=me||'이름'; $('#whoAv').textC
 $('#whoBtn').onclick=()=>{ $('#nameInput').value=me; showSheet('#nameSheet'); setTimeout(()=>$('#nameInput').focus(),280); };
 $('#saveName').onclick=async()=>{ const n=$('#nameInput').value.trim(); if(!n)return; me=n; await kv.set(K_NAME,n,false); refreshWho(); hideSheets(); if(!curSpace){ await initSpaces(); await setSpace(curSpace); } if(!fridgeType()) setTimeout(()=>openTypeGate(false),250); };
 function openNameGate(){ $('#ngName').value=me||''; $('#nameGate').classList.add('show'); setTimeout(()=>$('#ngName').focus(),350); }
-$('#ngForm').addEventListener('submit',async(e)=>{ e.preventDefault(); const n=$('#ngName').value.trim(); if(!n){ $('#ngName').focus(); return; } me=n; await kv.set(K_NAME,n,false); refreshWho(); $('#nameGate').classList.remove('show'); if(!curSpace){ await initSpaces(); await setSpace(curSpace); } if(!fridgeType()) openTypeGate(false); });
+$('#ngForm').addEventListener('submit',async(e)=>{ e.preventDefault(); const n=$('#ngName').value.trim(); if(!n){ $('#ngName').focus(); return; } me=n; await kv.set(K_NAME,n,false); refreshWho(); if(!curSpace){ await initSpaces(); await setSpace(curSpace); } if(!fridgeType()){ openTypeGate(false); } $('#nameGate').classList.remove('show'); });
 
 /* ---------- 공간(냉장고) 전환 UI ---------- */
 function renderSpaceBar(){
@@ -988,7 +988,7 @@ function renderCatGrid(){
 }
 function renderAll(){ renderStats(); renderBanner(); renderHero(); renderCatGrid(); renderFilters(); renderList(); if(viewMode==='fridge')renderFridge(); renderShop(); }
 async function syncFromShared(){ if(document.querySelector('.sheet.show')) return; const ni=await dbLoadItems(), ns=await dbLoadShop(); if(JSON.stringify(ni)!==JSON.stringify(items)||JSON.stringify(ns)!==JSON.stringify(shop)){ items=ni; shop=ns; renderAll(); } }
-(async()=>{ $('#f_cat').innerHTML=CATS.map(c=>`<option>${c}</option>`).join(''); await loadAll(); refreshWho(); renderAll(); if(!me){ openNameGate(); } else if(!fridgeType()){ setTimeout(()=>openTypeGate(false),300); } setInterval(syncFromShared,8000); document.addEventListener('visibilitychange',()=>{ if(!document.hidden) syncFromShared(); }); })();
+(async()=>{ $('#f_cat').innerHTML=CATS.map(c=>`<option>${c}</option>`).join(''); await loadAll(); refreshWho(); renderAll(); if(!me){ openNameGate(); } else if(!fridgeType()){ openTypeGate(false); } setInterval(syncFromShared,8000); document.addEventListener('visibilitychange',()=>{ if(!document.hidden) syncFromShared(); }); })();
 </script>
 <script>
 /* PWA: 서비스워커 등록 (홈 화면 설치·앱처럼 실행) */
