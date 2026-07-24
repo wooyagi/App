@@ -320,8 +320,9 @@
   .fz-empty{padding:4px 16px 17px; color:var(--ink-faint); font-size:13px; font-weight:600}
 
   /* ===== 첨부 이미지 사용: 종류 카드 + 메인 냉장고 사진 ===== */
-  .tg-card{padding:9px; gap:0}
-  .tg-card img{width:100%; height:auto; display:block; border-radius:12px}
+  .tg-card{padding:14px 10px 15px; gap:7px}
+  .tg-ill{height:104px; display:grid; place-items:center}
+  .tg-ill img{max-width:100%; max-height:104px; width:auto; height:auto; display:block}
   .fz-photo{position:relative; width:100%; max-width:340px; margin:2px auto 0}
   .fz-photo>img{width:100%; height:auto; display:block}
   .fz-hot{position:absolute; transform:translate(-50%,-50%); display:inline-flex; align-items:center; gap:6px; background:var(--card); border:2px solid var(--ink); border-radius:999px; padding:6px 12px; font-family:var(--serif); font-weight:700; font-size:15px; color:var(--ink); box-shadow:2px 2.5px 0 rgba(43,52,80,.22); white-space:nowrap; z-index:2}
@@ -350,11 +351,11 @@
         <span class="sb-caret">▾</span>
       </button>
     </div>
-    <div class="stats" id="stats"></div>
   </header>
 
   <main>
     <section id="tab-fridge">
+      <div class="stats" id="stats"></div>
       <div id="alertBanner"></div>
       <div class="recipe-cta" id="recipeCta">
         <span class="rc-emoji">🍳</span>
@@ -509,11 +510,10 @@ const ZONES=[{id:'cold',label:'냉장실',c:'var(--z-cold)'},{id:'freeze',label:
 const CATS=['채소','과일','육류','수산','유제품','계란','음료','반찬','양념','냉동식품','기타'];
 /* ----- 냉장고 종류 (실제 냉장고처럼 보여주기) ----- */
 const FRIDGE_TYPES=[
-  {id:'top',ko:'상부 냉동형',en:'Top Freezer',chips:{freeze:'top:20%;left:40%',cold:'top:48%;left:40%'}},
-  {id:'bottom',ko:'하부 냉동형',en:'Bottom Freezer',chips:{cold:'top:24%;left:38%',freeze:'top:56%;left:45%'}},
-  {id:'sbs',ko:'좌우 분리형',en:'Side-by-Side',chips:{freeze:'top:40%;left:26%',cold:'top:40%;left:60%'}},
-  {id:'french',ko:'4도어형',en:'French Door',chips:{cold:'top:24%;left:50%',freeze:'top:52%;left:48%'}},
-  {id:'compact',ko:'소형',en:'Compact',chips:{freeze:'top:24%;left:36%',cold:'top:50%;left:36%'}},
+  {id:'top',ko:'상부 냉동형',en:'Top Freezer',chips:{freeze:'top:24%;left:34%',cold:'top:66%;left:34%'}},
+  {id:'bottom',ko:'하부 냉동형',en:'Bottom Freezer',chips:{cold:'top:30%;left:38%',freeze:'top:76%;left:44%'}},
+  {id:'sbs',ko:'좌우 분리형',en:'Side-by-Side',chips:{freeze:'top:48%;left:25%',cold:'top:48%;left:58%'}},
+  {id:'french',ko:'4도어형',en:'French Door',chips:{cold:'top:28%;left:50%',freeze:'top:74%;left:48%'}},
 ];
 let heroOpen='';
 const fridgeType=()=> (curSpace?localStorage.getItem('ftype:'+curSid()):'')||'';
@@ -631,7 +631,7 @@ function setView(v){ viewMode=v; $('#viewSeg').querySelectorAll('button').forEac
 $('#viewSeg').querySelectorAll('button').forEach(b=>b.onclick=()=>setView(b.dataset.v));
 
 /* ----- 냉장고 종류 선택 게이트 + 메인 인터랙티브 냉장고 ----- */
-function typeCardHTML(t){ return `<button class="tg-card" data-t="${t.id}"><img src="fridges/${t.id}.png" alt="${t.ko}" loading="lazy"></button>`; }
+function typeCardHTML(t){ return `<button class="tg-card" data-t="${t.id}"><span class="tg-ill"><img src="fridges/${t.id}.png" alt="${t.ko}" loading="lazy"></span><span class="tg-ko">${t.ko}</span><span class="tg-en">${t.en}</span></button>`; }
 function openTypeGate(change){
   const el=$('#typeGate');
   $('#tgGrid').innerHTML=FRIDGE_TYPES.map(typeCardHTML).join('');
