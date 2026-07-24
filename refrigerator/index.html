@@ -258,7 +258,7 @@
   @media(min-width:560px){ .sheet{bottom:auto; top:50%; border-radius:28px; transform:translate(-50%,-46%) scale(.97); opacity:0} }
   .sheet.show{transform:translate(-50%,0)}
   @media(min-width:560px){ .sheet.show{transform:translate(-50%,-50%) scale(1); opacity:1} }
-  .grab{width:40px;height:5px;border-radius:3px;background:var(--line);margin:8px auto 8px}
+  .grab{width:46px;height:5px;border-radius:3px;background:var(--ink-faint);opacity:.55;margin:2px auto 10px;padding:8px 40px;background-clip:content-box;box-sizing:content-box;touch-action:none;cursor:grab}
   @media(min-width:560px){ .grab{display:none} }
   .sheet h2{font-family:var(--serif); font-size:24px; font-weight:800; margin:10px 2px 20px; letter-spacing:-.025em}
   .media-row{display:flex; gap:15px; align-items:center; margin-bottom:20px}
@@ -1057,6 +1057,47 @@ $('#cookCancel').onclick=hideSheets;
 function showSheet(id){ $('#scrim').classList.add('show'); $(id).classList.add('show'); }
 function hideSheets(){ $('#scrim').classList.remove('show'); document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('show')); }
 $('#scrim').onclick=hideSheets;
+/* 바텀시트: 아래로 스와이프해서 닫기 (모바일) */
+(function sheetSwipe(){
+  document.querySelectorAll('.sheet').forEach(el=>{
+    let startY=0, dy=0, dragging=false, grab=false;
+    const scrim=()=>document.getElementById('scrim');
+    el.addEventListener('touchstart',e=>{
+      if(window.innerWidth>=560) return;               // 데스크톱은 가운데 모달 → 제외
+      const t=e.touches[0]; startY=t.clientY; dy=0;
+      grab=!!(e.target.closest&&e.target.closest('.grab'));
+      dragging = grab || el.scrollTop<=0;               // 손잡이에서 시작하거나 맨 위일 때만
+    },{passive:true});
+    el.addEventListener('touchmove',e=>{
+      if(!dragging) return;
+      dy=e.touches[0].clientY-startY;
+      if(dy<=0){ dy=0; el.style.transition='none'; el.style.transform=''; return; }
+      e.preventDefault();                                // 시트를 끌 땐 내부 스크롤 막기
+      el.style.transition='none';
+      el.style.transform='translate(-50%,'+dy+'px)';
+      const s=scrim(); if(s) s.style.opacity=String(Math.max(.12, 1-dy/420));
+    },{passive:false});
+    const end=()=>{
+      if(!dragging){ return; }
+      dragging=false;
+      const s=scrim();
+      if(dy>105){                                        // 충분히 내리면 닫기
+        el.style.transition='transform .25s cubic-bezier(.32,.72,0,1)';
+        el.style.transform='translate(-50%,100%)';
+        if(s){ s.style.opacity=''; s.classList.remove('show'); }
+        setTimeout(()=>{ el.classList.remove('show'); el.style.transition=''; el.style.transform=''; },240);
+      }else{                                             // 아니면 제자리로
+        el.style.transition='transform .2s cubic-bezier(.32,.72,0,1)';
+        el.style.transform='';
+        if(s) s.style.opacity='';
+        setTimeout(()=>{ el.style.transition=''; },200);
+      }
+      dy=0;
+    };
+    el.addEventListener('touchend',end);
+    el.addEventListener('touchcancel',end);
+  });
+})();
 const TUT=[
   {img:'fridges/welcome.png', t:'냉장고 프로젝트', d:'냉장고 속 재료를 한눈에 관리하고, 남은 재료로 뭘 해먹을지 추천받는 앱이에요. 잠깐만 둘러볼까요?'},
   {e:'➕', t:'재료 담기', d:'아래 가운데 <b>＋ 버튼</b>으로 추가해요. 이름만 적으면 <b>분류·유통기한이 자동</b>으로 채워지고, <b>냉동실</b>을 고르면 기한을 더 길게 잡아드려요.'},
