@@ -406,8 +406,9 @@
   .tg-card{padding:14px 10px 15px; gap:7px}
   .tg-ill{height:104px; display:grid; place-items:center}
   .tg-ill img{max-width:100%; max-height:104px; width:auto; height:auto; display:block}
-  .fz-photo{position:relative; width:100%; max-width:340px; margin:2px auto 0}
+  .fz-photo{position:relative; width:100%; max-width:300px; margin:2px auto 0}
   .fz-photo>img{width:100%; height:auto; display:block}
+  .fz-svg{width:100%; height:auto; display:block; color:var(--ink)}
   .fz-hot{position:absolute; transform:translate(-50%,-50%); display:inline-flex; align-items:center; gap:6px; background:var(--card); border:2px solid var(--ink); border-radius:999px; padding:6px 12px; font-family:var(--serif); font-weight:700; font-size:15px; color:var(--ink); box-shadow:2px 2.5px 0 rgba(43,52,80,.22); white-space:nowrap; z-index:2}
   .fz-hot .n{font-family:var(--font); font-size:11.5px; font-weight:700; background:var(--ink); color:#fff; border-radius:999px; min-width:18px; height:18px; padding:0 5px; display:grid; place-items:center}
   .fz-hot.on{background:var(--ink); color:var(--bg); box-shadow:2px 2.5px 0 rgba(43,52,80,.4)}
@@ -640,10 +641,10 @@ const ZONES=[{id:'cold',label:'냉장실',c:'var(--z-cold)'},{id:'freeze',label:
 const CATS=['채소','과일','육류','수산','유제품','계란','음료','반찬','양념','냉동식품','기타'];
 /* ----- 냉장고 종류 (실제 냉장고처럼 보여주기) ----- */
 const FRIDGE_TYPES=[
-  {id:'top',ko:'상부 냉동형',en:'Top Freezer',box:{freeze:'top:12%;left:11%;width:46%;height:22%',cold:'top:40%;left:11%;width:46%;height:46%'}},
-  {id:'bottom',ko:'하부 냉동형',en:'Bottom Freezer',box:{cold:'top:9%;left:10%;width:56%;height:42%',freeze:'top:62%;left:14%;width:58%;height:26%'}},
-  {id:'sbs',ko:'좌우 분리형',en:'Side-by-Side',box:{cold:'top:11%;left:22%;width:56%;height:33%',freeze:'top:57%;left:22%;width:56%;height:30%'}},
-  {id:'french',ko:'4도어형',en:'French Door',box:{cold:'top:12%;left:25%;width:50%;height:32%',freeze:'top:56%;left:24%;width:52%;height:30%'}},
+  {id:'top',ko:'상부 냉동형',en:'Top Freezer',svg:{split:0.32,twin:false},box:{freeze:'top:8%;left:16%;width:68%;height:22%',cold:'top:35%;left:16%;width:68%;height:52%'}},
+  {id:'bottom',ko:'하부 냉동형',en:'Bottom Freezer',svg:{split:0.66,twin:false},box:{cold:'top:8%;left:16%;width:68%;height:50%',freeze:'top:63%;left:16%;width:68%;height:24%'}},
+  {id:'sbs',ko:'좌우 분리형',en:'Side-by-Side',svg:{split:0.52,twin:true},box:{cold:'top:8%;left:16%;width:68%;height:39%',freeze:'top:53%;left:16%;width:68%;height:34%'}},
+  {id:'french',ko:'4도어형',en:'French Door',svg:{split:0.52,twin:true},box:{cold:'top:8%;left:16%;width:68%;height:39%',freeze:'top:53%;left:16%;width:68%;height:34%'}},
 ];
 let heroOpen='';
 const fridgeType=()=> (curSpace?localStorage.getItem('ftype:'+curSid()):'')||'';
@@ -797,6 +798,19 @@ function shelfHTML(zid){
   if(!its.length) return `<div class="fz-empty">아직 비어 있어요</div>`;
   return `<div class="fz-shelf">${its.map(x=>{ const d=daysLeft(x.exp), st=state(d); const face=x.photo?`<img src="${x.photo}" alt="">`:emojiFor(x); return `<button class="fz-item" data-open="${x.id}"><span class="fz-face ${st==='exp'?'exp':st==='soon'?'soon':''}">${face}</span><span class="fz-nm">${esc(x.name)}</span></button>`; }).join('')}</div>`;
 }
+function fridgeSVG(t){
+  const P=t.svg||{split:0.5,twin:false};
+  const y0=16, y1=252, sy=Math.round(y0+(y1-y0)*P.split);
+  let s=`<svg class="fz-svg" viewBox="0 0 240 292" preserveAspectRatio="xMidYMid meet" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">`;
+  s+=`<rect x="30" y="${y0}" width="180" height="${y1-y0}" rx="22" fill="#fffdf4" stroke-width="3.5"/>`;
+  s+=`<line x1="30" y1="${sy}" x2="210" y2="${sy}" stroke-width="3"/>`;
+  if(P.twin){ s+=`<line x1="120" y1="${y0+10}" x2="120" y2="${sy-10}" stroke-width="2.2" opacity=".6"/><line x1="120" y1="${sy+10}" x2="120" y2="${y1-10}" stroke-width="2.2" opacity=".6"/>`; }
+  s+=`<line x1="197" y1="${y0+16}" x2="197" y2="${y0+42}" stroke-width="4"/>`;
+  s+=`<line x1="197" y1="${sy+14}" x2="197" y2="${sy+40}" stroke-width="4"/>`;
+  s+=`<line x1="52" y1="${y1}" x2="52" y2="${y1+14}" stroke-width="3.5"/><line x1="188" y1="${y1}" x2="188" y2="${y1+14}" stroke-width="3.5"/>`;
+  s+=`</svg>`;
+  return s;
+}
 function renderHero(){
   const host=$('#fridgeHero'); if(!host) return;
   if(!curSpace){ host.innerHTML=''; return; }
@@ -809,7 +823,7 @@ function renderHero(){
   };
   let panel='';
   if(heroOpen){ const z=ZONES.find(z=>z.id===heroOpen); panel=`<div class="fz-panel"><div class="fz-phead">${heroOpen==='freeze'?'❄️':'🧊'} ${z.label} 재료</div>${shelfHTML(heroOpen)}</div>`; }
-  host.innerHTML=`<div class="fz-wrap"><div class="fz-head" style="justify-content:flex-end"><button class="fz-change" id="fzChange">종류 변경</button></div><div class="fz-photo"><img src="fridges/${t.id}.png" alt="${t.ko}">${zone('cold','냉장')}${zone('freeze','냉동')}</div>${panel}</div>`;
+  host.innerHTML=`<div class="fz-wrap"><div class="fz-head"><span class="fz-title">${t.ko}</span><button class="fz-change" id="fzChange">종류 변경</button></div><div class="fz-photo">${fridgeSVG(t)}${zone('cold','냉장')}${zone('freeze','냉동')}</div>${panel}</div>`;
   host.querySelectorAll('.fz-zlbl,.fz-more').forEach(b=>b.onclick=()=>{ const z=b.dataset.zone; heroOpen=heroOpen===z?'':z; renderHero(); });
   host.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>openItem(b.dataset.open));
   $('#fzChange').onclick=()=>openTypeGate(true);
