@@ -353,11 +353,11 @@
   #typeGate.show{display:flex}
   .tg-h{font-family:var(--serif); font-size:30px; font-weight:700; text-align:center; margin:4px 0 22px; color:var(--ink)}
   .tg-sub{text-align:center; color:var(--ink-soft); font-size:14px; margin-bottom:22px; font-weight:500}
-  .tg-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; width:100%; max-width:520px; margin:0 auto}
+  .tg-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; width:100%; max-width:560px; margin:0 auto}
   .tg-card{background:var(--card); border-radius:var(--radius); padding:18px 12px 15px; box-shadow:var(--shadow); display:flex; flex-direction:column; align-items:center; gap:9px; transition:transform .12s}
   .tg-card:active{transform:scale(.95)}
   .tg-card:last-child:nth-child(odd){grid-column:1 / -1}
-  .tg-ill{height:92px; display:grid; place-items:center}
+  .tg-ill{height:138px; display:grid; place-items:center}
   .tg-ko{font-family:var(--serif); font-size:20px; font-weight:700; color:var(--ink)}
   .tg-en{font-size:11.5px; color:var(--ink-soft); font-weight:700; margin-top:-3px; letter-spacing:.02em}
   #tgSkip{display:none; margin:20px auto 0; color:var(--ink-soft); font-size:14px; font-weight:700; padding:10px 22px; background:var(--card); border-radius:999px; box-shadow:var(--shadow)}
@@ -403,10 +403,10 @@
   .fz-empty{padding:4px 16px 17px; color:var(--ink-faint); font-size:13px; font-weight:600}
 
   /* ===== 첨부 이미지 사용: 종류 카드 + 메인 냉장고 사진 ===== */
-  .tg-card{padding:14px 10px 15px; gap:7px}
-  .tg-ill{height:104px; display:grid; place-items:center}
-  .tg-ill img{max-width:100%; max-height:104px; width:auto; height:auto; display:block}
-  .fz-photo{position:relative; width:100%; max-width:300px; margin:2px auto 0}
+  .tg-card{padding:12px 9px 13px; gap:5px}
+  .tg-ill{height:138px; display:grid; place-items:center}
+  .tg-ill img{max-width:100%; max-height:138px; width:auto; height:auto; display:block}
+  .fz-photo{position:relative; width:100%; max-width:380px; margin:2px auto 0}
   .fz-photo>img{width:100%; height:auto; display:block}
   .fz-svg{width:100%; height:auto; display:block; color:var(--ink)}
   .fz-hot{position:absolute; transform:translate(-50%,-50%); display:inline-flex; align-items:center; gap:6px; background:var(--card); border:2px solid var(--ink); border-radius:999px; padding:6px 12px; font-family:var(--serif); font-weight:700; font-size:15px; color:var(--ink); box-shadow:2px 2.5px 0 rgba(43,52,80,.22); white-space:nowrap; z-index:2}
@@ -421,12 +421,12 @@
   .fz-zlbl{align-self:flex-start; font-family:var(--serif); font-size:12px; font-weight:700; color:#fff; background:rgba(43,52,80,.82); border-radius:999px; padding:1px 9px; line-height:1.5; box-shadow:0 1px 3px rgba(0,0,0,.25)}
   .fz-zlbl b{font-family:var(--font); font-weight:800; margin-left:2px}
   .fz-zlbl.on{background:var(--sage-deep)}
-  .fz-mags{display:flex; flex-wrap:wrap; gap:4px; align-content:flex-start}
-  .fz-mag{width:29px; height:29px; display:grid; place-items:center; font-size:18px; line-height:1; background:rgba(255,253,244,.94); border:1.5px solid var(--ink); border-radius:9px; overflow:hidden; box-shadow:1px 1.5px 0 rgba(43,52,80,.25)}
-  .fz-mag img{width:100%; height:100%; object-fit:cover}
-  .fz-mag.soon{box-shadow:inset 0 0 0 2px var(--soon), 1px 1.5px 0 rgba(43,52,80,.25)}
-  .fz-mag.exp{box-shadow:inset 0 0 0 2px var(--expired), 1px 1.5px 0 rgba(43,52,80,.25)}
-  .fz-more{min-width:29px; height:29px; padding:0 7px; font-size:12px; font-weight:800; color:var(--ink); background:rgba(255,253,244,.94); border:1.5px solid var(--ink); border-radius:9px}
+  .fz-mags{display:flex; flex-wrap:wrap; gap:5px 3px; align-content:flex-start}
+  .fz-mag{width:34px; height:34px; display:grid; place-items:center; font-size:28px; line-height:1; background:none; border:none; overflow:visible; filter:drop-shadow(1px 1.5px 1px rgba(43,52,80,.3))}
+  .fz-mag img{width:30px; height:30px; object-fit:cover; border-radius:8px}
+  .fz-mag.soon{filter:drop-shadow(0 0 2.5px var(--soon)) drop-shadow(0 0 1.5px var(--soon))}
+  .fz-mag.exp{filter:drop-shadow(0 0 2.5px var(--expired)) drop-shadow(0 0 1.5px var(--expired))}
+  .fz-more{min-width:29px; height:29px; padding:0 7px; font-size:12px; font-weight:800; color:var(--ink); background:rgba(255,253,244,.9); border:1.5px solid var(--ink); border-radius:9px; align-self:flex-start; margin-top:2px}
 </style>
 
 <div class="app">
