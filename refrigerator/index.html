@@ -415,6 +415,17 @@
   .fz-panel{max-width:430px; margin:14px auto 0; background:var(--card); border-radius:18px; box-shadow:var(--shadow); overflow:hidden}
   .fz-phead{display:flex; align-items:center; gap:8px; padding:14px 16px 2px; font-family:var(--serif); font-size:19px; font-weight:700; color:var(--ink)}
   .fz-hint2{text-align:center; color:var(--ink-soft); font-size:13px; font-weight:600; margin:13px 2px 2px}
+  /* 냉장고 그림 위 재료 이모지 오버레이 */
+  .fz-zone{position:absolute; display:flex; flex-direction:column; gap:3px; z-index:2}
+  .fz-zlbl{align-self:flex-start; font-family:var(--serif); font-size:12px; font-weight:700; color:#fff; background:rgba(43,52,80,.82); border-radius:999px; padding:1px 9px; line-height:1.5; box-shadow:0 1px 3px rgba(0,0,0,.25)}
+  .fz-zlbl b{font-family:var(--font); font-weight:800; margin-left:2px}
+  .fz-zlbl.on{background:var(--sage-deep)}
+  .fz-mags{display:flex; flex-wrap:wrap; gap:4px; align-content:flex-start}
+  .fz-mag{width:29px; height:29px; display:grid; place-items:center; font-size:18px; line-height:1; background:rgba(255,253,244,.94); border:1.5px solid var(--ink); border-radius:9px; overflow:hidden; box-shadow:1px 1.5px 0 rgba(43,52,80,.25)}
+  .fz-mag img{width:100%; height:100%; object-fit:cover}
+  .fz-mag.soon{box-shadow:inset 0 0 0 2px var(--soon), 1px 1.5px 0 rgba(43,52,80,.25)}
+  .fz-mag.exp{box-shadow:inset 0 0 0 2px var(--expired), 1px 1.5px 0 rgba(43,52,80,.25)}
+  .fz-more{min-width:29px; height:29px; padding:0 7px; font-size:12px; font-weight:800; color:var(--ink); background:rgba(255,253,244,.94); border:1.5px solid var(--ink); border-radius:9px}
 </style>
 
 <div class="app">
@@ -629,10 +640,10 @@ const ZONES=[{id:'cold',label:'냉장실',c:'var(--z-cold)'},{id:'freeze',label:
 const CATS=['채소','과일','육류','수산','유제품','계란','음료','반찬','양념','냉동식품','기타'];
 /* ----- 냉장고 종류 (실제 냉장고처럼 보여주기) ----- */
 const FRIDGE_TYPES=[
-  {id:'top',ko:'상부 냉동형',en:'Top Freezer',chips:{freeze:'top:24%;left:34%',cold:'top:66%;left:34%'}},
-  {id:'bottom',ko:'하부 냉동형',en:'Bottom Freezer',chips:{cold:'top:30%;left:38%',freeze:'top:76%;left:44%'}},
-  {id:'sbs',ko:'좌우 분리형',en:'Side-by-Side',chips:{cold:'top:30%;left:50%',freeze:'top:72%;left:50%'}},
-  {id:'french',ko:'4도어형',en:'French Door',chips:{cold:'top:28%;left:50%',freeze:'top:74%;left:48%'}},
+  {id:'top',ko:'상부 냉동형',en:'Top Freezer',box:{freeze:'top:12%;left:11%;width:46%;height:22%',cold:'top:40%;left:11%;width:46%;height:46%'}},
+  {id:'bottom',ko:'하부 냉동형',en:'Bottom Freezer',box:{cold:'top:9%;left:10%;width:56%;height:42%',freeze:'top:62%;left:14%;width:58%;height:26%'}},
+  {id:'sbs',ko:'좌우 분리형',en:'Side-by-Side',box:{cold:'top:11%;left:22%;width:56%;height:33%',freeze:'top:57%;left:22%;width:56%;height:30%'}},
+  {id:'french',ko:'4도어형',en:'French Door',box:{cold:'top:12%;left:25%;width:50%;height:32%',freeze:'top:56%;left:24%;width:52%;height:30%'}},
 ];
 let heroOpen='';
 const fridgeType=()=> (curSpace?localStorage.getItem('ftype:'+curSid()):'')||'';
@@ -669,7 +680,26 @@ const CAT_SHELF={채소:7,과일:7,육류:3,수산:2,유제품:10,계란:21,음�
 function shelfDays(name,cat){ const s=(name||'').toLowerCase(); for(const [keys,d] of SHELF){ for(const k of keys){ if(s.includes(k)) return d; } } return CAT_SHELF[cat]||14; }
 const zoneOf=id=>ZONES.find(z=>z.id===id)||ZONES[0];
 function matchEmoji(name){ const s=(name||'').toLowerCase(); for(const [keys,e] of EMOJI){ for(const k of keys){ if(s.includes(k)) return e; } } return ''; }
-function emojiFor(x){ return matchEmoji(x.name) || CAT_EMOJI[x.cat] || '🍽️'; }
+let emojiCache={}; try{ emojiCache=JSON.parse(localStorage.getItem('emojiCache')||'{}'); }catch(e){}
+const emojiPending={};
+function emojiFor(x){ return matchEmoji(x.name) || x.emoji || emojiCache[x.name] || CAT_EMOJI[x.cat] || '🍽️'; }
+async function aiEmoji(name){
+  try{
+    const r=await fetch(API+'/api/emoji',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name})});
+    const j=await r.json(); const e=(j&&j.emoji)||'';
+    emojiCache[name]=e; try{localStorage.setItem('emojiCache',JSON.stringify(emojiCache))}catch(_){}
+    return e;
+  }catch(e){ return ''; }
+}
+async function ensureAiEmoji(x){
+  if(!x||x.emoji||x.photo) return;
+  if(matchEmoji(x.name)) return;                 // 사전에 있으면 그대로
+  const nm=x.name;
+  if(emojiCache[nm]!==undefined){ if(emojiCache[nm]) x.emoji=emojiCache[nm]; return; }
+  if(emojiPending[nm]) return; emojiPending[nm]=1;
+  const e=await aiEmoji(nm);
+  if(e){ items.filter(it=>it.name===nm&&!it.emoji).forEach(it=>{ it.emoji=e; dbSaveItem(it); }); renderStats(); renderList(); renderHero(); }
+}
 function foodEmoji(name){ return matchEmoji(name) || '🍳'; }
 function addDays(base,n){ const d=new Date(base+'T00:00:00'); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10); }
 function freezeExtend(days){ return Math.min(365, Math.max(90, Math.round(days*15))); }
@@ -771,13 +801,16 @@ function renderHero(){
   const host=$('#fridgeHero'); if(!host) return;
   if(!curSpace){ host.innerHTML=''; return; }
   const t=typeMeta(fridgeType()||'top');
-  const cnt=zid=>items.filter(x=>x.zone===zid).length;
-  const hot=(zid,label)=>`<button class="fz-hot ${zid} ${heroOpen===zid?'on':''}" data-zone="${zid}" style="${t.chips[zid]}">${label}<span class="n">${cnt(zid)}</span></button>`;
-  let panel;
+  const CAP=8;
+  const zone=(zid,label)=>{
+    const its=items.filter(x=>x.zone===zid), shown=its.slice(0,CAP), more=its.length-shown.length;
+    const mags=its.length ? shown.map(x=>{ const st=state(daysLeft(x.exp)); const face=x.photo?`<img src="${x.photo}" alt="">`:emojiFor(x); return `<button class="fz-mag ${st==='exp'?'exp':st==='soon'?'soon':''}" data-open="${x.id}">${face}</button>`; }).join('')+(more>0?`<button class="fz-more" data-zone="${zid}">+${more}</button>`:'') : '';
+    return `<div class="fz-zone" style="${t.box[zid]}"><button class="fz-zlbl ${heroOpen===zid?'on':''}" data-zone="${zid}">${label} <b>${its.length}</b></button><div class="fz-mags">${mags}</div></div>`;
+  };
+  let panel='';
   if(heroOpen){ const z=ZONES.find(z=>z.id===heroOpen); panel=`<div class="fz-panel"><div class="fz-phead">${heroOpen==='freeze'?'❄️':'🧊'} ${z.label} 재료</div>${shelfHTML(heroOpen)}</div>`; }
-  else panel=`<div class="fz-hint2">냉장 · 냉동 칸을 눌러 재료를 확인하세요</div>`;
-  host.innerHTML=`<div class="fz-wrap"><div class="fz-head" style="justify-content:flex-end"><button class="fz-change" id="fzChange">종류 변경</button></div><div class="fz-photo"><img src="fridges/${t.id}.png" alt="${t.ko}">${hot('cold','냉장')}${hot('freeze','냉동')}</div>${panel}</div>`;
-  host.querySelectorAll('.fz-hot').forEach(b=>b.onclick=()=>{ const z=b.dataset.zone; heroOpen=heroOpen===z?'':z; renderHero(); });
+  host.innerHTML=`<div class="fz-wrap"><div class="fz-head" style="justify-content:flex-end"><button class="fz-change" id="fzChange">종류 변경</button></div><div class="fz-photo"><img src="fridges/${t.id}.png" alt="${t.ko}">${zone('cold','냉장')}${zone('freeze','냉동')}</div>${panel}</div>`;
+  host.querySelectorAll('.fz-zlbl,.fz-more').forEach(b=>b.onclick=()=>{ const z=b.dataset.zone; heroOpen=heroOpen===z?'':z; renderHero(); });
   host.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>openItem(b.dataset.open));
   $('#fzChange').onclick=()=>openTypeGate(true);
 }
@@ -986,7 +1019,7 @@ function renderCatGrid(){
   el.innerHTML=html;
   el.querySelectorAll('[data-cat]').forEach(b=>b.onclick=()=>{ filterCat=b.dataset.cat; if(viewMode!=='list') setView('list'); renderCatGrid(); renderList(); });
 }
-function renderAll(){ renderStats(); renderBanner(); renderHero(); renderCatGrid(); renderFilters(); renderList(); if(viewMode==='fridge')renderFridge(); renderShop(); }
+function renderAll(){ renderStats(); renderBanner(); renderHero(); renderCatGrid(); renderFilters(); renderList(); if(viewMode==='fridge')renderFridge(); renderShop(); items.forEach(ensureAiEmoji); }
 async function syncFromShared(){ if(document.querySelector('.sheet.show')) return; const ni=await dbLoadItems(), ns=await dbLoadShop(); if(JSON.stringify(ni)!==JSON.stringify(items)||JSON.stringify(ns)!==JSON.stringify(shop)){ items=ni; shop=ns; renderAll(); } }
 (async()=>{ $('#f_cat').innerHTML=CATS.map(c=>`<option>${c}</option>`).join(''); await loadAll(); refreshWho(); renderAll(); if(!me){ openNameGate(); } else if(!fridgeType()){ openTypeGate(false); } setInterval(syncFromShared,8000); document.addEventListener('visibilitychange',()=>{ if(!document.hidden) syncFromShared(); }); })();
 </script>
