@@ -1,6 +1,6 @@
 {
   "name": "냉장고 프로젝트",
-  "short_name": "냉프로",
+  "short_name": "냉프",
   "description": "우리집 냉장고 재료 관리 + 레시피 추천",
   "start_url": "./",
   "scope": "./",
