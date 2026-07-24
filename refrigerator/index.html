@@ -269,6 +269,22 @@
   :focus-visible{outline:2px solid var(--ink); outline-offset:2px}
   @media (prefers-reduced-motion: reduce){ *{transition:none !important; animation:none !important} }
 
+  /* ===== 사용 설명서 ===== */
+  #manual{position:fixed; inset:0; z-index:80; background:var(--bg); background-image:radial-gradient(rgba(43,52,80,.045) 1px,transparent 1.4px); background-size:20px 20px; display:none; flex-direction:column}
+  #manual.show{display:flex}
+  .mn-top{display:flex; align-items:center; justify-content:space-between; padding:calc(env(safe-area-inset-top) + 16px) 20px 12px; background:var(--bg)}
+  .mn-h{font-family:var(--serif); font-size:27px; font-weight:700; color:var(--ink)}
+  .mn-x{width:38px; height:38px; border-radius:50%; background:var(--card); box-shadow:var(--shadow); font-size:15px; color:var(--ink); display:grid; place-items:center; flex:none}
+  .mn-body{flex:1; overflow-y:auto; padding:4px 20px calc(env(safe-area-inset-bottom) + 30px)}
+  .mn-hero{text-align:center; margin:2px 0 20px}
+  .mn-hero img{width:170px; max-width:52%; height:auto; display:inline-block}
+  .mn-hero p{font-size:14px; color:var(--ink-soft); font-weight:500; line-height:1.6; margin:8px auto 0; max-width:320px}
+  .mn-card{display:flex; gap:13px; align-items:flex-start; background:var(--card); border-radius:var(--radius); padding:16px 17px; box-shadow:var(--shadow); margin-bottom:12px}
+  .mn-ic{font-size:28px; line-height:1.15; flex:none; width:38px; text-align:center}
+  .mn-card b{font-family:var(--serif); font-size:19px; font-weight:700; color:var(--ink); display:block; margin-bottom:3px}
+  .mn-card p{font-size:13.5px; color:var(--ink-soft); font-weight:500; line-height:1.6; margin:0}
+  .mn-card p b{font-family:var(--font); font-size:13.5px; color:var(--ink); display:inline; margin:0}
+
   /* ===== 시작 화면 (이름 입력) ===== */
   #nameGate{position:fixed; inset:0; z-index:75; background:var(--bg); background-image:radial-gradient(rgba(43,52,80,.045) 1px,transparent 1.4px); background-size:20px 20px; display:none; flex-direction:column; align-items:center; justify-content:center; padding:calc(env(safe-area-inset-top) + 24px) 26px calc(env(safe-area-inset-bottom) + 24px)}
   #nameGate.show{display:flex}
@@ -355,6 +371,7 @@
     <div class="titlerow">
       <div class="brand"><h1 id="greet">냉장고 프로젝트</h1><p>My Fridge Manager</p></div>
       <div class="hbtns">
+        <button class="bell" id="helpBtn" aria-label="사용법"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.2a2.5 2.5 0 0 1 4.7 1.1c0 1.6-2.3 2.1-2.3 3.7"/><path d="M12 17.5v.01"/></svg></button>
         <button class="bell" id="bellBtn" aria-label="알림"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.5 21a2 2 0 0 0 3 0"/></svg></button>
         <button class="whoami" id="whoBtn"><span class="av" id="whoAv">?</span><span id="whoName">이름</span></button>
       </div>
@@ -415,6 +432,25 @@
 
 <div class="scrim" id="scrim"></div>
 <div id="toast"></div>
+
+<div id="manual">
+  <div class="mn-top">
+    <span class="mn-h">사용 설명서</span>
+    <button class="mn-x" id="mnClose" aria-label="닫기">✕</button>
+  </div>
+  <div class="mn-body">
+    <div class="mn-hero">
+      <img src="fridges/welcome.png" alt="냉장고">
+      <p>냉장고 속 재료를 한눈에 관리하고,<br>남은 재료로 뭘 해먹을지 추천받는 앱이에요.</p>
+    </div>
+    <div class="mn-card"><span class="mn-ic">➕</span><div><b>재료 담기</b><p>아래 가운데 <b>＋ 버튼</b>으로 추가해요. 이름만 적으면 <b>분류·유통기한이 자동</b>으로 채워지고, 냉동실을 고르면 기한을 더 길게 잡아드려요.</p></div></div>
+    <div class="mn-card"><span class="mn-ic">🧊</span><div><b>내 냉장고 보기</b><p>메인의 냉장고 그림에서 <b>냉장·냉동 칸을 누르면</b> 그 칸에 든 재료가 펼쳐져요. 실제 냉장고를 여는 느낌으로요.</p></div></div>
+    <div class="mn-card"><span class="mn-ic">⏰</span><div><b>유통기한 관리</b><p>위쪽 <b>‘곧 먹어요 / 지났어요’</b>를 누르면 해당 재료만 모아서 볼 수 있어요. 임박한 건 색으로 표시돼요.</p></div></div>
+    <div class="mn-card"><span class="mn-ic">🍳</span><div><b>레시피 추천</b><p><b>‘오늘 뭐 해먹지?’</b>를 누르면 지금 있는 재료, 특히 곧 상할 재료로 만들 수 있는 요리를 추천해줘요.</p></div></div>
+    <div class="mn-card"><span class="mn-ic">🛒</span><div><b>장보기 목록</b><p>살 것을 적어두고, 사 오면 <b>냉장고로</b> 바로 옮겨요. 레시피에서 부족한 재료도 담을 수 있어요.</p></div></div>
+    <div class="mn-card"><span class="mn-ic">👨‍👩‍👧</span><div><b>함께 쓰는 냉장고</b><p><b>마이</b>에서 공유 냉장고를 만들고 <b>초대 코드</b>를 나누면, 가족·룸메와 재료를 함께 관리해요.</p></div></div>
+  </div>
+</div>
 
 <div id="nameGate">
   <div class="ng-illus"><img src="fridges/welcome.png" alt="냉장고"></div>
@@ -756,6 +792,8 @@ $('#recipeCta').onclick=()=>{ switchTab('recipe'); getRecipes(); };
 function showSheet(id){ $('#scrim').classList.add('show'); $(id).classList.add('show'); }
 function hideSheets(){ $('#scrim').classList.remove('show'); document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('show')); }
 $('#scrim').onclick=hideSheets;
+$('#helpBtn').onclick=()=>{ $('#manual').scrollTop=0; $('#manual').classList.add('show'); };
+$('#mnClose').onclick=()=>$('#manual').classList.remove('show');
 
 function renderZoneSeg(){ $('#zoneSeg').innerHTML=ZONES.map(z=>`<button class="seg" data-zs="${z.id}" style="${pickedZone===z.id?`background:${z.c};color:#fff`:''}">${z.label}</button>`).join(''); $('#zoneSeg').querySelectorAll('[data-zs]').forEach(b=>b.onclick=()=>{pickedZone=b.dataset.zs;renderZoneSeg();autoExp();}); }
 function renderMediaPreview(){ const btn=$('#photoBtn'); if(pendingPhoto){ btn.innerHTML=`<img src="${pendingPhoto}" alt="">`; } else { const n=$('#f_name').value, c=$('#f_cat').value; btn.innerHTML=`<span id="emojiPrev">${matchEmoji(n)||CAT_EMOJI[c]||'🍽️'}</span>`; } }
