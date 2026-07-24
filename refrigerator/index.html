@@ -251,6 +251,8 @@
   .sp-sec{font-size:12px; font-weight:700; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.03em; margin:16px 2px 10px}
   .sp-row{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:16px;padding:14px 16px;margin-bottom:10px;box-shadow:var(--shadow);width:100%;text-align:left}
   .sp-row.on{box-shadow:0 0 0 2px var(--ink)}
+  .sp-pick{display:flex;align-items:center;gap:12px;flex:1;min-width:0;text-align:left;background:none;padding:0}
+  .sp-del{flex:none;width:34px;height:34px;border-radius:10px;background:var(--bg);color:var(--expired);display:grid;place-items:center}
   .sp-row .sp-ic{font-size:22px}
   .sp-row .sp-info{flex:1;min-width:0}
   .sp-row .sp-nm{font-weight:700;font-size:16px}
@@ -269,21 +271,22 @@
   :focus-visible{outline:2px solid var(--ink); outline-offset:2px}
   @media (prefers-reduced-motion: reduce){ *{transition:none !important; animation:none !important} }
 
-  /* ===== 사용 설명서 ===== */
-  #manual{position:fixed; inset:0; z-index:80; background:var(--bg); background-image:radial-gradient(rgba(43,52,80,.045) 1px,transparent 1.4px); background-size:20px 20px; display:none; flex-direction:column}
-  #manual.show{display:flex}
-  .mn-top{display:flex; align-items:center; justify-content:space-between; padding:calc(env(safe-area-inset-top) + 16px) 20px 12px; background:var(--bg)}
-  .mn-h{font-family:var(--serif); font-size:27px; font-weight:700; color:var(--ink)}
-  .mn-x{width:38px; height:38px; border-radius:50%; background:var(--card); box-shadow:var(--shadow); font-size:15px; color:var(--ink); display:grid; place-items:center; flex:none}
-  .mn-body{flex:1; overflow-y:auto; padding:4px 20px calc(env(safe-area-inset-bottom) + 30px)}
-  .mn-hero{text-align:center; margin:2px 0 20px}
-  .mn-hero img{width:170px; max-width:52%; height:auto; display:inline-block}
-  .mn-hero p{font-size:14px; color:var(--ink-soft); font-weight:500; line-height:1.6; margin:8px auto 0; max-width:320px}
-  .mn-card{display:flex; gap:13px; align-items:flex-start; background:var(--card); border-radius:var(--radius); padding:16px 17px; box-shadow:var(--shadow); margin-bottom:12px}
-  .mn-ic{font-size:28px; line-height:1.15; flex:none; width:38px; text-align:center}
-  .mn-card b{font-family:var(--serif); font-size:19px; font-weight:700; color:var(--ink); display:block; margin-bottom:3px}
-  .mn-card p{font-size:13.5px; color:var(--ink-soft); font-weight:500; line-height:1.6; margin:0}
-  .mn-card p b{font-family:var(--font); font-size:13.5px; color:var(--ink); display:inline; margin:0}
+  /* ===== 사용 튜토리얼 ===== */
+  #tutorial{position:fixed; inset:0; z-index:80; background:var(--bg); background-image:radial-gradient(rgba(43,52,80,.045) 1px,transparent 1.4px); background-size:20px 20px; display:none; flex-direction:column}
+  #tutorial.show{display:flex}
+  .tt-skip{position:absolute; top:calc(env(safe-area-inset-top) + 14px); right:18px; z-index:2; color:var(--ink-soft); font-weight:700; font-size:14px; padding:8px 12px}
+  .tt-stage{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:40px 30px 10px}
+  .tt-visual{min-height:180px; display:grid; place-items:center; margin-bottom:10px}
+  .tt-visual img{width:210px; max-width:62vw; height:auto}
+  .tt-emoji{font-size:96px; line-height:1}
+  .tt-title{font-family:var(--serif); font-size:32px; font-weight:700; color:var(--ink); margin:8px 0 12px}
+  .tt-desc{font-size:15.5px; color:var(--ink-soft); font-weight:500; line-height:1.75; max-width:340px; margin:0}
+  .tt-desc b{font-family:var(--font); color:var(--ink); font-weight:700}
+  .tt-nav{display:flex; align-items:center; justify-content:space-between; padding:16px 24px calc(env(safe-area-inset-bottom) + 26px); gap:16px}
+  .tt-dots{display:flex; gap:8px}
+  .tt-dot{width:8px; height:8px; border-radius:50%; background:var(--ink-faint); transition:.2s}
+  .tt-dot.on{background:var(--ink); width:22px; border-radius:4px}
+  .tt-next{background:var(--ink); color:#fff; border-radius:14px; padding:14px 28px; font-weight:700; font-size:16px; box-shadow:var(--shadow)}
 
   /* ===== 시작 화면 (이름 입력) ===== */
   #nameGate{position:fixed; inset:0; z-index:75; background:var(--bg); background-image:radial-gradient(rgba(43,52,80,.045) 1px,transparent 1.4px); background-size:20px 20px; display:none; flex-direction:column; align-items:center; justify-content:center; padding:calc(env(safe-area-inset-top) + 24px) 26px calc(env(safe-area-inset-bottom) + 24px)}
@@ -433,22 +436,12 @@
 <div class="scrim" id="scrim"></div>
 <div id="toast"></div>
 
-<div id="manual">
-  <div class="mn-top">
-    <span class="mn-h">사용 설명서</span>
-    <button class="mn-x" id="mnClose" aria-label="닫기">✕</button>
-  </div>
-  <div class="mn-body">
-    <div class="mn-hero">
-      <img src="fridges/welcome.png" alt="냉장고">
-      <p>냉장고 속 재료를 한눈에 관리하고,<br>남은 재료로 뭘 해먹을지 추천받는 앱이에요.</p>
-    </div>
-    <div class="mn-card"><span class="mn-ic">➕</span><div><b>재료 담기</b><p>아래 가운데 <b>＋ 버튼</b>으로 추가해요. 이름만 적으면 <b>분류·유통기한이 자동</b>으로 채워지고, 냉동실을 고르면 기한을 더 길게 잡아드려요.</p></div></div>
-    <div class="mn-card"><span class="mn-ic">🧊</span><div><b>내 냉장고 보기</b><p>메인의 냉장고 그림에서 <b>냉장·냉동 칸을 누르면</b> 그 칸에 든 재료가 펼쳐져요. 실제 냉장고를 여는 느낌으로요.</p></div></div>
-    <div class="mn-card"><span class="mn-ic">⏰</span><div><b>유통기한 관리</b><p>위쪽 <b>‘곧 먹어요 / 지났어요’</b>를 누르면 해당 재료만 모아서 볼 수 있어요. 임박한 건 색으로 표시돼요.</p></div></div>
-    <div class="mn-card"><span class="mn-ic">🍳</span><div><b>레시피 추천</b><p><b>‘오늘 뭐 해먹지?’</b>를 누르면 지금 있는 재료, 특히 곧 상할 재료로 만들 수 있는 요리를 추천해줘요.</p></div></div>
-    <div class="mn-card"><span class="mn-ic">🛒</span><div><b>장보기 목록</b><p>살 것을 적어두고, 사 오면 <b>냉장고로</b> 바로 옮겨요. 레시피에서 부족한 재료도 담을 수 있어요.</p></div></div>
-    <div class="mn-card"><span class="mn-ic">👨‍👩‍👧</span><div><b>함께 쓰는 냉장고</b><p><b>마이</b>에서 공유 냉장고를 만들고 <b>초대 코드</b>를 나누면, 가족·룸메와 재료를 함께 관리해요.</p></div></div>
+<div id="tutorial">
+  <button class="tt-skip" id="ttSkip">건너뛰기</button>
+  <div class="tt-stage" id="ttStage"></div>
+  <div class="tt-nav">
+    <div class="tt-dots" id="ttDots"></div>
+    <button class="tt-next" id="ttNext">다음</button>
   </div>
 </div>
 
@@ -704,7 +697,7 @@ function openTypeGate(change){
   const el=$('#typeGate');
   $('#tgGrid').innerHTML=FRIDGE_TYPES.map(typeCardHTML).join('');
   $('#tgSkip').style.display=change?'block':'none';
-  el.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{ setFridgeType(b.dataset.t); el.classList.remove('show'); heroOpen=''; renderAll(); toast('냉장고 종류를 설정했어요'); });
+  el.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{ setFridgeType(b.dataset.t); el.classList.remove('show'); heroOpen=''; renderAll(); toast('냉장고 종류를 설정했어요'); if(!localStorage.getItem('tut:seen')) setTimeout(openTut,450); });
   el.classList.add('show');
 }
 $('#tgSkip').onclick=()=>$('#typeGate').classList.remove('show');
@@ -792,8 +785,28 @@ $('#recipeCta').onclick=()=>{ switchTab('recipe'); getRecipes(); };
 function showSheet(id){ $('#scrim').classList.add('show'); $(id).classList.add('show'); }
 function hideSheets(){ $('#scrim').classList.remove('show'); document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('show')); }
 $('#scrim').onclick=hideSheets;
-$('#helpBtn').onclick=()=>{ $('#manual').scrollTop=0; $('#manual').classList.add('show'); };
-$('#mnClose').onclick=()=>$('#manual').classList.remove('show');
+const TUT=[
+  {img:'fridges/welcome.png', t:'냉장고 프로젝트', d:'냉장고 속 재료를 한눈에 관리하고, 남은 재료로 뭘 해먹을지 추천받는 앱이에요. 잠깐만 둘러볼까요?'},
+  {e:'➕', t:'재료 담기', d:'아래 가운데 <b>＋ 버튼</b>으로 추가해요. 이름만 적으면 <b>분류·유통기한이 자동</b>으로 채워지고, <b>냉동실</b>을 고르면 기한을 더 길게 잡아드려요.'},
+  {e:'🧊', t:'내 냉장고 열기', d:'메인의 냉장고 그림에서 <b>냉장·냉동 칸을 누르면</b> 그 칸에 든 재료가 펼쳐져요. 실제 냉장고를 여는 느낌으로요.'},
+  {e:'⏰', t:'유통기한 관리', d:'위쪽 <b>‘곧 먹어요·지났어요’</b>를 누르면 해당 재료만 모아서 볼 수 있어요. 임박한 재료는 색으로 표시돼요.'},
+  {e:'🍳', t:'오늘 뭐 해먹지?', d:'버튼 하나로 지금 있는 재료, 특히 <b>곧 상할 재료</b>로 만들 수 있는 요리를 추천받아요.'},
+  {e:'🛒', t:'장보기 & 함께 쓰기', d:'살 것을 적어두고 사 오면 <b>냉장고로</b> 옮겨요. <b>마이</b>에서 공유 냉장고를 만들어 초대 코드로 가족·룸메와 함께 관리할 수도 있어요.'},
+];
+let tutIx=0;
+function renderTut(){
+  const s=TUT[tutIx];
+  const visual=s.img?`<div class="tt-visual"><img src="${s.img}" alt=""></div>`:`<div class="tt-visual"><span class="tt-emoji">${s.e}</span></div>`;
+  $('#ttStage').innerHTML=`${visual}<h2 class="tt-title">${s.t}</h2><p class="tt-desc">${s.d}</p>`;
+  $('#ttDots').innerHTML=TUT.map((_,i)=>`<span class="tt-dot ${i===tutIx?'on':''}" data-i="${i}"></span>`).join('');
+  $('#ttDots').querySelectorAll('[data-i]').forEach(d=>d.onclick=()=>{ tutIx=+d.dataset.i; renderTut(); });
+  $('#ttNext').textContent = tutIx===TUT.length-1 ? '시작할게요' : '다음';
+}
+function openTut(){ tutIx=0; renderTut(); $('#tutorial').classList.add('show'); }
+function closeTut(){ $('#tutorial').classList.remove('show'); try{localStorage.setItem('tut:seen','1')}catch(e){} }
+$('#helpBtn').onclick=openTut;
+$('#ttSkip').onclick=closeTut;
+$('#ttNext').onclick=()=>{ if(tutIx<TUT.length-1){ tutIx++; renderTut(); } else closeTut(); };
 
 function renderZoneSeg(){ $('#zoneSeg').innerHTML=ZONES.map(z=>`<button class="seg" data-zs="${z.id}" style="${pickedZone===z.id?`background:${z.c};color:#fff`:''}">${z.label}</button>`).join(''); $('#zoneSeg').querySelectorAll('[data-zs]').forEach(b=>b.onclick=()=>{pickedZone=b.dataset.zs;renderZoneSeg();autoExp();}); }
 function renderMediaPreview(){ const btn=$('#photoBtn'); if(pendingPhoto){ btn.innerHTML=`<img src="${pendingPhoto}" alt="">`; } else { const n=$('#f_name').value, c=$('#f_cat').value; btn.innerHTML=`<span id="emojiPrev">${matchEmoji(n)||CAT_EMOJI[c]||'🍽️'}</span>`; } }
@@ -841,18 +854,20 @@ $('#ngForm').addEventListener('submit',async(e)=>{ e.preventDefault(); const n=$
 function renderSpaceBar(){
   if(!curSpace) return;
   const per=curSpace.kind==='personal';
-  $('#sbName').textContent=curSpace.name;
+  $('#sbName').textContent=per?(me?me+' 냉장고':'내 냉장고'):curSpace.name;
   $('#sbIc').innerHTML=per?ICN.fridge:ICN.people;
   const k=$('#sbKind'); k.textContent=per?'개인':'공유'; k.classList.toggle('personal',per);
 }
+function spaceLabel(s){ return s.kind==='personal' ? (me?me+' 냉장고':'내 냉장고') : s.name; }
 function renderSpaceList(){
   const el=$('#spaceList');
   el.innerHTML=spaces.map(s=>{
     const per=s.kind==='personal', on=curSpace&&s.id===curSpace.id;
     const sub=per?'나만 보는 공간':`공유 · ${s.members||1}명`+(s.code?` · 코드 <span class="sp-code">${esc(s.code)}</span>`:'');
-    return `<button class="sp-row ${on?'on':''}" data-sp="${s.id}"><span class="sp-ic">${per?'🧊':'👨‍👩‍👧'}</span><span class="sp-info"><div class="sp-nm">${esc(s.name)}</div><div class="sp-sub">${sub}</div></span>${on?'<span class="sp-on">사용 중</span>':''}</button>`;
+    return `<div class="sp-row ${on?'on':''}"><button class="sp-pick" data-sp="${s.id}"><span class="sp-ic">${per?'🧊':'👨‍👩‍👧'}</span><span class="sp-info"><div class="sp-nm">${esc(spaceLabel(s))}</div><div class="sp-sub">${sub}</div></span>${on?'<span class="sp-on">사용 중</span>':''}</button>${per?'':`<button class="sp-del" data-del="${s.id}" aria-label="나가기"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button>`}</div>`;
   }).join('');
-  el.querySelectorAll('[data-sp]').forEach(b=>b.onclick=async()=>{ const sp=spaces.find(x=>x.id===b.dataset.sp); await setSpace(sp); renderSpaceList(); toast(`'${sp.name}'(으)로 전환했어요`); });
+  el.querySelectorAll('[data-sp]').forEach(b=>b.onclick=async()=>{ const sp=spaces.find(x=>x.id===b.dataset.sp); await setSpace(sp); renderSpaceList(); toast(`'${spaceLabel(sp)}'(으)로 전환했어요`); });
+  el.querySelectorAll('[data-del]').forEach(b=>b.onclick=async()=>{ const s=spaces.find(x=>x.id===b.dataset.del); if(!s) return; if(!confirm(`'${s.name}' 공유 냉장고에서 나갈까요?\n내 목록에서 사라져요. (재료는 다른 멤버에게 남아요)`)) return; const wasCur=curSpace&&curSpace.id===s.id; await leaveSharedSpace(s.id); if(wasCur){ const p=spaces.find(x=>x.kind==='personal')||spaces[0]; curSpace=null; if(p) await setSpace(p); } renderSpaceBar(); renderSpaceList(); toast('공유 냉장고에서 나갔어요'); });
 }
 $('#spaceBtn').onclick=()=>{ if(!me){ $('#whoBtn').click(); return; } renderSpaceList(); $('#spMakeBox').style.display='none'; $('#spJoinBox').style.display='none'; showSheet('#spaceSheet'); };
 $('#spMake').onclick=()=>{ const b=$('#spMakeBox'); const show=b.style.display==='none'; b.style.display=show?'block':'none'; $('#spJoinBox').style.display='none'; if(show) setTimeout(()=>$('#spMakeName').focus(),50); };
