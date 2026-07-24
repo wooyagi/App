@@ -4,7 +4,9 @@
 const SYS = [
   "너는 한국 가정식 전문 요리사다. 반드시 한국어(한글)로만 답한다.",
   "요리명·재료·조리 단계를 전부 자연스러운 한국어로 쓴다.",
-  "한자(漢字)·중국어·일본어·영어 단어를 절대 섞지 않는다. 모든 글자는 한글과 숫자, 기본 문장부호로만 쓴다.",
+  "한자(漢字)·중국어·일본어·영어를 절대 쓰지 않는다. 모든 글자는 한글과 숫자, 기본 문장부호로만 쓴다.",
+  "괄호 안에 한자나 원어를 덧붙이지 않는다(예: '간장(醬)', '두부(豆腐)' 금지). 외래어도 한글로만 적는다(파스타, 토마토, 치즈, 소스 등).",
+  "요리명·재료·조리 단계 모두 초등학생도 이해할 만큼 쉽고 명확한 한국어로 쓴다.",
   "실제로 많이 만들어 먹는 대중적이고 검증된 한국 가정식·자취요리만 추천한다. 새로 지어낸 퓨전은 금지.",
   "출력은 반드시 아래 형태의 JSON 객체 하나만. 설명·마크다운·코드블록 없이 JSON만 출력한다. recipes 배열은 요청한 개수만큼 반드시 채운다.",
   '{"recipes":[{"name":"김치볶음밥","difficulty":"간단","time":"약 10분","use":["김치","밥","계란"],"missing":["식용유"],"steps":["팬에 기름을 두르고 김치를 볶는다.","밥을 넣고 함께 볶는다.","계란 프라이를 올려 완성한다."]}]}',
@@ -32,14 +34,26 @@ function hanRatio(s) {
   return han / chars.length;
 }
 
+// 응답에 섞인 한자·일본어 가나를 제거하고, 그로 인해 남는 빈 괄호·군더더기 공백을 정리한다.
+function stripCJK(s) {
+  return String(s == null ? "" : s)
+    .replace(/[\u3400-\u9fff\uf900-\ufaff\u3040-\u30ff]/g, "")
+    .replace(/（\s*）|\(\s*\)|\[\s*\]|【\s*】/g, "")
+    .replace(/\s+([,.!?)\]}])/g, "$1")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
 function clean(arr) {
   if (!Array.isArray(arr)) return [];
-  const slist = (v) => Array.isArray(v) ? v.map(x => String(x).trim()).filter(Boolean)
-    : (typeof v === "string" && v.trim() ? [v.trim()] : []);
-  const mapped = arr.filter(r => r && typeof r === "object" && String(r.name || "").trim()).map(r => ({
-    name: String(r.name).trim(),
+  const slist = (v) => {
+    const a = Array.isArray(v) ? v : (typeof v === "string" && v.trim() ? [v] : []);
+    return a.map(x => stripCJK(x)).filter(Boolean);
+  };
+  const mapped = arr.filter(r => r && typeof r === "object" && stripCJK(r.name)).map(r => ({
+    name: stripCJK(r.name),
     difficulty: ["간단", "보통", "복잡"].includes(r.difficulty) ? r.difficulty : "보통",
-    time: String(r.time || "").trim(),
+    time: stripCJK(r.time),
     use: slist(r.use),
     missing: slist(r.missing),
     steps: slist(r.steps),
