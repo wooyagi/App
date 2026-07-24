@@ -1,10 +1,10 @@
-// Vercel 서버리스 함수: 요리명들을 받아 유튜브에서 "조회수 많은 인기 영상"을 찾는다.
-// 키 불필요 — 유튜브 검색 결과(조회수순 정렬) 페이지를 서버에서 파싱한다.
+// Vercel 서버리스 함수: 요리명들을 받아 유튜브에서 "요리명이 실제로 들어간 인기 영상"을 찾는다.
+// 키 불필요 — 유튜브 검색(관련성) 결과 페이지를 서버에서 파싱한다.
+// 조회수순 정렬은 엉뚱한 인기 영상이 1위로 올 수 있어, 관련성 상위 후보 중
+// "제목에 요리명이 들어간" 영상만 골라 그중 조회수가 가장 높은 것을 고른다(인기+정확).
 // 브라우저에서는 CORS로 막히므로 반드시 서버(여기)에서 조회한다.
 
 const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0 Safari/537.36";
-// 유튜브 검색 필터 토큰: sp=CAMSAhAB → "조회수순" 정렬
-const SORT_VIEWS = "CAMSAhAB";
 
 function unesc(s) {
   return String(s || "")
@@ -12,9 +12,49 @@ function unesc(s) {
     .replace(/\\\//g, "/").replace(/\\"/g, '"').replace(/\\n/g, " ").trim();
 }
 
+// "조회수 1.2만회", "123만", "1.2억", "1,234,567회", "1.2M views" → 숫자
+function parseViews(t) {
+  if (!t) return 0;
+  const s = String(t).replace(/조회수|회|views?|,/gi, "").trim();
+  let m;
+  if ((m = s.match(/([\d.]+)\s*억/))) return Math.round(parseFloat(m[1]) * 1e8);
+  if ((m = s.match(/([\d.]+)\s*만/))) return Math.round(parseFloat(m[1]) * 1e4);
+  if ((m = s.match(/([\d.]+)\s*천/))) return Math.round(parseFloat(m[1]) * 1e3);
+  if ((m = s.match(/([\d.]+)\s*b/i))) return Math.round(parseFloat(m[1]) * 1e9);
+  if ((m = s.match(/([\d.]+)\s*m/i))) return Math.round(parseFloat(m[1]) * 1e6);
+  if ((m = s.match(/([\d.]+)\s*k/i))) return Math.round(parseFloat(m[1]) * 1e3);
+  const n = parseFloat(s);
+  return isFinite(n) ? n : 0;
+}
+
+const norm = (s) => String(s || "").toLowerCase().replace(/\s+/g, "");
+
+// 검색 결과 HTML → 영상 후보 목록(id·제목·조회수)
+function parseCandidates(html, limit) {
+  const out = [], seen = new Set();
+  const re = /"videoId":"([\w-]{11})"/g;
+  let m;
+  while ((m = re.exec(html)) && out.length < limit) {
+    const id = m[1];
+    if (seen.has(id)) continue;
+    const seg = html.slice(m.index, m.index + 2500);
+    const tm = seg.match(/"title":\{"runs":\[\{"text":"((?:[^"\\]|\\.)*)"/) ||
+               seg.match(/"title":\{"simpleText":"((?:[^"\\]|\\.)*)"/);
+    if (!tm) continue; // 제목 없는 건 실제 영상 렌더러가 아님(썸네일/광고 등)
+    seen.add(id);
+    const vm = seg.match(/"viewCountText":\{"simpleText":"((?:[^"\\]|\\.)*)"/) ||
+               seg.match(/"shortViewCountText":\{[^}]*?"simpleText":"((?:[^"\\]|\\.)*)"/) ||
+               seg.match(/"viewCountText":\{"runs":\[\{"text":"((?:[^"\\]|\\.)*)"/);
+    const viewsText = vm ? unesc(vm[1]) : "";
+    out.push({ id, title: unesc(tm[1]), viewsText, views: parseViews(viewsText) });
+  }
+  return out;
+}
+
 async function checkOne(name) {
-  const q = encodeURIComponent(String(name || "").trim() + " 레시피");
-  const url = `https://www.youtube.com/results?search_query=${q}&hl=ko&gl=KR&sp=${SORT_VIEWS}`;
+  const dish = String(name || "").trim();
+  const q = encodeURIComponent(dish + " 레시피");
+  const url = `https://www.youtube.com/results?search_query=${q}&hl=ko&gl=KR`; // 관련성순(기본)
   try {
     const r = await fetch(url, {
       headers: {
@@ -25,22 +65,20 @@ async function checkOne(name) {
     });
     if (!r.ok) return { name, ok: true, videoId: "", soft: true }; // 실패 → 보수적으로 통과
     const html = await r.text();
-    const count = (html.match(/"videoId":"[\w-]{11}"/g) || []).length;
-    // 조회수순 정렬이므로 첫 번째 videoRenderer가 가장 인기 있는 영상
-    const m = html.match(/"videoRenderer":\{"videoId":"([\w-]{11})"/) || html.match(/"videoId":"([\w-]{11})"/);
-    const videoId = m ? m[1] : "";
-    let title = "", views = "";
-    if (videoId) {
-      const i = html.indexOf(videoId);
-      const seg = html.slice(i, i + 3000);
-      const tm = seg.match(/"title":\{"runs":\[\{"text":"((?:[^"\\]|\\.)*)"/) || seg.match(/"title":\{"simpleText":"((?:[^"\\]|\\.)*)"/);
-      if (tm) title = unesc(tm[1]).slice(0, 100);
-      const vm = seg.match(/"viewCountText":\{"simpleText":"((?:[^"\\]|\\.)*)"/) ||
-                 seg.match(/"shortViewCountText":\{[^}]*?"simpleText":"((?:[^"\\]|\\.)*)"/) ||
-                 seg.match(/"viewCountText":\{"runs":\[\{"text":"((?:[^"\\]|\\.)*)"/);
-      if (vm) views = unesc(vm[1]).slice(0, 30);
+    const cands = parseCandidates(html, 15);
+    if (!cands.length) return { name, ok: true, videoId: "", soft: true };
+
+    const nn = norm(dish);
+    // 제목에 요리명이 실제로 들어간 후보만(정확). 그중 조회수 최상위(인기).
+    const matched = cands.filter((c) => norm(c.title).includes(nn));
+    if (matched.length) {
+      matched.sort((a, b) => b.views - a.views);
+      const best = matched[0];
+      return { name, ok: true, videoId: best.id, title: best.title, views: best.viewsText, matched: true };
     }
-    return { name, ok: !!videoId && count >= 2, videoId, title, views };
+    // 정확히 맞는 영상이 없으면: 엉뚱한 영상을 링크하지 않는다.
+    // 레시피 자체는 유지하되(검색 결과는 존재), 특정 영상 대신 검색으로 열도록 videoId 비움.
+    return { name, ok: cands.length >= 2, videoId: "", matched: false };
   } catch (e) {
     return { name, ok: true, videoId: "", soft: true }; // 네트워크 오류 → 통과
   }
@@ -55,6 +93,6 @@ export default async function handler(req, res) {
     const results = await Promise.all(list.map(checkOne));
     res.status(200).json({ results });
   } catch (e) {
-    res.status(200).json({ results: list.map(name => ({ name, ok: true, videoId: "", soft: true })) });
+    res.status(200).json({ results: list.map((name) => ({ name, ok: true, videoId: "", soft: true })) });
   }
 }
