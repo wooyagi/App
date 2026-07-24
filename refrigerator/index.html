@@ -269,6 +269,18 @@
   :focus-visible{outline:2px solid var(--ink); outline-offset:2px}
   @media (prefers-reduced-motion: reduce){ *{transition:none !important; animation:none !important} }
 
+  /* ===== 시작 화면 (이름 입력) ===== */
+  #nameGate{position:fixed; inset:0; z-index:75; background:var(--bg); background-image:radial-gradient(rgba(43,52,80,.045) 1px,transparent 1.4px); background-size:20px 20px; display:none; flex-direction:column; align-items:center; justify-content:center; padding:calc(env(safe-area-inset-top) + 24px) 26px calc(env(safe-area-inset-bottom) + 24px)}
+  #nameGate.show{display:flex}
+  .ng-illus{width:230px; max-width:64%; margin-bottom:6px}
+  .ng-illus img{width:100%; height:auto; display:block}
+  .ng-title{font-family:var(--serif); font-size:38px; font-weight:700; color:var(--ink); margin:6px 0 2px; letter-spacing:0; text-align:center}
+  .ng-sub{font-family:var(--serif); font-size:19px; font-weight:400; color:var(--ink-soft); margin:0 0 26px; text-align:center}
+  .ng-form{width:100%; max-width:340px}
+  .ng-input{width:100%; background:var(--card); border:none; border-radius:16px; padding:16px; font-size:16px; color:var(--ink); box-shadow:var(--shadow); text-align:center; outline:none}
+  .ng-input:focus{box-shadow:inset 0 0 0 2px var(--ink), 2px 2.5px 0 rgba(43,52,80,.1)}
+  .ng-go{width:100%; margin-top:12px; background:var(--ink); color:#fff; border-radius:16px; padding:16px; font-weight:700; font-size:17px; box-shadow:var(--shadow)}
+
   /* ===== 냉장고 종류 선택 (온보딩 게이트) ===== */
   #typeGate{position:fixed; inset:0; z-index:70; background:var(--bg); background-image:radial-gradient(rgba(43,52,80,.045) 1px,transparent 1.4px); background-size:20px 20px; display:none; flex-direction:column; padding:calc(env(safe-area-inset-top) + 34px) 22px 34px; overflow-y:auto}
   #typeGate.show{display:flex}
@@ -403,6 +415,16 @@
 
 <div class="scrim" id="scrim"></div>
 <div id="toast"></div>
+
+<div id="nameGate">
+  <div class="ng-illus"><img src="fridges/welcome.png" alt="냉장고"></div>
+  <h1 class="ng-title">냉장고 프로젝트</h1>
+  <p class="ng-sub">이름을 알려주세요</p>
+  <form class="ng-form" id="ngForm">
+    <input class="ng-input" id="ngName" placeholder="예: 지현, 엄마, 룸메A" autocomplete="off"/>
+    <button class="ng-go" id="ngGo" type="submit">시작하기</button>
+  </form>
+</div>
 
 <div id="typeGate">
   <div class="tg-h">어떤 냉장고를 쓰세요?</div>
@@ -774,6 +796,8 @@ async function lookupBarcode(code){ $('#scanLabel').textContent='조회 중…';
 function refreshWho(){ $('#whoName').textContent=me||'이름'; $('#whoAv').textContent=me?me.slice(0,1):'?'; $('#greet').textContent='냉장고 프로젝트'; }
 $('#whoBtn').onclick=()=>{ $('#nameInput').value=me; showSheet('#nameSheet'); setTimeout(()=>$('#nameInput').focus(),280); };
 $('#saveName').onclick=async()=>{ const n=$('#nameInput').value.trim(); if(!n)return; me=n; await kv.set(K_NAME,n,false); refreshWho(); hideSheets(); if(!curSpace){ await initSpaces(); await setSpace(curSpace); } if(!fridgeType()) setTimeout(()=>openTypeGate(false),250); };
+function openNameGate(){ $('#ngName').value=me||''; $('#nameGate').classList.add('show'); setTimeout(()=>$('#ngName').focus(),350); }
+$('#ngForm').addEventListener('submit',async(e)=>{ e.preventDefault(); const n=$('#ngName').value.trim(); if(!n){ $('#ngName').focus(); return; } me=n; await kv.set(K_NAME,n,false); refreshWho(); $('#nameGate').classList.remove('show'); if(!curSpace){ await initSpaces(); await setSpace(curSpace); } if(!fridgeType()) openTypeGate(false); });
 
 /* ---------- 공간(냉장고) 전환 UI ---------- */
 function renderSpaceBar(){
@@ -836,7 +860,7 @@ function renderCatGrid(){
 }
 function renderAll(){ renderStats(); renderBanner(); renderHero(); renderCatGrid(); renderFilters(); renderList(); if(viewMode==='fridge')renderFridge(); renderShop(); }
 async function syncFromShared(){ if(document.querySelector('.sheet.show')) return; const ni=await dbLoadItems(), ns=await dbLoadShop(); if(JSON.stringify(ni)!==JSON.stringify(items)||JSON.stringify(ns)!==JSON.stringify(shop)){ items=ni; shop=ns; renderAll(); } }
-(async()=>{ $('#f_cat').innerHTML=CATS.map(c=>`<option>${c}</option>`).join(''); await loadAll(); refreshWho(); renderAll(); if(!me){ setTimeout(()=>{$('#nameInput').value='';showSheet('#nameSheet');},400); } else if(!fridgeType()){ setTimeout(()=>openTypeGate(false),300); } setInterval(syncFromShared,8000); document.addEventListener('visibilitychange',()=>{ if(!document.hidden) syncFromShared(); }); })();
+(async()=>{ $('#f_cat').innerHTML=CATS.map(c=>`<option>${c}</option>`).join(''); await loadAll(); refreshWho(); renderAll(); if(!me){ openNameGate(); } else if(!fridgeType()){ setTimeout(()=>openTypeGate(false),300); } setInterval(syncFromShared,8000); document.addEventListener('visibilitychange',()=>{ if(!document.hidden) syncFromShared(); }); })();
 </script>
 <script>
 /* PWA: 서비스워커 등록 (홈 화면 설치·앱처럼 실행) */
