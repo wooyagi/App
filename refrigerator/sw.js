@@ -1,5 +1,5 @@
 // 냉장고 프로젝트 서비스워커 — 설치 가능(PWA) + 앱 셸 캐시
-const CACHE = 'fridge-v31';
+const CACHE = 'fridge-v32';
 self.addEventListener('install', (e) => { self.skipWaiting(); });
 self.addEventListener('activate', (e) => { e.waitUntil((async () => {
   const keys = await caches.keys();

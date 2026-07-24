@@ -216,6 +216,10 @@
   .ing-hint b{color:var(--ink); font-weight:700}
   .ryt{display:flex; align-items:center; justify-content:center; gap:8px; width:100%; margin-top:14px; background:var(--card); color:var(--ink); border:1.5px solid var(--line); border-radius:12px; padding:12px; font-weight:700; font-size:13.5px; box-shadow:var(--shadow)}
   .ryt:active{transform:scale(.98)}
+  .ryt svg{flex:none}
+  .ryt-t{overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0}
+  .ramts{margin:0; padding-left:18px; list-style:disc}
+  .ramts li{font-size:14px; color:var(--ink); line-height:1.65; font-weight:600}
   .rcook{display:flex; align-items:center; justify-content:center; gap:7px; width:100%; margin-top:9px; background:var(--sage-deep); color:#fff; border-radius:12px; padding:13px; font-weight:700; font-size:14px; box-shadow:var(--shadow)}
   .rcook:active{transform:scale(.98)}
   /* 요리 완료 재료 차감 시트 */
@@ -928,7 +932,7 @@ async function ytVerify(recipes){
     const j=await r.json(); const map={};
     (j.results||[]).forEach(x=>{ if(x&&x.name) map[x.name]=x; });
     const kept=[];
-    recipes.forEach(x=>{ const m=map[x.name]; if(m&&m.ok===false) return; if(m&&m.videoId) x.videoId=m.videoId; kept.push(x); });
+    recipes.forEach(x=>{ const m=map[x.name]; if(m&&m.ok===false) return; if(m){ if(m.videoId)x.videoId=m.videoId; if(m.title)x.ytTitle=m.title; if(m.views)x.ytViews=m.views; } kept.push(x); });
     return kept.length?kept:recipes;   // 전부 걸러지면 원본 유지(과필터 방지)
   }catch(e){ return recipes; }
 }
@@ -946,7 +950,7 @@ async function getRecipes(){
     ? `사용자가 고른 재료: ${chosen.join(', ')}. 이 재료들을 한 요리에 최대한 함께 넣어 쓰는 요리를 우선으로 추천해줘.`
     : (chosen.length===1 ? `사용자가 고른 재료 '${chosen[0]}'를 주재료로 활용하는 요리를 추천해줘.`
     : `냉장고에 있는 재료로 만들 수 있는 요리를 추천해줘. 유통기한이 임박한 재료를 우선 활용해줘.`);
-  const prompt=`냉장고에서 쓸 수 있는 재료: ${chosenInfo.join(', ')}.\n${togetherRule}\n아주 중요한 규칙(반드시 지켜):\n- 실제로 한국에서 사람들이 흔히 만들어 먹는, 이름만 들어도 아는 진짜 요리만 추천해. (예: 김치볶음밥, 계란말이, 된장찌개, 크림파스타, 프렌치토스트, 그라탕 등)\n- 존재하지 않는 이상한 음식을 지어내지 마. 재료 이름을 억지로 붙인 어색한 창작 요리 절대 금지(예: '우유죽' 같은 건 절대 안 됨).\n- 고른 재료를 전부 주인공으로 만들 필요는 없어. 그 재료가 자연스럽게 들어가는 대중적인 요리를 골라줘.\n- 고른 재료 조합으로 마땅한 요리가 없으면, 그 재료가 흔히 쓰이는 익숙한 요리를 대신 추천해줘.\n- ${want}\n- 냉장고에 있는 재료를 주로 쓰고, 없어서 새로 사야 하는 재료만 missing에 정확히 적어줘.\n- 요리명·재료·단계 설명은 모두 한자나 외국어 없이 순 한글로만 써줘(괄호 안 한자 병기도 금지).\n- difficulty는 "간단"(10분 내외·3~4단계), "보통"(15~30분), "복잡"(30분 이상·손이 많이 감) 중 하나.\n반드시 JSON 배열만 출력(설명·마크다운 금지):\n[{"name":"요리명","difficulty":"간단","time":"약 10분","use":["사용할 냉장고 재료"],"missing":["추가로 사야 하는 재료"],"steps":["1단계","2단계"]}]`;
+  const prompt=`냉장고에서 쓸 수 있는 재료: ${chosenInfo.join(', ')}.\n${togetherRule}\n아주 중요한 규칙(반드시 지켜):\n- 실제로 한국에서 사람들이 흔히 만들어 먹는, 이름만 들어도 아는 진짜 요리만 추천해. (예: 김치볶음밥, 계란말이, 된장찌개, 크림파스타, 프렌치토스트, 그라탕 등)\n- 존재하지 않는 이상한 음식을 지어내지 마. 재료 이름을 억지로 붙인 어색한 창작 요리 절대 금지(예: '우유죽' 같은 건 절대 안 됨).\n- 고른 재료를 전부 주인공으로 만들 필요는 없어. 그 재료가 자연스럽게 들어가는 대중적인 요리를 골라줘.\n- 고른 재료 조합으로 마땅한 요리가 없으면, 그 재료가 흔히 쓰이는 익숙한 요리를 대신 추천해줘.\n- ${want}\n- 냉장고에 있는 재료를 주로 쓰고, 없어서 새로 사야 하는 재료만 missing에 정확히 적어줘.\n- 요리명·재료·단계 설명은 모두 한자나 외국어 없이 순 한글로만 써줘(괄호 안 한자 병기도 금지).\n- difficulty는 "간단"(10분 내외·3~4단계), "보통"(15~30분), "복잡"(30분 이상·손이 많이 감) 중 하나.\n- amounts에는 모든 재료의 정확한 계량을 적어줘(그램·밀리리터·큰술·작은술·컵·개 등. 예: "간장 1큰술(15ml)", "밥 1공기(약 210g)", "대파 1/2대").\n- servings는 몇 인분 기준인지("1인분","2인분" 등). steps의 각 단계도 분량·시간·불세기를 구체적으로 써줘(예: "중불에서 3분간 볶는다").\n반드시 JSON 배열만 출력(설명·마크다운 금지):\n[{"name":"요리명","difficulty":"간단","time":"약 10분","servings":"1인분","amounts":["재료명 분량(계량)"],"use":["사용할 냉장고 재료"],"missing":["추가로 사야 하는 재료"],"steps":["1단계(분량·시간·불세기 포함)","2단계"]}]`;
   try{
     const res=await fetch(API+"/api/recipes",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({prompt})});
     const data=await res.json();
@@ -967,11 +971,14 @@ function recipeCard(r,ri){
   const allAdded=miss.length&&miss.every(inShop);
   const missHtml=miss.length?`<div class="rsec"><div class="rlbl">추가로 필요</div>${miss.map((m,mi)=>`<button class="pill need ${inShop(m)?'added':''}" data-add="${ri}-${mi}">${inShop(m)?'✓ ':'+ '}${esc(m)}</button>`).join('')}<button class="radd ${allAdded?'done':''}" data-addall="${ri}">${allAdded?'✓ 장보기에 담음':'부족한 재료 장보기에 담기'}</button></div>`:'';
   const tag=r.difficulty?`<span class="difftag" style="background:${meta.bg};color:${meta.fg}">${esc(r.difficulty)}</span>`:'';
+  const amtHtml=(r.amounts&&r.amounts.length)?`<div class="rsec"><div class="rlbl">재료 계량 (${(r.servings&&esc(r.servings))||'1인분'} 기준)</div><ul class="ramts">${r.amounts.map(a=>`<li>${esc(a)}</li>`).join('')}</ul></div>`:'';
+  const ytLabel=(r.videoId&&r.ytTitle)?`${esc(r.ytTitle)}${r.ytViews?` · ${esc(r.ytViews)}`:''}`:'유튜브에서 레시피 영상 찾기';
   return `<div class="rcard"><div class="rhead"><h4>${foodEmoji(r.name)} ${esc(r.name)}</h4>${tag}</div><div class="rtime">${esc(r.time||'')}</div>
     <div class="rsec"><div class="rlbl">냉장고에서</div>${(r.use||[]).map(u=>`<span class="pill have">${esc(u)}</span>`).join('')||'<span class="pill need" style="cursor:default">-</span>'}</div>
     ${missHtml}
+    ${amtHtml}
     <div class="rsec"><div class="rlbl">만드는 법</div><ol class="steps">${(r.steps||[]).map(s=>`<li>${esc(s)}</li>`).join('')}</ol></div>
-    <button class="ryt" data-yt="${ri}"><svg width="20" height="20" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="4.5" fill="#ff0000"/><path d="M10 8.5l5.5 3.5L10 15.5z" fill="#fff"/></svg>유튜브에서 레시피 영상 찾기</button>
+    <button class="ryt" data-yt="${ri}"><svg width="20" height="20" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="4.5" fill="#ff0000"/><path d="M10 8.5l5.5 3.5L10 15.5z" fill="#fff"/></svg><span class="ryt-t">${ytLabel}</span></button>
     <button class="rcook" data-cook="${ri}">🍳 이 요리 했어요 (재료 차감)</button></div>`;
 }
 function renderRecipes(){

@@ -9,9 +9,10 @@ const SYS = [
   "요리명·재료·조리 단계 모두 초등학생도 이해할 만큼 쉽고 명확한 한국어로 쓴다.",
   "실제로 많이 만들어 먹는 대중적이고 검증된 한국 가정식·자취요리만 추천한다. 새로 지어낸 퓨전은 금지.",
   "출력은 반드시 아래 형태의 JSON 객체 하나만. 설명·마크다운·코드블록 없이 JSON만 출력한다. recipes 배열은 요청한 개수만큼 반드시 채운다.",
-  '{"recipes":[{"name":"김치볶음밥","difficulty":"간단","time":"약 10분","use":["김치","밥","계란"],"missing":["식용유"],"steps":["팬에 기름을 두르고 김치를 볶는다.","밥을 넣고 함께 볶는다.","계란 프라이를 올려 완성한다."]}]}',
-  'difficulty는 "간단","보통","복잡" 중 하나. time은 "약 15분"처럼 쓴다. use=냉장고에 있는 재료, missing=없어서 사야 하는 재료.',
-  "steps는 각 단계를 구체적으로(재료 양·순서·불세기 등) 한 문장씩, 순 한글로 쓴다.",
+  '{"recipes":[{"name":"김치볶음밥","difficulty":"간단","time":"약 10분","servings":"1인분","amounts":["김치 1컵(약 150g)","밥 1공기(약 210g)","계란 1개","식용유 1큰술(15ml)","대파 1/2대"],"use":["김치","밥","계란"],"missing":["식용유"],"steps":["팬에 식용유 1큰술을 두르고 중불에서 김치 1컵을 2분간 볶는다.","밥 1공기를 넣고 3분간 함께 볶는다.","계란 1개로 프라이를 만들어 위에 올려 완성한다."]}]}',
+  'difficulty는 "간단","보통","복잡" 중 하나. time은 "약 15분"처럼 쓴다. servings는 "1인분","2인분"처럼 쓴다. use=냉장고에 있는 재료, missing=없어서 사야 하는 재료.',
+  "amounts에는 모든 재료의 정확한 계량을 적는다(그램·밀리리터·큰술·작은술·컵·개·대 등. 예: '간장 1큰술(15ml)', '밥 1공기(약 210g)').",
+  "steps는 각 단계를 재료의 분량·시간·불세기까지 구체적으로 한 문장씩, 순 한글로 쓴다(예: '중불에서 3분간 볶는다').",
 ].join("\n");
 
 // 한국어 품질이 좋은 모델을 우선 시도하고, 사용 불가 시 안정 모델로 폴백.
@@ -54,12 +55,14 @@ function clean(arr) {
     name: stripCJK(r.name),
     difficulty: ["간단", "보통", "복잡"].includes(r.difficulty) ? r.difficulty : "보통",
     time: stripCJK(r.time),
+    servings: stripCJK(r.servings),
+    amounts: slist(r.amounts),
     use: slist(r.use),
     missing: slist(r.missing),
     steps: slist(r.steps),
   }));
   // 한자·가나가 섞인(깨진) 레시피는 제외. 전부 걸러지면 원본 유지(빈 결과 방지).
-  const korean = mapped.filter(r => hanRatio([r.name, ...r.use, ...r.missing, ...r.steps].join(" ")) < 0.04);
+  const korean = mapped.filter(r => hanRatio([r.name, ...r.amounts, ...r.use, ...r.missing, ...r.steps].join(" ")) < 0.04);
   return korean.length ? korean : mapped;
 }
 
